@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b-2 border-red-600 pb-4">
+            <div>
+                <h1 class="text-red-600 text-3xl font-bold">INVOICE <span class="text-gray-600">#1000245</span></h1>
+            </div>
+            <div>
+                <img src="your-logo.png" alt="Company Logo" class="h-12">
+            </div>
+        </div>
+
+        <!-- From and To -->
+        <div class="grid grid-cols-3 gap-4 mt-6">
+            <div>
+                <h2 class="font-bold text-red-600">FROM</h2>
+                <p>Example Corp</p>
+                <p>987 Somewhere</p>
+                <p>Somecity 12345</p>
+                <p>sales@clientary.com</p>
+                <p>EIN: 23-45-6789</p>
+            </div>
+            <div>
+                <h2 class="font-bold text-red-600">TO</h2>
+                <p>ABC Corp</p>
+                <p>123 Main St, Suite 123</p>
+                <p>Mainville, NY 10001</p>
+            </div>
+
+                    <!-- Invoice Details -->
+                    <div class="">
+                        <div class="flex justify-between">
+                            <h2 class="font-bold text-red-600">INVOICE NO.:</h2>
+                            <p>1000245</p>
+                        </div>
+                        <div class="flex justify-between">
+                            <h2 class="font-bold text-red-600">INVOICE DATE:</h2>
+                            <p>May 11, 2023</p>
+                        </div>
+                        <div class="flex justify-between">
+                            <h2 class="font-bold text-red-600">PAYMENT DUE:</h2>
+                            <p>June 10, 2023</p>
+                        </div>
+                    </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="mt-6">
+            <h2 class="font-bold text-gray-600">SUMMARY</h2>
+            <p class="text-gray-700 text-sm mt-2">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            </p>
+        </div>
+
+        <!-- Items Table -->
+        <table class="table-auto w-full mt-6 text-left border-collapse">
+            <thead>
+                <tr class="bg-red-100 text-gray-700">
+                    <th class="border px-4 py-2">DESCRIPTION</th>
+                    <th class="border px-4 py-2">QTY</th>
+                    <th class="border px-4 py-2">UNIT PRICE</th>
+                    <th class="border px-4 py-2">TOTAL PRICE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border px-4 py-2 font-bold">Section Header</td>
+                    <td class="border px-4 py-2"></td>
+                    <td class="border px-4 py-2"></td>
+                    <td class="border px-4 py-2"></td>
+                </tr>
+                <tr>
+                    <td class="border px-4 py-2">Line Item</td>
+                    <td class="border px-4 py-2">1</td>
+                    <td class="border px-4 py-2">$100.00</td>
+                    <td class="border px-4 py-2">$100.00</td>
+                </tr>
+                <tr>
+                    <td class="border px-4 py-2 font-bold">Header 2</td>
+                    <td class="border px-4 py-2"></td>
+                    <td class="border px-4 py-2"></td>
+                    <td class="border px-4 py-2"></td>
+                </tr>
+                <tr>
+                    <td class="border px-4 py-2">Line Item 2</td>
+                    <td class="border px-4 py-2">1</td>
+                    <td class="border px-4 py-2">$250.00 + tax</td>
+                    <td class="border px-4 py-2">$250.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Footer -->
+        <div class="mt-6 pt-4 text-gray-500 text-xs text-center  border-t-2 border-red-600">
+            <p>Invoice generated for ABC Corp by Example Corp</p>
+        </div>
+    </div>
+</body>
+</html>

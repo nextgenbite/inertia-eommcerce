@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            border-bottom: 2px solid #dc2626;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .header table {
+            width: 100%;
+        }
+        .header table th, .header table td {
+            border: none;
+        }
+        .header h1 {
+            color: #dc2626;
+            font-size: 24px;
+            margin: 0;
+        }
+        .header span {
+            color: #6b7280;
+        }
+        .logo img {
+            height: 50px;
+        }
+        .section {
+            margin-top: 20px;
+        }
+        .section h2 {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        .section p {
+            margin: 0;
+        }
+        .details {
+            margin-top: 20px;
+        }
+        .details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .details td {
+            padding: 5px 10px;
+            vertical-align: top;
+        }
+        .summary {
+            margin-top: 20px;
+        }
+        .summary p {
+            color: #374151;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table thead {
+            background-color: #fee2e2;
+            color: #374151;
+        }
+        .order table th, table td {
+            border: 1px solid #d1d5db;
+            padding: 10px;
+            text-align: left;
+        }
+        .order table th {
+            font-size: 14px;
+        }
+        .order table td {
+            font-size: 14px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <table>
+                <tr>
+                    <td><h1>INVOICE <span>#1000245</span></h1></td>
+                    <td style="text-align: right;"><div class="logo"><img src="your-logo.png" alt="Company Logo"></div></td>
+                </tr>
+            </table>
+        </div>
+
+        <table>
+            <tr>
+                <td>
+                    <h2>FROM</h2>
+                    <p>Example Corp</p>
+                    <p>987 Somewhere</p>
+                    <p>Somecity 12345</p>
+                    <p>sales@clientary.com</p>
+                    <p>EIN: 23-45-6789</p>
+                </td>
+                <td>
+                    <h2>TO</h2>
+                    <p>ABC Corp</p>
+                    <p>123 Main St, Suite 123</p>
+                    <p>Mainville, NY 10001</p>
+                </td>
+                <td>
+                    <h3>INVOICE NO.</h3><span style="float: inline-end;">1000245</p>
+                    <h3>INVOICE NO.</h3><span style="float: inline-end;">1000245</p>
+                    <h3>INVOICE NO.</h3><span style="float: inline-end;">1000245</p>
+                    <h3>INVOICE NO.</h3><span style="float: inline-end;">1000245</p>
+                    <h3>INVOICE NO.</h3><span style="float: inline-end;">1000245</p>
+                </td>
+            </tr>
+        </table>
+        <!-- From and To -->
+        <div class="section">
+            <h2>FROM</h2>
+            <p>Example Corp</p>
+            <p>987 Somewhere</p>
+            <p>Somecity 12345</p>
+            <p>sales@clientary.com</p>
+            <p>EIN: 23-45-6789</p>
+        </div>
+
+        <div class="section">
+            <h2>TO</h2>
+            <p>ABC Corp</p>
+            <p>123 Main St, Suite 123</p>
+            <p>Mainville, NY 10001</p>
+        </div>
+
+        <!-- Invoice Details -->
+        <div class="details">
+            <table>
+                <tr>
+                    <td><h2>INVOICE NO.</h2><p>1000245</p></td>
+                    <td><h2>INVOICE DATE</h2><p>May 11, 2023</p></td>
+                    <td><h2>PAYMENT DUE</h2><p>June 10, 2023</p></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary">
+            <h2>SUMMARY</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        </div>
+
+        <!-- Items Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>DESCRIPTION</th>
+                    <th>QTY</th>
+                    <th>UNIT PRICE</th>
+                    <th>TOTAL PRICE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Section Header</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Line Item</td>
+                    <td>1</td>
+                    <td>$100.00</td>
+                    <td>$100.00</td>
+                </tr>
+                <tr>
+                    <td>Header 2</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Line Item 2</td>
+                    <td>1</td>
+                    <td>$250.00 + tax</td>
+                    <td>$250.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Invoice generated for ABC Corp by Example Corp</p>
+        </div>
+    </div>
+</body>
+</html>
