@@ -1,8 +1,8 @@
 <template>
   <default-layout>
     <div class="container mx-auto py-8">
-      <section class="grid grid-cols-1 lg:grid-cols-5 gap-2">
-        <div class="col-span-2 w-full h-full max-lg:mx-auto mx-0">
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4">
+        <div class="col-span-4 w-full h-full max-lg:mx-auto mx-0">
           <Galleria
             class="w-full"
             v-if="galleryData.length"
@@ -36,67 +36,67 @@
             class="w-full h-auto rounded-lg shadow-lg"
           />
         </div>
-        <div class="col-span-2 flex justify-center items-center">
-          <div class="w-full max-lg:mt-8">
+        <div class="col-span-5 flex justify-center items-center">
+          <div class="w-full h-full max-lg:mt-8 flex flex-col">
             <div class="flex items-center justify-between gap-6 mb-6">
               <div class="text">
-                <h1
-                  class="font-manrope font-bold text-3xl leading-10 text-gray-900 mb-2 capitalize"
-                >
-                  {{ product.title }}
-                  {{ product.inventory }}
-                </h1>
-                <p class="font-normal text-base text-gray-500 capitalize">
-                  {{ product.category?.title || "Uncategorized" }}
-                </p>
+            <h1
+              class="font-manrope font-bold text-3xl leading-10 text-gray-900 mb-2 capitalize"
+            >
+              {{ product.title }}
+              {{ product.inventory }}
+            </h1>
+            <p class="font-normal text-base text-gray-500 capitalize">
+              {{ product.category?.title || "Uncategorized" }}
+            </p>
               </div>
               <Button
-                raised
-                outlined
-                rounded
-                size="large"
-                icon="pi pi-heart"
-                aria-label="Add to Wishlist"
+            raised
+            outlined
+            rounded
+            size="large"
+            icon="pi pi-heart"
+            aria-label="Add to Wishlist"
               />
             </div>
 
             <div
-              class="flex flex-col min-[400px]:flex-row min-[400px]:items-center mb-8 gap-y-3"
+              class="flex flex-col min-[400px]:flex-row min-[400px]:items-center mb-4 gap-y-3"
             >
               <div class="flex items-center">
-                <h5
-                  class="font-manrope font-semibold text-2xl leading-6 text-gray-900"
-                >
-                  $ {{ product.price }}
-                </h5>
-                <span class="ml-3 font-semibold text-lg text-primary-600"
-                  >30% off</span
-                >
+            <h5
+              class="font-manrope font-semibold text-2xl leading-6 text-gray-900"
+            >
+              $ {{ product.price }}
+            </h5>
+            <span class="ml-3 font-semibold text-lg text-primary-600"
+              >30% off</span
+            >
               </div>
               <span class="text-gray-200 mx-5 max-[400px]:hidden">|</span>
               <button
-                class="flex items-center gap-1 rounded-lg bg-amber-400 text py-1.5 px-2.5 w-max"
+            class="flex items-center gap-1 rounded-lg bg-amber-400 text py-1.5 px-2.5 w-max"
               >
-                <i class="pi pi-star-fill text-white"></i>
-                <span class="text-base font-medium text-white">4.8</span>
+            <i class="pi pi-star-fill text-white"></i>
+            <span class="text-base font-medium text-white">4.8</span>
               </button>
             </div>
-<div
-  v-for="attribute in product.attributes"
-  :key="attribute.id"
-  class="mb-6"
->
-  <h3 class="font-medium text-lg text-gray-900 mb-2">
-    {{ `${attribute.display_name}` }}
-  </h3>
-
-  <div class="flex flex-wrap gap-3">
-    <label
-      v-for="value in attribute.values"
-      :key="value.id"
-      class="cursor-pointer"
+    <div
+      v-for="attribute in product.attributes"
+      :key="attribute.id"
+      class="mb-6"
     >
-      <input
+      <h3 class="font-medium text-lg text-gray-900 mb-2">
+        {{ `${attribute.display_name}` }}
+      </h3>
+
+      <div class="flex flex-wrap gap-3">
+        <label
+          v-for="value in attribute.values"
+          :key="value.id"
+          class="cursor-pointer"
+        >
+          <input
         type="radio"
         :name="'attribute-' + attribute.name"
         :value="value.id"
@@ -104,8 +104,8 @@
         class="hidden peer"
         :disabled="!isSelectable(attribute.name, value.id)"
         @change="handleChange(attribute.name, value.id)"
-      />
-      <div
+          />
+          <div
         class="p-1 border border-gray-200 rounded-md whitespace-nowrap text-gray-900 text-center peer-checked:ring-1 ring-primary-300 transition-all duration-200 font-semibold shadow-sm shadow-transparent hover:bg-gray-50 hover:shadow-primary-300"
         :class="[
           !isSelectable(attribute.name, value.id)
@@ -115,7 +115,7 @@
             ? 'w-20'
             : 'px-4 py-1.5 rounded-full',
         ]"
-      >
+          >
         <img
           v-if="attribute.name === 'color' && value.image"
           :src="`${value.image}`"
@@ -128,72 +128,72 @@
         >
           {{ value.value }}
         </p>
+          </div>
+        </label>
       </div>
-    </label>
-  </div>
-</div>
+    </div>
 
-
-
+            <!-- If there are no attributes, push the controls to the bottom with mt-auto -->
             <div
-              class="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8"
+            class="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 "
+            :class="product.attributes && product.attributes.length === 0 ? 'mt-auto' : ''"
             >
-              <div
+            <div
                 class="flex mx-auto text-gray-600 border rounded-full border-gray-300 divide-x divide-gray-300 lg:mx-0 w-max"
-              >
+            >
                 <div
-                  @click="quantity > 1 ? quantity-- : ''"
-                  class="relative rounded-l-full px-5 py-2.5 overflow-hidden font-medium text-primary-600 shadow-inner cursor-pointer group"
+                @click="quantity > 1 ? quantity-- : ''"
+                class="relative rounded-l-full px-5 py-2.5 overflow-hidden font-medium text-primary-600 shadow-inner cursor-pointer group"
                 >
-                  <span
+                <span
                     class="absolute top-0 left-0 w-0 h-0 transition-all duration-200 border-t-2 border-primary-600 group-hover:w-full ease"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="absolute bottom-0 right-0 w-0 h-0 transition-all duration-200 border-b-2 border-primary-600 group-hover:w-full ease"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="absolute top-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-primary-600 group-hover:h-full ease"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="absolute bottom-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-primary-600 group-hover:h-full ease"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="absolute inset-0 w-full h-full duration-300 delay-300 bg-primary opacity-0 group-hover:opacity-100"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="relative transition-colors duration-300 delay-200 group-hover:text-white ease"
                     ><i class="pi pi-minus"></i
-                  ></span>
+                ></span>
                 </div>
                 <div class="flex items-center justify-center w-10">
-                  {{ quantity }}
+                {{ quantity }}
                 </div>
                 <div
-                  @click="quantity < 10 ? quantity++ : ''"
-                  class="relative px-5 py-2.5 rounded-r-full overflow-hidden font-medium text-primary-600 shadow-inner cursor-pointer group"
+                @click="quantity < 10 ? quantity++ : ''"
+                class="relative px-5 py-2.5 rounded-r-full overflow-hidden font-medium text-primary-600 shadow-inner cursor-pointer group"
                 >
-                  <span
+                <span
                     class="absolute top-0 left-0 w-0 h-0 transition-all duration-200 border-t-2 border-primary-600 group-hover:w-full ease"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="absolute bottom-0 right-0 w-0 h-0 transition-all duration-200 border-b-2 border-primary-600 group-hover:w-full ease"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="absolute top-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-primary-600 group-hover:h-full ease"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="absolute bottom-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-primary-600 group-hover:h-full ease"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="absolute inset-0 w-full h-full duration-300 delay-300 bg-primary opacity-0 group-hover:opacity-100"
-                  ></span>
-                  <span
+                ></span>
+                <span
                     class="relative transition-colors duration-300 delay-200 group-hover:text-white ease"
                     ><i class="pi pi-plus"></i
-                  ></span>
+                ></span>
                 </div>
-              </div>
-              <Button
+            </div>
+            <Button
                 raised
                 outlined
                 rounded
@@ -202,27 +202,27 @@
                 icon="pi  pi-shopping-bag"
                 @click="addToCart"
                 :disabled="product.has_variant && !selectedVariant"
-              />
+            />
             </div>
             <div
-              class="flex justify-between items-center rounded-full bg-primary/10 p-5 shadow-lg shadow-primary-100"
+            class="flex mb-4 justify-between items-center rounded-full bg-primary/10 p-5 shadow-lg shadow-primary-100"
             >
-              <div>
+            <div>
                 <p class="text-sm text-gray-600">Total Price</p>
                 <h3 class="font-bold text-primary">
-                  $ {{ (product.price * quantity).toFixed(2) }}
+                $ {{ (product.price * quantity).toFixed(2) }}
                 </h3>
-              </div>
-              <Button
+            </div>
+            <Button
                 raised
                 rounded
                 icon="pi pi-shopping-cart"
                 label="Buy Now"
-              />
+            />
             </div>
           </div>
         </div>
-        <div class="">
+        <div class="col-span-3 h-full" >
     <!-- right sidebar -->
     <right-side-bar :product="product" :shipping="shipping"/>
         </div>

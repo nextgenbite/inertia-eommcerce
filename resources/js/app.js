@@ -19,7 +19,6 @@ import ToastService from 'primevue/toastservice';
 
 import '@/sakai/assets/styles.scss';
 import '@/sakai/assets/tailwind.css';
-
 const appName = import.meta.env.VITE_APP_NAME || 'Nextgen Inventory';
 // Function to get the theme based on settings
 const getTheme = (themeMode) => themeMode === 'Lara' ? Lara : Aura;
@@ -103,13 +102,17 @@ createInertiaApp({
                         });
                         return hasPermission;
                     },
+                       formatCurrency(amount) {
+            const currencySymbol = settings.currency_symbol || '$';
+            return `${currencySymbol}${Math.round(amount)}`;
+        },
                 },
             })
             .mount(el);
     },
     progress: {
         color: 'var(--p-primary-color)',
-        delay: 250,
+        // delay: 250,
 
     },
 });

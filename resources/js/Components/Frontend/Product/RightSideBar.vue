@@ -28,7 +28,7 @@ const feature = ref([
               </div>
             </template>
           </Listbox>
-          <div class="mt-4 bg-white rounded-lg shadow p-4">
+          <div class="mt-2 bg-white rounded-lg shadow p-4">
             <h3 class="text-lg font-semibold mb-2 card-header">
               Share this product
             </h3>
@@ -73,13 +73,9 @@ const feature = ref([
             <template v-for="item in shipping" :key="item.id">
 
             <p class="text-gray-600 mb-2">
-              <strong>Area:</strong>
-              {{ item.title}}</p>
-            <p class="text-gray-600 mb-2">
-              <strong>Shipping Cost:</strong> ${{
-                item.cost || "Free"
-              }}
-            </p>
+              <strong>{{ item.title}}:</strong>
+                     <span>${{ item.cost || "Free" }}</span></p>
+
             <p v-if="item.eta" class="text-gray-600 mb-2">
               <strong>ETA:</strong>
               {{ item.eta }}

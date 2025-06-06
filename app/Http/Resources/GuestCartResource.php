@@ -76,7 +76,8 @@ class GuestCartResource extends JsonResource
         $shipping = 5;
         $tax = $subtotal * 0.1;
         $discount = 0;
-        $total = $subtotal + $shipping + $tax - $discount;
+        $total = $subtotal + $shipping - $discount;
+        // $total = $subtotal + $shipping + $tax - $discount;
 
         return [
             'items' => $items,

@@ -145,7 +145,7 @@
                       <h6
                         class="text-primary font-manrope font-bold text-lg text-right"
                       >
-                       ${{ item.product.price * item.quantity }}
+                       {{ formatCurrency(item.product.price * item.quantity) }}
                       </h6>
                     </div>
                   </div>
@@ -158,7 +158,7 @@
                 <div class="flex items-center justify-between w-full mb-2">
                   <p class="text-xl text-gray-400">Sub Total</p>
                   <h6 class="font-semibold text-xl text-gray-900">
-                    ${{ cartStore.cart.summary.subtotal }}
+                    {{ formatCurrency(cartStore.cart.subtotal) }}
                   </h6>
                 </div>
                 <div
@@ -168,7 +168,7 @@
                     Delivery Charge
                   </p>
                   <h6 class="font-semibold text-xl leading-8 text-gray-900">
-                    ${{ cartStore.cart.summary.shipping_cost }}
+                    {{ formatCurrency(cartStore.cart.shipping_cost) }}
                   </h6>
                 </div>
                 <div
@@ -178,7 +178,7 @@
                     Discount
                   </p>
                   <h6 class="font-semibold text-xl leading-8 text-gray-900">
-                   - ${{ cartStore.cart.summary.discount }}
+                   - {{ formatCurrency(cartStore.cart.discount) }}
                   </h6>
                 </div>
                 <div class="flex items-center justify-between w-full py-2">
@@ -190,7 +190,7 @@
                   <h6
                     class="font-manrope font-medium text-2xl text-primary"
                   >
-                     ${{ cartStore.cart.summary.total }}
+                     {{ formatCurrency(cartStore.cart.total) }}
                   </h6>
                 </div>
               </div>
@@ -534,23 +534,23 @@
                         <h3 class="font-semibold mb-2">Order Summary</h3>
                         <div v-for="item in cart" :key="item.id" class="flex justify-between text-sm py-1">
                             <span>{{ item.name }} <span class="text-gray-500">x{{ item.qty }}</span></span>
-                            <span>${{ item.price * item.qty }}</span>
+                            <span>{{ formatCurrency(item.price * item.qty) }}</span>
                         </div>
                         <div class="flex justify-between mt-2 text-sm">
                             <span>Subtotal</span>
-                            <span>${{ cartStore.cart.summary.subtotal }}</span>
+                            <span>{{ formatCurrency(cartStore.cart.subtotal) }}</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span>Delivery Charge</span>
-                            <span>${{ cartStore.cart.summary.shipping_cost }}</span>
+                            <span>{{ formatCurrency(cartStore.cart.shipping_cost) }}</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span>Discount</span>
-                            <span>- ${{ cartStore.cart.summary.discount }}</span>
+                            <span>- {{ formatCurrency(cartStore.cart.discount) }}</span>
                         </div>
                         <div class="flex justify-between mt-2 font-bold">
                             <span>Total</span>
-                            <span class="text-primary">${{ cartStore.cart.summary.total }}</span>
+                            <span class="text-primary">{{ formatCurrency(cartStore.cart.total) }}</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 mt-6">

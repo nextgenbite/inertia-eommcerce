@@ -16,14 +16,12 @@ class CartResource extends JsonResource
     {
                return [
             'items' => CartItemResource::collection($this->items),
-            'summary' => [
                 'count' => $this->items->sum('quantity'),
                 'subtotal' => $this->subtotal,
                 'shipping_cost' => $this->shipping_cost,
                 'tax' => $this->tax,
                 'discount' => $this->discount,
                 'total' => $this->total,
-            ],
         ];
     }
 }

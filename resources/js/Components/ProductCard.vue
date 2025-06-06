@@ -73,13 +73,13 @@ const discountPercentage = (price, discount) => {
       </Link>
       <div class="flex justify-left items-baseline space-x-3">
         <p class="text-lg font-bold text-red-600 font-roboto">
-          ${{ product.discount_price || product.price }}
+          {{ formatCurrency(product.discount_price || product.price) }}
         </p>
         <p
           v-if="product.discount_price"
           class="font-bold text-gray-400 font-roboto line-through"
         >
-          ${{ product.price }}
+          {{ formatCurrency(product.price) }}
         </p>
       </div>
     </div>

@@ -8,6 +8,7 @@ use App\Models\Brand;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippingCost;
 
@@ -161,5 +162,10 @@ class HomeController extends Controller
             'total' => $total,
             'cartCount' => $cartCount,
         ]);
+    }
+
+    public function OrderConfirmed(){
+        $data= Order::with('customer','orderdetails','orderdetails.product')->firstOrFail();
+         return Inertia::render('OrderConfirmed',['order'=> $data]);
     }
 }

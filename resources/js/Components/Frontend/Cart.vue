@@ -91,7 +91,7 @@
                 />
               </div>
               <h6 class="text-primary font-manrope font-bold text-right">
-                ${{ item.product.price * item.quantity }}
+                {{ formatCurrency(item.product.price * item.quantity) }}
               </h6>
             </div>
           </div>
@@ -100,7 +100,7 @@
       <div v-if="cartStore.cart?.items?.length" class="border-t px-4 py-3">
         <div class="flex justify-between items-center mb-2">
           <span class="font-semibold text-gray-700">Subtotal</span>
-          <span class="font-bold text-primary">${{ subtotal }}</span>
+          <span class="font-bold text-primary">{{ formatCurrency(subtotal) }}</span>
         </div>
         <Link
           href="/checkout"

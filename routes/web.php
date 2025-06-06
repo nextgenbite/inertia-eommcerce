@@ -43,9 +43,7 @@ Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::delete('/cart', [CartController::class, 'destroy'])->name('cart.destroy');
 Route::put('/cart', [CartController::class, 'update'])->name('cart.update');
 Route::post('/create-invoice', [HomeController::class, 'CreateInvoice'])->name('create.invoice');
-Route::get('/order-confirmed', function () {
-    return Inertia::render('OrderConfirmed');
-})->name('order.confirmed');
+Route::get('/order-confirmed', [HomeController::class, 'OrderConfirmed'])->name('order.confirmed');
 
 
 Route::get('/dashboard', function () {
