@@ -74,13 +74,17 @@ class OrderRepository implements OrderInterface
     public function baseData(): array
     {
         $title = ['Orders', 'order'];
-        $columns = [
-            // ['key' => 'thumbnail', 'label' => 'Thumbnail', 'path' => 'thumbnail', 'sort' => true],
-            ['key' => 'invoice_no', 'label' => 'Invoice no.', 'path' => 'invoice_no', 'sort' => true],
-            ['key' => 'created_at', 'label' => 'Created', 'path' => 'created_at', 'sort' => true],
-            ['key' => 'updated_at', 'label' => 'Updated', 'path' => 'updated_at', 'sort' => true],
-            ['key' => 'status', 'label' => 'Status', 'path' => 'status', 'sort' => true],
-        ];
+$columns = [
+    ['key' => 'invoice_no', 'label' => 'Invoice No.', 'path' => 'invoice_no', 'sort' => true],
+    ['key' => 'customer', 'label' => 'Customer', 'path' => 'customer.name', 'sort' => true],
+    ['key' => 'image', 'label' => 'Avatar', 'path' => 'customer.avatar', 'sort' => false],
+    ['key' => 'order_date', 'label' => 'Date', 'path' => 'order_date', 'sort' => true],
+    ['key' => 'total', 'label' => 'Amount', 'path' => 'total', 'sort' => true],
+    ['key' => 'paid', 'label' => 'Paid', 'path' => 'paid', 'sort' => true],
+    ['key' => 'tag', 'label' => 'Payment Status', 'path' => 'payment_status', 'sort' => true],
+    ['key' => 'tag', 'label' => 'Delivery Status', 'path' => 'delivery_status', 'sort' => true],
+];
+
 
         $form = [
             ['key' => 'title', 'label' => 'Title', 'path' => 'title', 'type' => 'text'],
@@ -95,7 +99,8 @@ class OrderRepository implements OrderInterface
                 ['name' => 'Deactive', 'code' => '0'],
             ]],
         ];
+        $permissions = ['create' => 'product.create', 'read' => 'product.view', 'update' => 'product.edit', 'delete' => 'product.delete'];
 
-        return array('route' => 'orders', 'title' => $title, 'columns' => $columns, 'form' => $form);
+        return array('route' => 'orders', 'title' => $title, 'columns' => $columns, 'form' => $form, 'permissions' => $permissions);
     }
 }

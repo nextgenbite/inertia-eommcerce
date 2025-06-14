@@ -9,7 +9,12 @@
       <div class="grid grid-cols-2 lg:grid-cols-5 gap-2 lg:gap-6">
         <template v-for="product in $page.props.products" :key="product.id">
           <!-- ---- Start Single Product  ----- -->
-          <product-card :product="product" />
+         <ProductCard
+                    v-for="product in $page.props.products"
+                    :key="product.id"
+                    :product="product"
+                    class="transition-transform transform hover:-translate-y-2 hover:shadow-lg"
+                />
           <!-- ---- End Single Product  ----- -->
         </template>
       </div>

@@ -2,7 +2,9 @@
 <template>
   <default-layout>
     <Head title="Checkout" />
-    <div class="container my-8 card flex justify-center max-w-3xl">
+    <div class="container my-8 card  ">
+        <div class="max-w-3xl mx-auto rounded-xl shadow-lg shadow-primary-200 border border-slate-200 p-4">
+
                 <div
                   v-if="!cartStore.cart?.items?.length"
                   class="text-center text-gray-400 py-8 text-3xl"
@@ -64,7 +66,7 @@
         <StepPanels>
           <StepPanel v-slot="{ activateCallback }" :value="1">
             <div
-              class="rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+              class=""
             >
               <div class="p-4 max-h-96 overflow-y-auto">
 
@@ -322,7 +324,7 @@
                 label="Back"
                 severity="secondary"
                 icon="pi pi-arrow-left"
-                @click="activateCallback('1')"
+                @click="activateCallback(1)"
               />
               <Button
                 label="Continue to Payment"
@@ -518,6 +520,7 @@
           </StepPanel>
         </StepPanels>
       </Stepper>
+        </div>
     </div>
 
         <!-- Order Confirmation Dialog -->
@@ -641,23 +644,6 @@ const paymentMethod = ref([
  .p-listbox-list-container {
   max-height: none !important;
 }
-/* .nav-for-slider .swiper-slide {
-            height: auto;
-            width: auto;
-            cursor: pointer;
 
-        }
-        .swiper-wrapper{
-            height: auto;
-        }
-        .nav-for-slider .swiper-slide img{
-            border:2px solid transparent;
-            border-radius: 10px;
-
-        }
-        .nav-for-slider .swiper-slide-thumb-active img{
-
-            border-color: rgb(79 70 229 );
-        } */
 </style>
 

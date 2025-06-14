@@ -10,105 +10,93 @@ const props = defineProps({
   },
 });
 const discountPercentage = (price, discount) => {
-  let discountAmount = price - discount;
-  return Math.round((discountAmount / price) * 100);
+  if (!price || !discount) return 0;
+  return Math.round(((price - discount) / price) * 100);
 };
 </script>
+
 <template>
   <div
-    class="group rounded bg-white shadow overflow-hidden hover:shadow-lg transition duration-300 ease-in-out relative"
+    class="group rounded-xl bg-white shadow-md hover:shadow-xl transition-all duration-300 relative border border-gray-100 overflow-hidden"
   >
-    <span v-if="product.discount_price" class="badge-custom">
-      {{ badge ?? "OFF" }}
-      <span class="box ml-1 mr-0">
-        &nbsp;{{
-          discountPercentage(product.price, product.discount_price)
-        }}%</span
-      ></span
+    <span
+      v-if="product.discount_price"
+      class="absolute top-4 left-4 z-10 flex items-center gap-1 px-3 py-1 rounded-full bg-red-500 text-white text-xs font-semibold shadow"
     >
-    <span v-else-if="badge" class="badge-custom">{{ badge }}</span>
+      {{ badge ?? "SALE" }}
+      <span
+        class="ml-1 bg-white text-red-500 rounded-full px-2 py-0.5 font-bold"
+      >
+        -{{ discountPercentage(product.price, product.discount_price) }}%
+      </span>
+    </span>
+    <span
+      v-else-if="badge"
+      class="absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-gray-800 text-white text-xs font-semibold shadow"
+    >
+      {{ badge }}
+    </span>
 
-    <div class="relative overflow-hidden p-2">
+    <div
+      class="relative overflow-hidden bg-white flex items-center justify-center"
+    >
       <img
         :src="product.thumbnail ? `/${product.thumbnail}` : '/no-image.png'"
         :alt="product.title"
-        class="w-full group-hover:brightness-75 group-hover:scale-110 transition-all duration-300 ease-in-out rounded-lg"
+        class="object-contain transition-transform duration-300 group-hover:scale-105 bg-white p-2"
       />
       <div
-        class="absolute top-2 -right-12 group-hover:right-0 rounded text-gray-600 bg-white duration-300 ease-in-out"
+        class="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
       >
-        <Link
-          :href="'/product/' + product.id"
-          title="Quick view"
-          class="text-md w-8 h-8 hover:text-gray-800 hover:animate-pulse flex items-center justify-center"
-        >
-          <i class="pi pi-eye"></i>
+        <Link title="Quick view" :href="'/product/' + product.id">
+          <Button icon="pi pi-eye" severity="secondary" raised rounded size="small" />
         </Link>
-        <a
-          href="#"
+        <Button
+          icon="pi pi-cart-arrow-down"
           title="Add to cart"
-          class="text-md w-8 h-8 hover:text-gray-800 hover:animate-pulse flex items-center justify-center"
-        >
-          <i class="pi pi-cart-arrow-down"></i>
-        </a>
+          severity="secondary"
+          raised
+          rounded
+          v-ripple size="small"
+        />
       </div>
     </div>
     <div class="p-4">
-      <div class="flex items-center">
-        <div class="flex gap-1 text-sm text-yellow-400">
-          <span><i class="pi pi-star"></i></span>
-          <span><i class="pi pi-star"></i></span>
-          <span><i class="pi pi-star"></i></span>
-          <span><i class="pi pi-star"></i></span>
-          <span><i class="pi pi-star"></i></span>
+      <div class="flex items-center mb-2">
+        <div class="flex gap-0.5 text-yellow-400 text-sm">
+          <i
+            v-for="i in 5"
+            :key="i"
+            class="pi"
+            :class="i <= (product.rating ?? 0) ? 'pi-star-fill' : 'pi-star'"
+          ></i>
         </div>
-        <div class="text-xs text-gray-500 ml-3">(99)</div>
+        <div class="text-xs text-gray-400 ml-2">
+          ({{ product.rating_count ?? 0 }})
+        </div>
       </div>
       <Link :href="'/product/' + product.id" :title="product.title">
         <h4
-          class="capitalize font-semibold mb-2 px-1 text-gray-800 group-hover:text-primary transition duration-300 ease-in truncate"
+          class="capitalize font-semibold mb-1 text-gray-900 group-hover:text-primary transition truncate"
         >
           {{ product.title }}
         </h4>
       </Link>
-      <div class="flex justify-left items-baseline space-x-3">
-        <p class="text-lg font-bold text-red-600 font-roboto">
+      <div class="flex items-baseline gap-2 mt-1">
+        <span class="text-lg font-bold text-red-600">
           {{ formatCurrency(product.discount_price || product.price) }}
-        </p>
-        <p
+        </span>
+        <span
           v-if="product.discount_price"
-          class="font-bold text-gray-400 font-roboto line-through"
+          class="text-sm font-medium text-gray-400 line-through"
         >
           {{ formatCurrency(product.price) }}
-        </p>
+        </span>
       </div>
     </div>
   </div>
 </template>
-<style scoped>
-.badge-custom {
-  display: inline-block;
-  padding: 0.1875rem; /* 3px converted to rem */
-  font-size: 0.6875rem; /* 11px converted to rem */
-  border-radius: 0 3.125rem 3.125rem 0; /* 50px converted to rem */
-  color: #ff0000;
-  font-weight: 600;
-  line-height: 1.625rem; /* 26px converted to rem */
-  position: absolute;
-  background: #fff;
-  z-index: 1;
-  top: 1rem;
-  box-shadow: 0.125rem 0.0625rem 0.375rem 0.125rem rgba(0, 0, 0, 0.1),
-    0 0.25rem 0.25rem 0rem rgba(0, 0, 0, 0.06) !important;
-}
 
-.badge-custom .box {
-  height: 1.625rem; /* 26px converted to rem */
-  width: 1.625rem; /* 26px converted to rem */
-  background: #ff0000;
-  color: #fff;
-  display: inline-block;
-  border-radius: 50%;
-  text-align: center;
-}
+<style scoped>
+/* No custom CSS needed, all handled by Tailwind */
 </style>

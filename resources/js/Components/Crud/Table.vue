@@ -24,7 +24,6 @@ const props = defineProps({
     required: true,
   },
 
-
   route: {
     type: String,
     required: true,
@@ -100,11 +99,65 @@ const dt = ref();
 const exportCSV = () => {
   dt.value.exportCSV();
 };
+const size = ref({ label: "Small", value: "small" });
+function getNestedValue(obj, path) {
+  return path.split(".").reduce((o, i) => (o ? o[i] : ""), obj);
+}
+
+function getImage(obj, path) {
+  const val = getNestedValue(obj, path);
+  return val && val.length > 0 ? "/" + val : "/no-image.png";
+}
+const getSeverity = (status) => {
+  if (!status) return null;
+  const filter = String(status).toLowerCase();
+  console.log(filter);
+
+  // Payment Status
+  if (["unpaid", "paid", "partial"].includes(filter)) {
+    switch (filter) {
+      case "unpaid":
+        return "danger";
+      case "paid":
+        return "success";
+      case "partial":
+        return "warning";
+    }
+  }
+
+  // Delivery Method (optional, if you want to color them)
+  if (["cod", "pickup", "courier"].includes(filter)) {
+    switch (filter) {
+      case "cod":
+        return "info";
+      case "pickup":
+        return "success";
+      case "courier":
+        return "warning";
+    }
+  }
+
+  // Delivery Status
+  if (["pending", "shipped", "delivered", "cancelled"].includes(filter)) {
+    switch (filter) {
+      case "pending":
+        return "info";
+      case "shipped":
+        return "warning";
+      case "delivered":
+        return "success";
+      case "cancelled":
+        return "danger";
+    }
+  }
+
+  // Default
+  return null;
+};
 </script>
 
 <template>
   <div class="card">
-
     <Create
       :show="data.createOpen"
       @close="data.createOpen = false"
@@ -126,7 +179,9 @@ const exportCSV = () => {
     <DataTable
       v-model:selection="selectedItem"
       ref="dt"
+      size="small"
       lazy
+      stripedRows
       :loading="!getData.data"
       :value="getData.data"
       paginator
@@ -134,7 +189,7 @@ const exportCSV = () => {
       :totalRecords="getData.total"
       :first="(getData.current_page - 1) * getData.per_page"
       @page="onPageChange"
-      tableStyle="min-width: 50rem"
+      l
     >
       <template #header>
         <div
@@ -151,7 +206,6 @@ const exportCSV = () => {
             />
           </IconField>
           <ButtonGroup>
-
             <Button
               v-show="can([$page.props.permissions.create])"
               label="Create"
@@ -180,33 +234,47 @@ const exportCSV = () => {
         :key="column.key"
       >
         <template #body="slotProps">
-          <Tag
-            v-if="column.path === 'status'"
-            :value="slotProps.data.status == 1 ? 'Active' : 'Inactive'"
-            :severity="slotProps.data.status == 1 ? 'success' : 'danger'"
-          />
-
+          <!-- 1. Image -->
           <Image
-            v-else-if="
-              column?.path === 'image' ||
-              column?.path === 'thumbnail' ||
-              column.path === 'avatar'
-            "
-            :src="
-              slotProps.data[column.key] &&
-              slotProps.data[column.key].length > 0
-                ? '/' + slotProps.data[column.key]
-                : '/no-image.png'
-            "
-            :alt="slotProps.data[column.path] || 'Image not available'"
+            v-if="column.key === 'image'"
+            :src="getImage(slotProps.data, column.path)"
+            :alt="column.label"
             class="shadow-2 rounded"
             width="100"
             preview
           />
+
+          <!-- 2. General Tag -->
+          <Tag
+            v-else-if="column.key === 'tag'"
+            :value="getNestedValue(slotProps.data, column.path)"
+            :severity="getSeverity(getNestedValue(slotProps.data, column.path))"
+          />
+
+          <!-- 3. Status Tag (custom logic for status = 1/0) -->
+          <Tag
+            v-else-if="column.key === 'status'"
+            :value="
+              getNestedValue(slotProps.data, column.path) == 1
+                ? 'Active'
+                : 'Inactive'
+            "
+            :severity="
+              getNestedValue(slotProps.data, column.path) == 1
+                ? 'success'
+                : 'danger'
+            "
+          />
+
+          <!-- 4. Nested Path -->
           <div v-else-if="column.path.includes('.')">
-            {{ getColumnValue(slotProps.data, column.path) }}
+            {{ getNestedValue(slotProps.data, column.path) }}
           </div>
-          <div v-else>{{ slotProps.data[column.path] }}</div>
+
+          <!-- 5. Flat value -->
+          <div class=" capitalize truncate" v-else>
+            {{ slotProps.data[column.path] }}
+          </div>
         </template>
       </Column>
 
@@ -220,10 +288,10 @@ const exportCSV = () => {
           </div>
         </template>
         <template #body="slotProps">
-             <!-- <template v-if="$slots.button"> -->
+          <!-- <template v-if="$slots.button"> -->
 
-        <slot name="button" :item="slotProps.data" />
-        <!-- </template> -->
+          <slot name="button" :item="slotProps.data" />
+          <!-- </template> -->
           <Button
             v-show="can([$page.props.permissions.update])"
             icon="pi pi-pencil"
@@ -270,7 +338,6 @@ const exportCSV = () => {
         <Button label="Yes" icon="pi pi-check" @click="deleteData" />
       </template>
     </Dialog>
-
   </div>
 </template>
 

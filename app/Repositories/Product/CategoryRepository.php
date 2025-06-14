@@ -6,10 +6,11 @@ use App\Http\Resources\CategoryCollection;
 use App\Models\Category;
 use App\Repositories\Interfaces\Product\CategoryInterface;
 use App\Traits\ImageUploadTrait;
-
+use Illuminate\Support\Str;
 class CategoryRepository implements CategoryInterface
 {
     use ImageUploadTrait;
+    private $imagePath = 'uploads/category';
 
     /**
      * Retrieve a category by its ID.
@@ -20,39 +21,43 @@ class CategoryRepository implements CategoryInterface
     }
 
     /**
-     * Store a new category.
+     * Store a new Category.
      */
     public function store($request): Category
     {
-        // Assuming $request is a validated request with necessary data
-        $data = $request->validated();
-
-        // If a thumbnail file exists, handle the upload and add it to the data array
-        if ($request->hasFile('thumbnail')) {
-            $data['thumbnail'] = $this->uploadImage($request->file('thumbnail'), 'uploads/categories', 300, 300);
+        if ($request->thumbnail && $request->thumbnail !== null) {
+            $thumbnail = $this->uploadImage($request->file('thumbnail'), $this->imagePath, 300, 300);
         }
+        return Category::create([
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'thumbnail' => $thumbnail ?? null,
 
-        // Create the category and return the result
-        return Category::create($data);
+            // 'status' => $request->status,
+        ]);
     }
 
     /**
-     * Update an existing category.
+     * Update an existing Category.
      */
     public function update(Category $category, $request): bool
     {
-        $data = $request->validated();
-
-        // If a thumbnail file exists, handle the upload and add it to the data array
-        if ($request->hasFile('thumbnail') && !empty($request->hasFile('thumbnail'))) {
+        if ($request->hasFile('thumbnail')) {
             $this->deleteImage($category->thumbnail);
-            $data['thumbnail'] = $this->uploadImage($request->file('thumbnail'), 'uploads/categories', 300, 300);
+            $thumbnail = $this->uploadImage($request->file('thumbnail'), $this->imagePath, 300, 300);
         }
-        return $category->update($data);
+
+        return $category->update([
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'thumbnail' => $thumbnail ?? $category->thumbnail,
+
+            // 'status' => $request->status,
+        ]);
     }
 
     /**
-     * Delete a category.
+     * Delete a Category.
      */
     public function delete(Category $category): bool
     {
@@ -70,9 +75,9 @@ class CategoryRepository implements CategoryInterface
 
     public function baseData(): array
     {
-         $title = ['Categories', 'category'];
+        $title = ['Categories', 'category'];
         $columns = [
-            ['key' => 'thumbnail', 'label' => 'Thumbnail', 'path' => 'thumbnail', 'sort' => true],
+            ['key' => 'image', 'label' => 'Thumbnail', 'path' => 'thumbnail', 'sort' => true],
             ['key' => 'title', 'label' => 'Title', 'path' => 'title', 'sort' => true],
             ['key' => 'created_date', 'label' => 'Created', 'path' => 'created_date', 'sort' => true],
             ['key' => 'updated_date', 'label' => 'Updated', 'path' => 'updated_date', 'sort' => true],
@@ -82,17 +87,19 @@ class CategoryRepository implements CategoryInterface
 
         $form = [
             ['key' => 'title', 'label' => 'Title', 'path' => 'title', 'type' => 'text'],
-            ['key' => 'image', 'label' => 'Thumbnail', 'path' => 'thumbnail'],
+            ['key' => 'thumbnail', 'label' => 'Thumbnail', 'type' => 'image', 'path' => 'thumbnail'],
             ['key' => 'description', 'label' => 'Description', 'path' => 'description', 'type' => 'textarea'],
-            ['key' => 'status', 'label' => 'Status', 'path' => 'status', 'type' => 'select', 'optionLabel'=> 'name','optionValue'=> 'code',  'options' => [
+            ['key' => 'status', 'label' => 'Status', 'path' => 'status', 'type' => 'select', 'optionLabel' => 'name', 'optionValue' => 'code',  'options' => [
                 ['name' => 'Active', 'code' => '1'],
                 ['name' => 'Deactive', 'code' => '0'],
             ]],
-
-            // Add more columns as needed
         ];
-                $permissions = ['create' => 'category.create', 'read' => 'category.view', 'update' => 'category.edit', 'delete' => 'category.delete'];
-
-        return array( 'route'=> 'categories', 'title'=>$title,'columns'=>$columns,'form'=> $form, 'permissions' => $permissions);
+     $permissions = [
+            'create' => 'category.create',
+            'read' => 'category.read',
+            'update' => 'category.update',
+            'delete' => 'category.delete'
+        ];
+        return array('route' => 'categories', 'title' => $title, 'columns' => $columns, 'form' => $form, 'permissions' => $permissions);
     }
 }

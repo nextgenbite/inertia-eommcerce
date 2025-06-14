@@ -22,8 +22,5 @@ class Expense extends Model
     {
         return $this->belongsTo(ExpenseCategory::class);
     }
-    public function GetCreatedDateAttribute()
-    {
-        return $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null ;
-    }
+
 }

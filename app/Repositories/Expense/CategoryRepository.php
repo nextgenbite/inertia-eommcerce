@@ -70,7 +70,7 @@ class CategoryRepository implements CategoryInterface
 
     public function baseData(): array
     {
-         $title = ['Expense Categories', 'Expense Category'];
+        $title = ['Expense Categories', 'Expense Category'];
         $columns = [
             ['key' => 'title', 'label' => 'Title', 'path' => 'title', 'sort' => true],
             ['key' => 'created_date', 'label' => 'Created', 'path' => 'created_date', 'sort' => true],
@@ -82,14 +82,15 @@ class CategoryRepository implements CategoryInterface
         $form = [
             ['key' => 'title', 'label' => 'Title', 'path' => 'title', 'type' => 'text'],
             ['key' => 'description', 'label' => 'Description', 'path' => 'description', 'type' => 'textarea'],
-            ['key' => 'status', 'label' => 'Status', 'path' => 'status', 'type' => 'select', 'optionLabel'=> 'name','optionValue'=> 'code', 'options' => [
+            ['key' => 'status', 'label' => 'Status', 'path' => 'status', 'type' => 'select', 'optionLabel' => 'name', 'optionValue' => 'code', 'options' => [
                 ['name' => 'Active', 'code' => '1'],
                 ['name' => 'Deactive', 'code' => '0'],
             ]],
 
             // Add more columns as needed
         ];
+        $permissions = ['create' => 'product.create', 'read' => 'product.view', 'update' => 'product.edit', 'delete' => 'product.delete'];
 
-        return array( 'route'=> 'categories', 'title'=>$title,'columns'=>$columns,'form'=> $form);
+        return array('route' => 'categories', 'title' => $title, 'columns' => $columns, 'form' => $form, 'permissions' => $permissions);
     }
 }

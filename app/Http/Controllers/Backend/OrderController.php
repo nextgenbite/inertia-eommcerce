@@ -51,7 +51,7 @@ class OrderController extends Controller
         }
         $data =   array_merge([
             'filters'       => $request->all(['search', 'field', 'order']),
-            'getData'         => $data->paginate(10)
+            'getData'         => $data->with('warehouse', 'customer')->paginate(10)
 
         ], $this->order->baseData());
 
@@ -67,7 +67,7 @@ class OrderController extends Controller
             'customer_id' => 'required|numeric',
             'invoice_no' => 'required',
         ]);
-    
+
         $orderData = [
             'customer_id' => $request->customer_id,
             'order_date' => now()->toDateString(),
@@ -84,11 +84,11 @@ class OrderController extends Controller
             'due' => $request->total - $request->total_paid,
             'note' => $request->note,
         ];
-    
+
         $order = Order::create($orderData);
-    
+
         $this->createOrderDetails($order, $request->product_id, $request->quantity, $request->discount_price);
-    
+
         $this->createPayment($order, $request);
         return response()->json($order, 200);
     } // End Method
@@ -276,13 +276,13 @@ private function createPayment(Order $order, Request $request)
     {
         // Retrieve the order with the provided order ID
         $order = Order::where('id', $order_id)->first();
-    
+
         // Retrieve order details along with related product information
         $orderItem = Orderdetails::with('product')
                         ->where('order_id', $order_id)
                         ->orderBy('id', 'DESC')
                         ->get();
-    
+
         // Generate PDF using DomPDF facade
         $pdf = Pdf::loadView('backend.order.order_invoice', compact('order', 'orderItem'))
                     ->setPaper('a4') // Set paper size to A4
@@ -290,11 +290,11 @@ private function createPayment(Order $order, Request $request)
                         'tempDir' => public_path(), // Set temporary directory
                         'chroot' => public_path(), // Set the chroot directory
                     ]);
-        
+
         // Download the generated PDF with the filename 'invoice.pdf'
         return $pdf->download( $order->invoice_no.'-invoice.pdf');
     }
-    
+
 
 
     public function PendingDue()

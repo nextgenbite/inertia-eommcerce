@@ -23,6 +23,26 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Repositories\Interfaces\Product\CategoryInterface',
             'App\Repositories\Product\CategoryRepository'
         );
+         //sub_category
+         $this->app->bind(
+            'App\Repositories\Interfaces\Product\SubCategoryInterface',
+            'App\Repositories\Product\SubCategoryRepository'
+        );
+         //sub_sub_category
+         $this->app->bind(
+            'App\Repositories\Interfaces\Product\SubSubCategoryInterface',
+            'App\Repositories\Product\SubSubCategoryRepository'
+        );
+         //brand
+         $this->app->bind(
+            'App\Repositories\Interfaces\Product\BrandInterface',
+            'App\Repositories\Product\BrandRepository'
+        );
+         //unit
+         $this->app->bind(
+            'App\Repositories\Interfaces\Product\UnitInterface',
+            'App\Repositories\Product\UnitRepository'
+        );
          //product
          $this->app->bind(
             'App\Repositories\Interfaces\Product\ProductInterface',
@@ -32,6 +52,11 @@ class RepositoryServiceProvider extends ServiceProvider
          $this->app->bind(
             'App\Repositories\Interfaces\Order\OrderInterface',
             'App\Repositories\Order\OrderRepository'
+        );
+         //Warehouse
+         $this->app->bind(
+            'App\Repositories\Interfaces\Warehouse\WarehouseInterface',
+            'App\Repositories\Warehouse\WarehouseRepository'
         );
     }
 }

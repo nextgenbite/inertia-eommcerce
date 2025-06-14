@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{Product, Supplier, Category, Brand, Inventory, Unit};
+use App\Models\{Attribute, AttributeValue, Product, Supplier, Category, Brand, Inventory, Unit};
 use Carbon\Carbon;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
@@ -15,6 +15,7 @@ use App\Imports\ProductImport;
 use App\Repositories\Interfaces\Product\ProductInterface;
 use App\Traits\ApiReturnFormatTrait;
 use App\Traits\ImageUploadTrait;
+use Milon\Barcode\DNS1D;
 
 class ProductController extends Controller
 {
@@ -43,9 +44,45 @@ class ProductController extends Controller
         if ($request->has(['field', 'order'])) {
             $data->orderBy($request->field, $request->order);
         }
+
+        $sku = IdGenerator::generate([
+            'table' => 'products',
+            'field' => 'sku',
+            'length' => 15,
+            'prefix' => 'PC-' . now()->format('Ymd') . '-',
+            'reset_on_prefix_change' => true
+        ]);
+
+ do {
+        $code12 = str_pad(mt_rand(0, 999999999999), 12, '0', STR_PAD_LEFT);
+        $checkDigit = $this->calculateEAN13CheckDigit($code12);
+        $barcode = $code12 . $checkDigit;
+    } while (\App\Models\Product::where('barcode', $barcode)->exists());
+
+    $generator = new DNS1D();
+    $generator->setStorPath(storage_path('framework/barcodes'));
+    // Black bars (0,0,0)
+$pngData = $generator->getBarcodePNG($barcode, 'C128', 2, 44, [0, 0, 0], true);
+
+$barcodeImage = 'data:image/png;base64,' . $pngData;
+
+    $attribute_values = AttributeValue::with('attribute')->get()
+            ->map(fn ($v) => [
+                'value' => $v->id,
+                'label' => "{$v->attribute->display_name}: {$v->value}"
+            ]);
+
         $data =   array_merge([
             'filters'       => $request->all(['search', 'field', 'order']),
-            'getData'         => $data->with('category')->paginate(10)
+            'getData'         => $data->with('category')->paginate(10),
+            'categories' => Category::with(['subCategories.subSubCategories'])->get(),
+            'attributes' => Attribute::with(['values'])->get(),
+            'attribute_values' => $attribute_values,
+            'brands' => Brand::get(),
+            'units' => Unit::get(),
+            'sku' => $sku,
+            'barcode' => $barcode,
+          'barcode_image' => $barcodeImage,
 
         ], $this->product->baseData());
 
@@ -312,4 +349,15 @@ class ProductController extends Controller
             }
         }
     }
+
+ private function calculateEAN13CheckDigit(string $code12): string {
+    $sum = 0;
+    for ($i = 0; $i < 12; $i++) {
+        $digit = (int) $code12[$i];
+        $sum += ($i % 2 === 0) ? $digit : $digit * 3;
+    }
+    $mod = $sum % 10;
+    return ($mod === 0) ? '0' : (string)(10 - $mod);
+}
+
 }

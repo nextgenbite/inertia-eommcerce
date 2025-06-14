@@ -32,8 +32,7 @@ class ExpenseController extends Controller
 
     public function index(IndexExpenseRequest $request)
     {
-        $data = Expense::query()
-            ->with(['user', 'expenseCategory', 'warehouse']);
+        $data = Expense::query();
 
         if ($request->has('search')) {
             $data->where('title', 'LIKE', "%" . $request->search . "%");
@@ -43,79 +42,15 @@ class ExpenseController extends Controller
             $data->orderBy($request->field, $request->order);
         }
 
-        $pagination = $data->paginate(10);
 
-        $response = array_merge([
+        $data = array_merge([
             'filters' => $request->only(['search', 'field', 'order']),
-            'getData' => $pagination,
+            'getData' =>  $data->with(['user', 'expenseCategory', 'warehouse'])->paginate(10),
         ], $this->expense->baseData());
 
-        return $this->responseWithInertia("Backend/{$this->title[0]}/Index", $response);
+        return $this->responseWithInertia("Backend/Common/Index", $data);
     }
 
-    // public function index(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $filter = $request->query('filter');
-    //         $expenses = [];
-
-    //         if ($filter === 'this_month' || $filter === 'last_month') {
-    //             // Create an array representing all days of the month
-    //             $daysOfMonth = range(1, 30);
-
-    //             // Get expenses for the selected month
-    //             $expensesData = Expense::whereYear('created_at', now()->year)
-    //                 ->whereMonth('created_at', now()->month - ($filter === 'this_month' ? 0 : 1))
-    //                 ->orderBy('created_at')
-    //                 ->get();
-
-    //             // Group expenses by day of the month
-    //             $expensesGrouped = $expensesData->groupBy(function ($expense) {
-    //                 return Carbon::parse($expense->created_at)->format('j');
-    //             });
-
-    //             // Loop through each day of the month and set the 'y' value to 0 if no expenses
-    //             foreach ($daysOfMonth as $day) {
-    //                 $dayKey = str_pad($day, 2, '0', STR_PAD_LEFT); // Add leading zero if necessary
-    //                 $total = $expensesGrouped->has($dayKey) ? $expensesGrouped[$dayKey]->sum('total') : 0;
-    //                 $expenses[] = [
-    //                     'x' => $day,
-    //                     'y' => $total
-    //                 ];
-    //             }
-    //         } elseif ($filter === 'this_year' || $filter === 'last_year') {
-    //             // Create an array representing all months of the year
-    //             $monthsOfYear = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    //             // Get expenses for the selected year
-    //             $expensesData = Expense::whereYear('created_at', now()->year - ($filter === 'this_year' ? 0 : 1))
-    //                 ->orderBy('created_at')
-    //                 ->get();
-
-    //             // Group expenses by month
-    //             $expensesGrouped = $expensesData->groupBy(function ($expense) {
-    //                 return Carbon::parse($expense->created_at)->format('M');
-    //             });
-
-    //             // Loop through each month of the year and set the 'y' value to 0 if no expenses
-    //             foreach ($monthsOfYear as $month) {
-    //                 $total = $expensesGrouped->has($month) ? $expensesGrouped[$month]->sum('total') : 0;
-    //                 $expenses[] = [
-    //                     'x' => $month,
-    //                     'y' => $total
-    //                 ];
-    //             }
-    //         }
-
-    //         return response()->json([
-    //             'data' => $expenses,
-    //         ]);
-    //     }
-
-    //     $title = $this->title;
-    //     $data = Expense::latest()->get();
-    //     return view('backend.' . strtolower($title[1]) . '.index', compact('data', 'title'));
-    // }
 
 
 
@@ -156,6 +91,10 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
+
+          if (isDemoMode()) {
+            return back();
+        }
         $request->validate([
             'files.*' => 'file|mimes:xls,xlsx,pdf,jpg,jpeg,png|max:1024', // Adjust max size as needed
             'attribute' => 'array',
@@ -174,9 +113,9 @@ class ExpenseController extends Controller
 
         // Store uploaded files
         $files = [];
-        if ($request->hasFile('files')) {
-            $files = $this->storeFiles($request->file('files'), 'upload/expense');
-        }
+        // if ($request->hasFile('files')) {
+        //     $files = $this->storeFiles($request->file('files'), 'upload/expense');
+        // }
 
         // Prepare expense items
         $total = 0;
@@ -194,7 +133,7 @@ class ExpenseController extends Controller
             'user_id' => $request->user_id,
             'warehouse_id' => $request->warehouse_id,
             'attribute' => count($request->attribute) > 0 ? json_encode($request->attribute) : null,
-            'document' => count($files) > 0 ? json_encode($files) : null,
+            // 'document' => count($files) > 0 ? json_encode($files) : null,
             'description' => $request->description,
             'total' =>  $total,
         ]);
@@ -211,19 +150,15 @@ class ExpenseController extends Controller
         return view('backend.expense.show', compact('data', 'title'));
     } // End Method
 
-    public function edit($id)
-    {
-        $title = $this->title;
-        $data = Expense::findOrFail($id);
-        $categories = ExpenseCategory::latest()->get(['id', 'title']);
-        $users = User::latest()->get(['id', 'name']);
-        $warehouses = Warehouse::latest()->get(['id', 'name']);
 
-        return view('backend.expense.edit', compact('data', 'categories', 'title', 'users', 'warehouses'));
-    } // End Method
 
     public function update(Request $request, $id)
     {
+
+          if (isDemoMode()) {
+            return back();
+        }
+
         $request->validate([
             'files.*' => 'file|mimes:xls,xlsx,pdf,jpg,jpeg,png|max:1024', // Adjust max size as needed
             'attribute' => 'array',
@@ -268,7 +203,7 @@ class ExpenseController extends Controller
             'attribute' => count($request->attribute) > 0 ? json_encode($request->attribute) : null,
             'document' => count($files) > 0 ? json_encode($files) : null,
             'description' => $request->description,
-            'total' => $request->total,
+            'total' => $total,
         ]);
 
         // Redirect back with success message
@@ -281,6 +216,9 @@ class ExpenseController extends Controller
     }
     public function destroy($id)
     {
+          if (isDemoMode()) {
+            return back();
+        }
 
         $data = Expense::findOrFail($id);
         if ($data->document) {

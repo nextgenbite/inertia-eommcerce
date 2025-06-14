@@ -24,8 +24,8 @@ class CategoryController extends Controller
         $this->middleware('permission:category.view', ['only' => ['index', 'show']]);
         $this->middleware('permission:category.edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:category.delete', ['only' => ['destroy', 'destroyBulk']]);
-
     }
+
 
     public function index(IndexCategoryRequest $request)
     {
@@ -36,20 +36,20 @@ class CategoryController extends Controller
         if ($request->has(['field', 'order'])) {
             $data->orderBy($request->field, $request->order);
         }
-     $data =   array_merge([
+        $data =   array_merge([
             'filters'       => $request->all(['search', 'field', 'order']),
             'getData'         => $data->paginate(10)
 
-        ],$this->category->baseData());
+        ], $this->category->baseData());
 
-        return $this->responseWithInertia("Backend/{$this->title[0]}/Index",  $data);
+        return $this->responseWithInertia("Backend/Common/Index", $data);
     }
 
     public function store(StoreCategoryRequest $request)
     {
-        if ($this->isDemoMode()) {
-            return back();
-        }
+     if (isDemoMode()) {
+        return redirect()->back();
+    }
 
         DB::beginTransaction();
         try {
@@ -88,15 +88,24 @@ class CategoryController extends Controller
             return back()->with('error', "Error deleting {$category->title}: " . $th->getMessage());
         }
     }
-    /**
-     * Handle demo mode restriction.
-     */
-    protected function isDemoMode(): bool
+
+       public function allCategories(Request $request)
     {
-        if (config('app.demo_mode')) {
-            session()->flash('error', 'This function is disabled in demo server.');
-            return true;
+        $data = Category::query();
+        if ($request->has('search')) {
+            $data->where('title', 'LIKE', "%" . $request->search . "%");
         }
-        return false;
+        if ($request->has(['field', 'order'])) {
+            $data->orderBy($request->field, $request->order);
+        }
+
+        $data =   array_merge([
+            'filters'       => $request->all(['search', 'field', 'order']),
+            'getData'         => $data->with(['subCategories.subSubCategories'])->paginate(10),
+
+        ], $this->category->baseData());
+
+        return $this->responseWithInertia("Backend/AllCategories/Index",  $data);
     }
+
 }

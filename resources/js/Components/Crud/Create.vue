@@ -183,6 +183,8 @@ const columnClass = computed(() => {
           />
           <!-- select option-->
           <Select
+          filter
+          checkmark
             class="w-full"
             v-else-if="input.type === 'select'"
             :id="input.path"

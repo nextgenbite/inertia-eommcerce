@@ -36,17 +36,17 @@ class ExpenseRepository implements ExpenseInterface
             $data['document'] = count($files) > 0 ? json_encode($files) : null;
         }
 
-                // Prepare expense items
+        // Prepare expense items
 
-                $items = [];
-                foreach ($request->name as $key => $name) {
-                    $items[] = [
-                        'name' => $name,
-                        'quantity' => $request->quantity[$key],
-                        'amount' => $request->amount[$key],
-                        'note' => $request->note[$key],
-                    ];
-                }
+        $items = [];
+        foreach ($request->name as $key => $name) {
+            $items[] = [
+                'name' => $name,
+                'quantity' => $request->quantity[$key],
+                'amount' => $request->amount[$key],
+                'note' => $request->note[$key],
+            ];
+        }
         // Create the category and return the result
         return Expense::create($data);
     }
@@ -94,7 +94,7 @@ class ExpenseRepository implements ExpenseInterface
             ['key' => 'total', 'label' => 'Total Price', 'path' => 'total', 'sort' => true],
             ['key' => 'date', 'label' => 'Date', 'path' => 'date', 'sort' => true],
         ];
-    
+
         $form = [
             ['key' => 'expense_category_id', 'label' => 'Category', 'path' => 'expense_category_id', 'type' => 'select', 'class' => 'col-span-6', 'optionLabel' => 'title', 'optionValue' => 'id', 'options' => ExpenseCategory::all()],
             ['key' => 'date', 'label' => 'Date', 'path' => 'date', 'type' => 'date', 'class' => 'col-span-6'],
@@ -102,17 +102,21 @@ class ExpenseRepository implements ExpenseInterface
             ['key' => 'user_id', 'label' => 'Expense User', 'path' => 'user_id', 'type' => 'select', 'class' => 'col-span-6', 'optionLabel' => 'name', 'optionValue' => 'id', 'options' => User::select('id', 'name')->get()],
             ['key' => 'title', 'label' => 'Title', 'path' => 'title', 'type' => 'text'],
             ['key' => 'attribute', 'label' => 'Attribute', 'path' => 'attribute', 'type' => 'attribute', 'items' => [['name' => '', 'quantity' => '', 'amount' => '']]],
+
             ['key' => 'file', 'label' => 'File', 'path' => 'file', 'type' => 'file'],
             ['key' => 'description', 'label' => 'Note', 'path' => 'description', 'type' => 'textarea'],
+
         ];
-    
+        $permissions = ['create' => 'product.create', 'read' => 'product.view', 'update' => 'product.edit', 'delete' => 'product.delete'];
+
+
         return [
             'route' => 'expense',
             'title' => $title,
             'columns' => $columns,
             'form' => $form,
             'modal_width' => '60rem',
+            'permissions' => $permissions
         ];
     }
-    
 }

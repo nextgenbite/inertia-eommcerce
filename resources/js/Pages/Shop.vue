@@ -5,183 +5,196 @@
       class="container grid grid-cols-1 lg:grid-cols-4 gap-6 pt-4 pb-16 items-start"
     >
       <!-- ---- Sidebar --->
-      <div
-        class="col-span-1 bg-white p-2 shadow-sm rounded h-full overflow-hidden lg:static hidden lg:block"
+      <aside
+        class="col-span-1 bg-white dark:bg-gray-900 p-4 shadow rounded-lg h-full overflow-hidden lg:static hidden lg:block"
       >
-        <div class="divide-gray-300 divide-y space-y-4 relative">
-          <!-- ---- filter --->
-          <div class="relative">
-            <div
-              class="lg:hidden text-gray-400 hover:text-primary text-lg absolute right-0 top-0 cursor-pointer"
-            ></div>
-            <h3 class="text-xl text-gray-800 mb-3 uppercase font-medium">
-              Filter By
+        <div class="space-y-6 sticky top-4">
+          <section>
+            <h3
+              class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 tracking-wide"
+            >
+              Filters
             </h3>
-            <Accordion :value="['0']" multiple>
+            <Accordion :value="['0']" multiple class="border-none">
+              <!-- Categories Filter -->
               <AccordionPanel value="0">
-                <AccordionHeader>Categories</AccordionHeader>
-                <AccordionContent>
-                  <!-- ----Single Category  --->
-                  <div
-                    class="flex items-center"
-                    v-for="(category, index) in categories"
-                    :key="index"
+                <AccordionHeader>
+                  <span class="font-medium text-gray-700 dark:text-gray-200"
+                    >Categories</span
                   >
-                    <Checkbox
-                      v-model="filters.categories"
-                      :inputId="`category-${category.id}`"
-                      :value="category.id"
-                      name="category"
-                    />
-                    <label
-                      :for="category.title"
-                      class="text-gray-600 ml-3 cursor-pointer capitalize"
-                      >{{ category.title }}</label
+                </AccordionHeader>
+                <AccordionContent>
+                  <ul class="space-y-2">
+                    <li
+                      v-for="category in categories"
+                      :key="category.id"
+                      class="flex items-center gap-2"
                     >
-
-                    <div class="ml-auto text-gray-600 text-sm">
-                      {{ category.products_count }}
-                    </div>
-                  </div>
-                  <!-- ----End Single Category --->
+                      <Checkbox
+                        v-model="filters.categories"
+                        :inputId="`category-${category.id}`"
+                        :value="category.id"
+                        name="category"
+                        class="accent-primary"
+                      />
+                      <label
+                        :for="`category-${category.id}`"
+                        class="text-gray-700 dark:text-gray-300 cursor-pointer capitalize flex-1"
+                      >
+                        {{ category.title }}
+                      </label>
+                      <span class="text-xs text-gray-500">
+                        {{ category.products_count }}
+                      </span>
+                    </li>
+                  </ul>
                 </AccordionContent>
               </AccordionPanel>
-              <!-- ---- End Categoryfilter --->
-              <!-- ---- Brand filter --->
-              <AccordionPanel value="1" v-if="brands.length > 0">
-                <AccordionHeader>Brand</AccordionHeader>
-                <AccordionContent>
-                  <!-- ----Single Brand  --->
-                  <div
-                    class="flex items-center"
-                    v-for="(brand, index) in brands"
-                    :key="index"
+              <!-- Brands Filter -->
+              <AccordionPanel value="1" v-if="brands.length">
+                <AccordionHeader>
+                  <span class="font-medium text-gray-700 dark:text-gray-200"
+                    >Brands</span
                   >
-                    <Checkbox
-                      v-model="filters.brands"
-                      :inputId="`brand-${brand.id}`"
-                      :value="brand.id"
-                      name="brand"
-                    />
-                    <label
-                      :for="brand.title"
-                      class="text-gray-600 ml-3 cursor-pointer capitalize"
-                      >{{ brand.title }}</label
+                </AccordionHeader>
+                <AccordionContent>
+                  <ul class="space-y-2">
+                    <li
+                      v-for="brand in brands"
+                      :key="brand.id"
+                      class="flex items-center gap-2"
                     >
-                    <div class="ml-auto text-gray-600 text-sm">
-                      ({{ brand.products_count }})
-                    </div>
-                  </div>
-                  <!-- ----End Single Brand --->
+                      <Checkbox
+                        v-model="filters.brands"
+                        :inputId="`brand-${brand.id}`"
+                        :value="brand.id"
+                        name="brand"
+                        class="accent-primary"
+                      />
+                      <label
+                        :for="`brand-${brand.id}`"
+                        class="text-gray-700 dark:text-gray-300 cursor-pointer capitalize flex-1"
+                      >
+                        {{ brand.title }}
+                      </label>
+                      <span class="text-xs text-gray-500">
+                        {{ brand.products_count }}
+                      </span>
+                    </li>
+                  </ul>
                 </AccordionContent>
               </AccordionPanel>
-              <!-- ----End Brand filter --->
-              <!-- ---- Price filter --->
+              <!-- Price Filter -->
               <AccordionPanel value="2">
-                <AccordionHeader>Price</AccordionHeader>
+                <AccordionHeader>
+                  <span class="font-medium text-gray-700 dark:text-gray-200"
+                    >Price</span
+                  >
+                </AccordionHeader>
                 <AccordionContent>
-                  <div class="mt-4 p-4 flex items-center">
+                  <div class="flex items-center gap-2 mb-3">
                     <input
-                      v-model="filters.price[0]"
-                      type="text"
-                      minlength="1"
-                      class="w-full border-gray-300 focus:ring-0 focus:border-primary px-3 py-1 text-gray-600 text-sm shadow-sm rounded"
+                      v-model.number="filters.price[0]"
+                      type="number"
+                      min="0"
+                      :max="maxPrice"
+                      class="w-20 border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-sm bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="Min"
                     />
-                    <span class="mx-3 text-gray-500"> - </span>
+                    <span class="text-gray-400">-</span>
                     <input
-                      v-model="filters.price[1]"
-                      type="text"
-                      class="w-full border-gray-300 focus:ring-0 focus:border-primary px-3 py-1 text-gray-600 text-sm shadow-sm rounded"
+                      v-model.number="filters.price[1]"
+                      type="number"
+                      min="0"
+                      :max="maxPrice"
+                      class="w-20 border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-sm bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="Max"
                     />
                   </div>
-                  <Slider v-model="filters.price" range class="w-full" />
+                  <Slider
+                    v-model="filters.price"
+                    range
+                    class="w-full"
+                    :min="0"
+                    :max="maxPrice"
+                  />
                 </AccordionContent>
               </AccordionPanel>
-              <!-- ---- End Price filter --->
-              <!-- ---- Attribute filter --->
+              <!-- Attribute Filters -->
               <AccordionPanel
-                v-for="(attribute, index) in attributes"
-                :key="index"
-                :value="index"
+                v-for="attribute in attributes"
+                :key="attribute.id"
+                :value="`attr-${attribute.id}`"
               >
-                <AccordionHeader>{{ attribute.display_name }}</AccordionHeader>
+                <AccordionHeader>
+                  <span class="font-medium text-gray-700 dark:text-gray-200">{{
+                    attribute.display_name
+                  }}</span>
+                </AccordionHeader>
                 <AccordionContent>
-                  <!-- ---- Single Value --->
-
-                  <div class="flex items-center gap-2">
-                    <div v-for="value in attribute.values" :key="value.id">
-                      <!-- Render color selector if attribute is color -->
-                      <div
-                        v-if="attribute.name === 'color'"
-                        class="color-selector"
-                      >
+                  <div class="flex flex-wrap gap-2">
+                    <template v-for="value in attribute.values" :key="value.id">
+                      <div v-if="attribute.name === 'color'">
                         <input
                           type="radio"
-                          :name="'attribute-color-' + attribute.id"
-                          class="hidden"
-                          :id="'color-' + value.value"
+                          :name="`attribute-color-${attribute.id}`"
+                          class="hidden peer"
+                          :id="`color-${value.value}`"
+                          :value="value.value"
+                          v-model="filters.attributes[attribute.name]"
                         />
                         <label
-                          :for="'color-' + value.value"
+                          :for="`color-${value.value}`"
                           :style="{ backgroundColor: value.value }"
-                          class="text-xs border border-gray-200 rounded-sm h-5 w-5 flex items-center justify-center cursor-pointer shadow-sm"
+                          class="h-6 w-6 rounded-full border-2 border-gray-200 dark:border-gray-700 cursor-pointer flex items-center justify-center peer-checked:ring-2 ring-primary-400"
                         ></label>
                       </div>
-                      <!-- Otherwise render checkbox for other attributes -->
-                      <div v-else class="size-selector">
+                      <div v-else>
                         <input
                           type="checkbox"
-                          :name="'attribute-' + attribute.id"
+                          :name="`attribute-${attribute.id}`"
                           :value="value.id"
                           class="hidden peer"
-                          :id="
-                            'attribute-' + attribute.id + '-value-' + value.id
-                          "
+                          :id="`attribute-${attribute.id}-value-${value.id}`"
+                          v-model="filters.attributes[attribute.name]"
                         />
                         <label
-                          :for="
-                            'attribute-' + attribute.id + '-value-' + value.id
-                          "
-                          class="text-xs border border-gray-200 rounded-sm p-2 flex items-center justify-center cursor-pointer shadow-sm text-gray-600 peer-checked:ring-2 ring-primary-300"
-                          >{{ value.value }}</label
+                          :for="`attribute-${attribute.id}-value-${value.id}`"
+                          class="px-3 py-1 rounded border border-gray-200 dark:border-gray-700 text-xs text-gray-700 dark:text-gray-200 cursor-pointer peer-checked:bg-primary-500 peer-checked:text-white transition"
                         >
+                          {{ value.value }}
+                        </label>
                       </div>
-                    </div>
-                    <!-- ---- End Single Value --->
+                    </template>
                   </div>
                 </AccordionContent>
               </AccordionPanel>
-              <!-- ---- End Attribute filter --->
             </Accordion>
-          </div>
-          <!-- ---- End Categoryfilter --->
+          </section>
         </div>
-      </div>
+      </aside>
 
       <!-- ---- End Sidebar --->
 
       <!-- ---- Product --->
-      <div class="col-span-3">
+      <div class="col-span-3 card rounded-lg">
         <!-- ---Product Wrapper --->
 
         <DataView
-        v-if="products.data && products.data.length"
-         lazy
-      :loading="!products.data"
+          v-if="products.data && products.data.length"
+          lazy
+          :loading="!products.data"
           :value="products.data"
           :layout="viewMode"
-  :paginator="true"
-  :rows="products.per_page"
-  :totalRecords="products.total"
-  :first="(filters.page - 1) * products.per_page"
-  @page="onPageChange"
+          :paginator="true"
+          :rows="products.per_page"
+          :totalRecords="products.total"
+          :first="(filters.page - 1) * products.per_page"
+          @page="onPageChange"
         >
-
           <template #header>
             <!-- ---- Shorting --->
-            <div class="mb-4 flex items-center">
+            <div class=" flex justify-between items-center">
               <Select
                 v-model="filters.sort"
                 :options="sortOptions"
@@ -244,7 +257,7 @@
                       <div>
                         <span
                           class="font-medium text-surface-500 dark:text-surface-400 text-sm"
-                          >{{ item.category?.title || 'Uncategorized' }}</span
+                          >{{ item.category?.title || "Uncategorized" }}</span
                         >
                         <div class="text-lg font-medium mt-2">
                           {{ item.title }}
@@ -290,7 +303,7 @@
           </template>
 
           <template #grid="slotProps">
-            <div class="grid grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 p-4">
               <ProductCard
                 v-for="(item, index) in slotProps.items"
                 :key="index"
@@ -347,7 +360,7 @@ const onSortChange = (event) => {
 };
 const viewMode = ref("grid");
 const viewOptions = ref(["list", "grid"]);
-
+const maxPrice =ref(10000)
 const filters = reactive({
   categories: [],
   brands: [],
@@ -355,6 +368,17 @@ const filters = reactive({
   price: [0, 100000],
   sort: "default",
   page: 1,
+});
+
+// Ensure attribute arrays are initialized for checkbox v-model
+onMounted(() => {
+  if (props.attributes && Array.isArray(props.attributes)) {
+    props.attributes.forEach(attr => {
+      if (attr.name !== 'color' && !Array.isArray(filters.attributes[attr.name])) {
+        filters.attributes[attr.name] = [];
+      }
+    });
+  }
 });
 
 const onPageChange = (event) => {

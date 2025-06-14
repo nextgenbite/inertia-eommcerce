@@ -2,7 +2,7 @@
   <default-layout>
 
     <!-- ----  Hero ----- -->
-  <hero-section/>
+  <hero-section :categories="$page.props.categories"/>
     <!-- ---- End Hero ----- -->
     <!-- ---- Start feature ----- -->
 
@@ -32,42 +32,37 @@
     <!-- ---- End Top New Arrival  ----- -->
 
     <!-- ---- Start Brand  ----- -->
-    <div class="container card">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg md:text-xl font-bold text-gray-800 uppercase">
-          Top Brands
-        </h2>
-        <a href="#" class="text-primary font-bold text-lg"
-          >View All <span class="pi pi-chevron-right"></span
-        ></a>
+    <section class="container mx-auto py-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Top Brands</h2>
+        <a href="#" class="inline-flex items-center text-primary-600 hover:underline font-medium transition">
+          View All
+          <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
       </div>
-      <div class="grid grid-cols-2 lg:grid-cols-6 divide-x-2 divide-primary-100 ">
-        <!-- ---- Start Single Brand  ----- -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
         <a
-            :title="category.title"
-            href="#"
           v-for="category in $page.props.categories.slice(0, 6)"
           :key="category.id"
-          class="p-4 group rounded-lg transition duration-300 ease-in-out text-center mb-2"
+          :title="category.title"
+          href="#"
+          class="group flex flex-col items-center bg-white rounded-xl shadow hover:shadow-lg transition p-4"
         >
-          <div
-            class="p-1 mb-2 w-24 h-24 flex items-center justify-center mx-auto group-hover:scale-95"
-          >
+          <div class="w-20 h-20 flex items-center justify-center mb-3 rounded-full bg-gray-50 overflow-hidden group-hover:scale-105 transition">
             <img
               :src="category.thumbnail || '/no-image.png'"
               :alt="category.title"
-              class="w-full h-full object-cover rounded-full group-hover:brightness-75 transition-all duration-300 ease-in-out"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div
-            class="w-full text-center font-roboto font-semibold capitalize"
-          >
+          <span class="mt-1 text-base font-semibold text-gray-800 capitalize group-hover:text-primary-600 transition">
             {{ category.title }}
-          </div>
+          </span>
         </a>
-        <!-- ---- End Single Brand  ----- -->
       </div>
-    </div>
+    </section>
     <!-- ---- End Brand  ----- -->
   </default-layout>
 </template>

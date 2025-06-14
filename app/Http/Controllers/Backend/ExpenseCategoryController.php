@@ -56,7 +56,9 @@ class ExpenseCategoryController extends Controller
 
     public function store(Request $request)
     {
-
+  if (isDemoMode()) {
+            return back();
+        }
         ExpenseCategory::insert([
             'title' => $request->title,
             'description' => $request->description,
@@ -72,13 +74,6 @@ class ExpenseCategoryController extends Controller
         return redirect()->route('all.' . strtolower($this->keyword))->with($notification);
     } // End Method
 
-
-    public function edit($id)
-    {
-        $title = $this->title;
-        $data = ExpenseCategory::findOrFail($id);
-        return view('backend.' . strtolower($this->keyword) . '.edit', compact('data', 'title'));
-    } // End Method
 
 
     public function update(Request $request)
@@ -104,6 +99,9 @@ class ExpenseCategoryController extends Controller
 
     public function destroy($id)
     {
+          if (isDemoMode()) {
+            return back();
+        }
 
         ExpenseCategory::findOrFail($id)->delete();
 

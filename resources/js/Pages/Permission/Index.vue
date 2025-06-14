@@ -3,11 +3,10 @@
 import AppLayout from "@/sakai/layout/AppLayout.vue";
 import Create from "@/Pages/Permission/Create.vue";
 import Edit from "@/Pages/Permission/Edit.vue";
-import { Head,usePage, useForm } from '@inertiajs/vue3';
+import { Head,usePage, useForm, router } from '@inertiajs/vue3';
 
 import { onMounted, reactive, ref, watch, computed } from "vue";
 import pkg from "lodash";
-import { router } from "@inertiajs/vue3";
 const { _, debounce, pickBy } = pkg;
 import { loadToast } from '@/composables/loadToast';
 
@@ -37,7 +36,7 @@ const data = reactive({
 
 const deleteData = () => {
     deleteDialog.value = false;
-    
+
     form.delete(route("permission.destroy", data.permission?.id), {
         preserveScroll: true,
         onSuccess: () => {
@@ -68,11 +67,11 @@ watch(
 </script>
 
 <template>
-    <app-layout>      
+    <app-layout>
                 <Head>
-            <title>{{ props.title }}</title> 
-        </Head>          
-        <div class="card">            
+            <title>{{ props.title }}</title>
+        </Head>
+        <div class="card">
             <Create
                 :show="data.createOpen"
                 @close="data.createOpen = false"

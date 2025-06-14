@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="">
         <FileUpload name="images[]" :url="null" :customUpload="true" @select="onSelectedFiles" :multiple="true"
             accept="image/*" :maxFileSize="1000000">
             <template #header="{ chooseCallback, clearCallback, files }">
@@ -24,16 +24,16 @@
                     <!-- New Files -->
                     <div v-if="files.length > 0">
                         <h5>Pending</h5>
-                        <div class="grid  grid-cols-2 lg:grid-cols-4 gap-2">
+                        <div class="grid grid-cols-2 gap-2" :class="itemShow ? itemShow : 'lg:grid-cols-4'">
                             <div v-for="(file, index) of files" :key="file.name + index"
                                 class="p-4 rounded-border flex flex-col border border-surface items-center gap-4">
                                 <div>
                                     <img role="presentation" :alt="file.name" :src="file.objectURL" width="100"
                                         height="50" />
                                 </div>
-                                <span class="font-semibold text-ellipsis max-w-44 text-xs whitespace-nowrap overflow-hidden">
+                                <span class="font-semibold text-ellipsis  text-xs">
                                     {{ file.name }}
-                                    </span>
+                                </span>
                                 <div>{{ formatSize(file.size) }}</div>
                                 <Badge value="Pending" severity="warn" />
                                 <Button icon="pi pi-times" @click="onRemoveFile(file, removeFileCallback, index)"
@@ -90,6 +90,7 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    itemShow: String
 });
 
 const totalSize = ref(0);

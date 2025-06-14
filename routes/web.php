@@ -12,9 +12,6 @@ use App\Http\Controllers\UserController;
 use Spatie\Permission\Models\Permission;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
-use App\Models\Category;
-use App\Models\Product;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,12 +23,8 @@ use App\Models\Product;
 |
 */
 
-Route::get('/', function () {
-       return Inertia::render('Index', [
-        'products' =>  Product::with('category')->limit(10)->get(),
-        'categories' =>  Category::get(),
-    ]);
-});
+Route::get('/', [HomeController::class, 'homePage'])->name('home');
+
 Route::get('/product/{product}', [HomeController::class, 'ProductShow'])->name('product.show');
 Route::get('/shop', [HomeController::class, 'Shop'])->name('shop');
 Route::get('/checkout', [HomeController::class, 'Checkout'])->name('checkout');
@@ -65,8 +58,6 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
 
     Route::resource('/permission', PermissionController::class)->except('create', 'show', 'edit');
-
-
 });
 
 Route::get('/form', function () {
@@ -100,275 +91,171 @@ Route::get('/list', function () {
 //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
-Route::prefix('admin')->middleware(['auth','verified'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
+
+    //role & permission Route
+    Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
+
+    Route::resource('/permission', PermissionController::class)->except('create', 'show', 'edit');
 
 
 
 
-    /// Customer All Route
+    /// Customer Routes
+    Route::resource('/customers', App\Http\Controllers\Backend\CustomerController::class)->except('create', 'show', 'edit');
+
     Route::controller(App\Http\Controllers\Backend\CustomerController::class)->group(function () {
 
-      Route::get('/all/customer', 'index')->name('all.customer')->middleware('permission:customer.view');
-      Route::get('/add/customer', 'create')->name('add.customer')->middleware('permission:customer.create');
-      Route::post('/store/customer', 'store')->name('customer.store')->middleware('permission:customer.create');
-      Route::get('/edit/customer/{id}', 'edit')->name('edit.customer')->middleware('permission:customer.edit');
-      Route::post('/update/customer', 'update')->name('customer.update')->middleware('permission:customer.edit');
-      Route::get('/delete/customer/{id}', 'destroy')->name('delete.customer')->middleware('permission:customer.delete');
-      Route::get('/customer-search', 'searchCustomer')->name('customer.search');
+        Route::get('/customer-search', 'searchCustomer')->name('customer.search');
+          Route::get('trashed', 'trashed')->name('trashed.unit');
+        Route::get('restore/{id}', 'restore')->name('restore.unit');
     });
 
 
-    /// Supplier All Route
-    Route::controller(App\Http\Controllers\Backend\SupplierController::class)->group(function () {
+    // Supplier Routes
+    Route::resource('/suppliers', App\Http\Controllers\Backend\SupplierController::class)->except('create', 'show', 'edit');
 
-      Route::get('/supplier', 'index')->name('index')->middleware('permission:supplier.view');
-      Route::get('/add/supplier', 'create')->name('add.supplier')->middleware('permission:supplier.create');
-      Route::post('/store/supplier', 'store')->name('supplier.store')->middleware('permission:supplier.create');
-      Route::get('/edit/supplier/{id}', 'edit')->name('edit.supplier')->middleware('permission:supplier.edit');
-      Route::post('/update/supplier', 'update')->name('supplier.update')->middleware('permission:supplier.edit');
-      Route::get('/delete/supplier/{id}', 'destroy')->name('delete.supplier')->middleware('permission:supplier.delete');
-      Route::get('/details/supplier/{id}', 'show')->name('details.supplier');
+
+
+    ///Warehouse Routes
+    Route::resource('warehouses', App\Http\Controllers\Backend\WarehouseController::class)->except('create', 'show', 'edit');
+
+    ///Category Routes
+    Route::resource('categories', App\Http\Controllers\Backend\CategoryController::class)->except('create', 'show', 'edit');
+    Route::get('/all/categories',[App\Http\Controllers\Backend\CategoryController::class, 'allCategories' ] );
+    Route::resource('sub-categories', App\Http\Controllers\Backend\SubCategoryController::class)->except('create', 'show', 'edit');
+    Route::resource('sub-subcategories', App\Http\Controllers\Backend\SubSubCategoryController::class)->except('create', 'show', 'edit');
+    ///Brand Routes
+    Route::resource('brands', App\Http\Controllers\Backend\BrandController::class)->except('create', 'show', 'edit');
+
+    ///Unit Routes
+    Route::resource('units', App\Http\Controllers\Backend\UnitController::class)->except('create', 'show', 'edit');
+
+    Route::controller(App\Http\Controllers\Backend\UnitController::class)->prefix('units')->group(function () {
+        Route::get('trashed', 'trashed')->name('trashed.unit');
+        Route::get('restore/{id}', 'restore')->name('restore.unit');
     });
 
 
-    /// Advance Salary All Route
-    Route::controller(App\Http\Controllers\Backend\SalaryController::class)->group(function () {
+    // Product Routes
+    Route::resource('products', App\Http\Controllers\Backend\ProductController::class)
+        ->except(['create', 'show', 'edit']);
 
-      Route::get('/add/advance/salary', 'AddAdvanceSalary')->name('add.advance.salary');
-      Route::post('/advance/salary/store', 'AdvanceSalaryStore')->name('advance.salary.store');
-      Route::get('/all/advance/salary', 'AllAdvanceSalary')->name('all.advance.salary');
+    Route::controller(App\Http\Controllers\Backend\ProductController::class)->prefix('products')->group(function () {
+        Route::get('trashed', 'trashed')->name('trashed.unit');
+        Route::get('restore/{id}', 'restore')->name('restore.unit');
 
-      Route::get('/edit/advance/salary/{id}', 'EditAdvanceSalary')->name('edit.advance.salary');
-      Route::post('/advance/salary/update', 'AdvanceSalaryUpdate')->name('advance.salary.update');
+        Route::get('search', 'search')->name('products.search');
+        Route::get('import', 'ImportProduct')->name('products.import.form');
+        Route::post('import', 'Import')->name('products.import');
+        Route::get('export', 'Export')->name('products.export');
+        Route::get('barcode/{id}', 'BarcodeProduct')->name('products.barcode');
+        Route::get('barcode', 'searchByBarcode')->name('products.barcode.search');
+        Route::get('search-by-name', 'searchProduct')->name('products.search.byname');
     });
 
+    ///Purchase Routes
+    Route::resource('purchases', App\Http\Controllers\Backend\PurchaseController::class)
+        ->except(['create', 'show', 'edit']);
 
-    /// Pay Salary All Route
-    Route::controller(App\Http\Controllers\Backend\SalaryController::class)->group(function () {
-
-      Route::get('/pay/salary', 'PaySalary')->name('pay.salary');
-      Route::get('/pay/now/salary/{id}', 'PayNowSalary')->name('pay.now.salary');
-      Route::post('/employe/salary/store', 'EmployeSalaryStore')->name('employe.salary.store');
-      Route::get('/month/salary', 'MonthSalary')->name('month.salary');
+    Route::prefix('purchases')->controller(App\Http\Controllers\Backend\PurchaseController::class)->group(function () {
+        Route::get('{purchase}/cancel', 'cancel')->name('purchases.cancel');
+        Route::post('cancel', 'cancelStore')->name('purchases.cancel.store');
+        Route::get('{purchase}/request', 'request')->name('purchases.request');
+        Route::get('{purchase}/receive', 'receive')->name('purchases.receive');
+        Route::post('receive', 'receiveStore')->name('purchases.receive.store');
+        Route::get('returns', 'returnIndex')->name('purchases.returns.index');
+        Route::get('returns/{purchase}', 'return')->name('purchases.returns.show');
+        Route::post('returns', 'returnStore')->name('purchases.returns.store');
     });
 
+    ///ExpenseCategory Routes
+    Route::resource('expenses/category', App\Http\Controllers\Backend\ExpenseCategoryController::class);
 
-    ///Attendence All Route
-    Route::controller(App\Http\Controllers\Backend\AttendenceController::class)->group(function () {
-
-      Route::get('/employee/attend/list', 'EmployeeAttendenceList')->name('employee.attend.list');
-      Route::get('/add/employee/attend', 'AddEmployeeAttendence')->name('add.employee.attend');
-      Route::post('/employee/attend/store', 'EmployeeAttendenceStore')->name('employee.attend.store');
-
-      Route::get('/edit/employee/attend/{date}', 'EditEmployeeAttendence')->name('employee.attend.edit');
-      Route::get('/view/employee/attend/{date}', 'ViewEmployeeAttendence')->name('employee.attend.view');
-    });
+    ///Expense Routes
+    Route::resource('expenses', App\Http\Controllers\Backend\ExpenseController::class);
 
 
-    ///Warehouse All Route
-    Route::controller(App\Http\Controllers\Backend\WarehouseController::class)->group(function () {
+    //Warehouse Routes
+    Route::resource('warehouses', App\Http\Controllers\Backend\WarehouseController::class);
 
-      Route::get('/all/warehouse', 'index')->name('all.warehouse');
-      Route::post('/store/warehouse', 'store')->name('warehouse.store');
-      Route::get('/edit/warehouse/{id}', 'edit')->name('edit.warehouse');
-      Route::post('/update/warehouse', 'update')->name('warehouse.update');
-      Route::get('/delete/warehouse/{id}', 'destroy')->name('delete.warehouse');
-    });
-    ///Category All Route
-    Route::resource('categories',App\Http\Controllers\Backend\CategoryController::class );
-    // Route::controller(App\Http\Controllers\Backend\CategoryController::class)->group(function () {
-
-    //   Route::get('/all/category', 'index')->name('all.category');
-    //   Route::post('/store/category', 'store')->name('category.store');
-    //   Route::get('/edit/category/{id}', 'edit')->name('edit.category');
-    //   Route::post('/update/category', 'update')->name('category.update');
-    //   Route::get('/delete/category/{id}', 'destroy')->name('delete.category');
-    // });
-    ///Brand All Route
-    Route::controller(App\Http\Controllers\Backend\BrandController::class)->group(function () {
-
-      Route::get('/all/brand', 'index')->name('all.brand');
-      Route::post('/store/brand', 'store')->name('brand.store');
-      Route::get('/edit/brand/{id}', 'edit')->name('edit.brand');
-      Route::post('/update/brand', 'update')->name('brand.update');
-      Route::get('/delete/brand/{id}', 'destroy')->name('delete.brand');
-    });
-    ///Unit All Route
-    Route::controller(App\Http\Controllers\Backend\UnitController::class)->group(function () {
-
-      Route::get('/all/unit', 'index')->name('all.unit');
-      Route::post('/store/unit', 'store')->name('unit.store');
-      Route::get('/edit/unit/{id}', 'edit')->name('edit.unit');
-      Route::post('/update/unit', 'update')->name('unit.update');
-      Route::get('/trashed/unit', 'trashed')->name('trashed.unit');
-      Route::get('/delete/unit/{id}', 'destroy')->name('delete.unit');
-      Route::get('/restore/unit/{id}', 'restore')->name('restore.unit');
-    });
-
-
-    ///Product All Route
-    Route::resource('products',App\Http\Controllers\Backend\ProductController::class );
-
-    // Route::controller(App\Http\Controllers\Backend\ProductController::class)->group(function () {
-
-    //   Route::get('/all/product', 'index')->name('all.product');
-    //   Route::get('/add/product', 'create')->name('add.product');
-    //   Route::get('/search/product', 'search')->name('search.product');
-    //   Route::post('/store/product', 'store')->name('product.store');
-    //   Route::get('/edit/product/{id}', 'edit')->name('edit.product');
-    //   Route::post('/update/product', 'update')->name('product.update');
-    //   Route::get('/delete/product/{id}', 'destroy')->name('delete.product');
-
-    //   Route::get('/barcode/product/{id}', 'BarcodeProduct')->name('barcode.product');
-
-    //   Route::get('/import/product', 'ImportProduct')->name('import.product');
-    //   Route::get('/export', 'Export')->name('export.product');
-    //   Route::post('/import', 'Import')->name('import');
-    //   Route::get('/product-search', 'searchProduct')->name('product.search');
-    //   Route::get('/barcode/product', 'searchByBarcode')->name('barcode.product.search');
-    // });
-
-    ///Purchase All Route
-    Route::controller(App\Http\Controllers\Backend\PurchaseController::class)->group(function () {
-
-      Route::get('/all/purchase', 'index')->name('all.purchase');
-      Route::get('/add/purchase', 'create')->name('add.purchase');
-      Route::post('/store/purchase', 'store')->name('purchase.store');
-      Route::get('/purchase/{id}', 'show')->name('show.purchase');
-      Route::get('/edit/purchase/{id}', 'edit')->name('edit.purchase');
-      Route::post('/update/purchase', 'update')->name('purchase.update');
-      Route::get('/delete/purchase/{id}', 'destroy')->name('delete.purchase');
-      Route::get('/cancel/purchase/{id}', 'cancel')->name('cancel.purchase');
-      Route::post('/cancel/purchase', 'cancelStore')->name('store.cancel.purchase');
-      Route::get('/request/purchase/{id}', 'request')->name('request.purchase');
-      Route::get('/receive/purchase/{id}', 'receive')->name('receive.purchase');
-      Route::post('/receive/purchase', 'receiveStore')->name('store.receive.purchase');
-      Route::get('/return/purchase', 'returnIndex')->name('return.index.purchase');
-      Route::get('/return/purchase/{id}', 'return')->name('return.purchase');
-      Route::post('/return/purchase', 'returnStore')->name('store.return.purchase');
-    });
-
-    ///ExpenseCategory All Route
-    Route::resource('expense/category', App\Http\Controllers\Backend\ExpenseCategoryController::class);
-    Route::resource('expense', App\Http\Controllers\Backend\ExpenseController::class);
-
-    ///Expense All Route
-    // Route::controller(App\Http\Controllers\Backend\ExpenseController::class)->group(function () {
-
-    //   Route::get('/all/expense', 'index')->name('all.expense');
-    //   Route::get('/add/expense', 'create')->name('add.expense');
-    //   Route::post('/store/expense', 'store')->name('expense.store');
-    //   Route::get('/details/expense/{id}', 'show')->name('show.expense');
-    //   Route::get('/edit/expense/{id}', 'edit')->name('edit.expense');
-    //   Route::post('/update/expense', 'update')->name('expense.update');
-    //   Route::get('/delete/expense', 'destroy')->name('delete.expense');
-    //   Route::get('/date/filter/expense', 'dateFilter')->name('date.filter.expense');
-    // });
-
-
-
-
-    ///Pos All Route
+    ///Pos Routes
     Route::controller(App\Http\Controllers\Backend\PosController::class)->group(function () {
 
-      Route::get('/pos', 'Pos')->name('pos');
-      Route::post('/add-cart', 'AddCart');
-      Route::get('/allitem', 'AllItem');
-      Route::post('/cart-update/{rowId}', 'CartUpdate');
-      Route::get('/cart-remove/{rowId}', 'CartRemove');
+        Route::get('/pos', 'Pos')->name('pos');
+        Route::post('/add-cart', 'AddCart');
+        Route::get('/allitem', 'AllItem');
+        Route::post('/cart-update/{rowId}', 'CartUpdate');
+        Route::get('/cart-remove/{rowId}', 'CartRemove');
 
-      Route::post('/create-invoice', 'CreateInvoice');
+        Route::post('/create-invoice', 'CreateInvoice');
     });
 
 
-    ///Order All Route
-     ///Product All Route
-     Route::resource('invoice',App\Http\Controllers\Backend\OrderController::class );
-    // Route::controller(App\Http\Controllers\Backend\OrderController::class)->group(function () {
+    // Order & Invoice Routes
+    Route::resource('orders', App\Http\Controllers\Backend\OrderController::class)->except(['create']);
 
-    //   Route::post('/final-invoice', 'FinalInvoice');
-    //   Route::get('/add/invoice', 'create')->name('add.invoice');
+    Route::prefix('orders')->controller(App\Http\Controllers\Backend\OrderController::class)->group(function () {
+        Route::get('create', 'create')->name('orders.create');
+        Route::post('finalize', 'FinalInvoice')->name('orders.finalize');
+        Route::get('pending', 'PendingOrder')->name('orders.pending');
+        Route::get('completed', 'CompleteOrder')->name('orders.completed');
+        Route::get('{order}/details', 'OrderDetails')->name('orders.details');
+        Route::get('{order}/invoice', 'OrderInvoice')->name('orders.invoice');
+        Route::post('status', 'OrderStatusUpdate')->name('orders.status.update');
+        // Due Routes
+        Route::get('due/pending', 'PendingDue')->name('orders.due.pending');
+        Route::get('{order}/due', 'OrderDueAjax')->name('orders.due.ajax');
+        Route::post('due/update', 'UpdateDue')->name('orders.due.update');
+    });
 
-    //   Route::get('/all/invoices', 'index')->name('all.invoice');
-    //   Route::get('/pending/order', 'PendingOrder')->name('pending.order');
-    //   Route::get('/order/details/{order_id}', 'OrderDetails')->name('show.invoice');
-    //   Route::post('/order/store', 'store')->name('order.store');
-    //   Route::post('/order/status/update', 'OrderStatusUpdate')->name('order.status.update');
-
-    //   Route::get('/complete/order', 'CompleteOrder')->name('complete.order');
-
-    //   Route::get('/stock', 'StockManage')->name('stock.manage');
-    //   Route::get('/order/invoice-download/{order_id}', 'OrderInvoice')->name('invoice.pdf');
-
-
-
-    //   //// Due All Route
-
-    //   Route::get('/pending/due', 'PendingDue')->name('pending.due');
-    //   Route::get('/order/due/{id}', 'OrderDueAjax');
-    //   Route::post('/update/due', 'UpdateDue')->name('update.due');
-    // });
+    // Stock Management Route
+    Route::get('stock', [App\Http\Controllers\Backend\OrderController::class, 'StockManage'])->name('stock.manage');
 
 
-    ///Report All Route
+    ///Report Routes
     Route::controller(App\Http\Controllers\Backend\ReportController::class)->group(function () {
 
-      Route::get('/report/expense', 'expenseReport')->name('report.expense');
-      Route::get('/report/sales', 'salesReport')->name('report.sales');
-      Route::get('/report/payment', 'reportPayment')->name('report.payment');
-      Route::get('/report/purchase', 'reportPurchase')->name('report.purchase');
-      Route::get('/sale/return', 'saleReturn')->name('sale.return');
-      Route::get('/profit-loss', 'profitLoss')->name('profit.loss');
+        Route::get('/report/expense', 'expenseReport')->name('report.expense');
+        Route::get('/report/sales', 'salesReport')->name('report.sales');
+        Route::get('/report/payment', 'reportPayment')->name('report.payment');
+        Route::get('/report/purchase', 'reportPurchase')->name('report.purchase');
+        Route::get('/sale/return', 'saleReturn')->name('sale.return');
+        Route::get('/profit-loss', 'profitLoss')->name('profit.loss');
     });
 
-
-
-
-    // POS All Route
-    Route::controller(App\Http\Controllers\Backend\Pos_2_Controller::class)->group(function () {
-
-      Route::get('/pos-2', 'index')->name('pos.index');
-      Route::get('/pos-search', 'searchProduct')->name('pos.search');
-      // Route::get('/customer-search','searchCustomer')->name('customer.search');
-      Route::get('/product/{product}', 'productShow')->name('productShow');
-      Route::get('/invoice/{id}', 'Posinvoice')->name('Posinvoice');
-      Route::post('/payment-store', 'store')->name('payment.store');
-    });
-
-    ///Setting All Route
+    ///Setting Routes
     Route::controller(App\Http\Controllers\Backend\SettingController::class)->group(function () {
 
-      Route::get('/general-settings', 'index')->name('general.settings');
-      Route::post('/store-settings', 'update')->name('general.settings.store');
-      Route::post('/env/update', 'updateEnvKeys')->name('env.update');
+        Route::get('/general-settings', 'index')->name('general.settings');
+        Route::post('/store-settings', 'update')->name('general.settings.store');
+        Route::post('/env/update', 'updateEnvKeys')->name('env.update');
     });
-    ///Wordpress All Route
+    ///Wordpress Routes
     Route::controller(App\Http\Controllers\Backend\WpController::class)->group(function () {
 
-      Route::get('/wocommerce', 'index')->name('wocommerce.index');
-      Route::get('/wocommerce/setup', 'setup')->name('wocommerce.setup');
-      Route::get('/batch-product-store', 'batchProductStore')->name('wocommerce.product');
-      Route::get('/category-sync', 'categorySync')->name('wocommerce.category');
-      // Route::post('/store-settings','store')->name('general.settings.store');
+        Route::get('/wocommerce', 'index')->name('wocommerce.index');
+        Route::get('/wocommerce/setup', 'setup')->name('wocommerce.setup');
+        Route::get('/batch-product-store', 'batchProductStore')->name('wocommerce.product');
+        Route::get('/category-sync', 'categorySync')->name('wocommerce.category');
+        // Route::post('/store-settings','store')->name('general.settings.store');
 
     });
-    ///Mail All Route
+    ///Mail Routes
     Route::controller(App\Http\Controllers\Backend\MailController::class)->group(function () {
 
-      Route::get('/mail/setup', 'setup')->name('mail.setup');
-      Route::get('/mail', 'inbox')->name('mail.inbox');
-      Route::get('/mail/read/{id}', 'read')->name('mail.read');
-      Route::get('/mail/compose', 'compose')->name('mail.compose');
-      Route::post('/mail/store', 'store')->name('mail.store');
-      Route::post('/mail/deletes', 'deletes')->name('mail.deletes');
-      // Route::post('/store-settings','store')->name('general.settings.store');
-
+        Route::get('/mail/setup', 'setup')->name('mail.setup');
+        Route::get('/mail', 'inbox')->name('mail.inbox');
+        Route::get('/mail/read/{id}', 'read')->name('mail.read');
+        Route::get('/mail/compose', 'compose')->name('mail.compose');
+        Route::post('/mail/store', 'store')->name('mail.store');
+        Route::post('/mail/deletes', 'deletes')->name('mail.deletes');
     });
 
 
-    /// User All Route
+    /// User Routes
     // Route::controller(App\Http\Controllers\Backend\AdminController::class)->group(function () {
 
     //   Route::get('/all/user', 'AllAdmin')->name('all.user');
@@ -384,4 +271,4 @@ Route::prefix('admin')->middleware(['auth','verified'])->group(function () {
     //   Route::get('/download/database/{getFilename}', 'DownloadDatabase')->name('database.download');
     //   Route::get('/delete/database/{getFilename}', 'DeleteDatabase');
     // });
-  }); // End User Middleware
+}); // End User Middleware

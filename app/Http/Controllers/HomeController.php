@@ -16,9 +16,13 @@ class HomeController extends Controller
 {
     public function homePage()
     {
+
+           $categories = Category::with(['subCategories.subSubCategories'])->limit(9)->get();
+
+
         return Inertia::render('Index', [
             'products' =>  Product::with('category')->limit(10)->get(),
-            'categories' =>  Category::get(),
+            'categories' =>  $categories,
         ]);
     }
     public function ProductShow(Product $product)

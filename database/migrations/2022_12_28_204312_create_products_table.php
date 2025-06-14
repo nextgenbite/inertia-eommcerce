@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->string('slug')->unique();
             $table->foreignId('category_id')->constrained()->index()->name('products_category_id_foreign'); // Specify foreign key name
+            $table->foreignId('sub_category_id')->nullable()->constrained();
+            $table->foreignId('sub_sub_category_id')->nullable()->constrained(); // optional
             $table->foreignId('brand_id')->nullable()->constrained()->index()->name('products_brand_id_foreign'); // Specify foreign key name
             $table->foreignId('unit_id')->nullable()->constrained()->index()->name('products_unit_id_foreign'); // Specify foreign key name
             $table->string('sku', 50)->unique()->nullable(); // Limiting length
