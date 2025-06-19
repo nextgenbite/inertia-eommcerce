@@ -6,9 +6,12 @@ use App\Http\Resources\ProductCollection;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductAttributeImage;
+use App\Models\ProductVariant;
 use App\Models\Unit;
 use App\Repositories\Interfaces\Product\ProductInterface;
 use App\Traits\ImageUploadTrait;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProductRepository implements ProductInterface
@@ -29,9 +32,15 @@ class ProductRepository implements ProductInterface
     public function store($request): Product
     {
         if ($request->thumbnail && $request->thumbnail !== null) {
-            $thumbnail = $this->uploadImage($request->file('thumbnail'), $this->imagePath, 300, 300);
+            $thumbnail = $this->uploadImage($request->file('thumbnail'), $this->imagePath, 600, 600);
         }
-        return Product::create([
+        $images = [];
+        if (!empty($request->images)) {
+            foreach ($request->images as $image) {
+                $images[] = $this->uploadImage($image, $this->imagePath, 600, 600);
+            }
+        }
+        $product = Product::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'category_id' => $request->category_id,
@@ -40,9 +49,11 @@ class ProductRepository implements ProductInterface
             'brand_id' => $request->brand_id,
             'unit_id' => $request->unit_id,
             'sku' => $request->sku,
+            'has_variants' => true,
             'barcode' => $request->barcode,
             'weight' => $request->weight,
             'thumbnail' => $thumbnail ?? null,
+            'images' =>  empty($images) ?: json_encode($images),
             'description' => $request->description,
             'buying_date' => $request->buying_date,
             'expire_date' => $request->expire_date,
@@ -50,10 +61,39 @@ class ProductRepository implements ProductInterface
             'discount_price' => $request->discount_price,
             'price' => $request->price,
             'status' => $request->status,
-
-            // 'status' => $request->status,
         ]);
+        if ($request->attribute_images) {
+            foreach ($request->attribute_images as $item) {
+                            $image_path = $this->uploadImage($item['image_path'], $this->imagePath, 600, 600);
+
+                ProductAttributeImage::create([
+                    'product_id' => $product->id,
+                    'attribute_value_id' => $item['attribute_value_id'],
+                    'image_path' => $image_path, // upload separately
+                ]);
+            }
+        }
+        if ($request->has_variants && $request->variants) {
+            foreach ($request->variants as $variantData) {
+                $variant = ProductVariant::create([
+                    'product_id' => $product->id,
+                    'sku' => $variantData['sku'],
+                    'price' => $variantData['price'],
+                ]);
+
+                $variant->attributeValues()->sync($variantData['attribute_value_ids']);
+
+                $variant->inventory()->create([
+                    'quantity' => $variantData['quantity'],
+                    'min_alert' => $request->min_qty ?? 0,
+                    'max_alert' => $request->max_qty ?? 0,
+                ]);
+            }
+        }
+        return $product;
     }
+
+
 
     /**
      * Update an existing Product.

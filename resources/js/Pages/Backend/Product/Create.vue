@@ -3,7 +3,6 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import { computed, ref, watchEffect } from "vue";
 import MultipleImageUpload from "@/Components/MultipleImageUpload.vue";
 
-
 const props = defineProps({
   show: Boolean,
   title: String,
@@ -22,6 +21,9 @@ const form = useForm({
   sku: "",
   barcode: "",
   weight: "",
+  length: "",
+  width: "",
+  height: "",
   thumbnail: null,
   images: [],
   description: "",
@@ -33,6 +35,8 @@ const form = useForm({
   has_variants: false,
   attribute_images: [],
   variants: [],
+  min_qty: null,
+max_qty: null,
   status: true,
 });
 
@@ -60,12 +64,6 @@ function onSubCategoryChange() {
 //attributes
 const attributeOptions = usePage().props.attributes;
 
-const attributeValueOptions = [
-  { label: "Red", value: 1 },
-  { label: "Blue", value: 2 },
-  { label: "XL", value: 3 },
-  { label: "XXL", value: 4 },
-]; // You should fetch this from the backend via a prop or API
 
 function addAttributeImage() {
   form.attribute_images.push({ attribute_value_id: null, image_path: "" });
@@ -88,6 +86,21 @@ function uploadImage(event, index) {
   };
   reader.readAsDataURL(file);
 }
+const imagePreview = ref("/no-image.png");
+function onFileSelect(event, field) {
+  const file = event.files[0];
+  if (!file) return;
+  // Directly use the file object for image field
+
+  form.thumbnail = file; // Store the file object directly
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imagePreview.value = e.target.result;
+  };
+
+  reader.readAsDataURL(file); // Convert the file to a base64 data URL
+}
 
 function generateSku() {
   form.sku = usePage().props.sku;
@@ -102,7 +115,7 @@ const status = ref([
   { name: "Deactive", code: "0" },
 ]);
 const create = () => {
-  form.post(route("categories.store"), {
+  form.post(route("products.store"), {
     preserveScroll: true,
     onSuccess: () => {
       emit("close");
@@ -133,8 +146,8 @@ watchEffect(() => {
   >
     <form @submit.prevent="create">
       <div class="flex flex-col gap-4">
-        <Stepper value="1">
-          <StepItem value="1">
+        <Stepper :value="1">
+          <StepItem :value="1">
             <Step>Product Details</Step>
             <StepPanel v-slot="{ activateCallback }">
               <div class="card shadow-lg border border-gray-200">
@@ -152,12 +165,12 @@ watchEffect(() => {
                   }}</small>
                 </div>
                 <div class="flex flex-col gap-2">
-                  <label for="title">Description</label>
+                  <label for="description">Description</label>
                   <Editor
                     v-model="form.description"
                     editorStyle="height: 120px"
                   >
-                    <template v-slot:toolbar>
+                    <template #toolbar>
                       <span class="ql-formats">
                         <button
                           v-tooltip.bottom="'Bold'"
@@ -176,19 +189,34 @@ watchEffect(() => {
                   </Editor>
                 </div>
               </div>
-              <div class="py-6">
-                <Button label="Next" @click="activateCallback('2')" />
+
+              <div class="flex py-6 gap-4 justify-end">
+                <Button
+                  label="Next"
+                  icon="pi pi-arrow-right"
+                  iconPos="right"
+                  class="rounded-lg px-6"
+                  @click="activateCallback('2')"
+                />
               </div>
             </StepPanel>
           </StepItem>
           <StepItem value="2">
-            <Step>General Setup</Step>
+            <Step>General Setup </Step>
             <StepPanel v-slot="{ activateCallback }">
-              <div class="card shadow-lg border border-gray-200">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+              <div
+                class="card shadow-lg border border-gray-200 p-8 rounded-2xl bg-white"
+              >
+                <div
+                  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
                   <!-- Category -->
-                  <div class="flex flex-col gap-2">
-                    <label for="category">Category</label>
+                  <div>
+                    <label
+                      for="category"
+                      class="block text-sm font-medium text-gray-700 mb-1"
+                      >Category</label
+                    >
                     <Select
                       v-model="form.category_id"
                       :options="categoryOptions"
@@ -200,14 +228,19 @@ watchEffect(() => {
                       placeholder="Select a Category"
                       class="w-full"
                     />
-                    <small v-if="form.errors.category_id" class="text-red-500">
-                      {{ form.errors.category_id }}
-                    </small>
+                    <small
+                      v-if="form.errors.category_id"
+                      class="text-red-500"
+                      >{{ form.errors.category_id }}</small
+                    >
                   </div>
-
                   <!-- Subcategory -->
-                  <div class="flex flex-col gap-2">
-                    <label for="subcategory">Sub Category</label>
+                  <div>
+                    <label
+                      for="subcategory"
+                      class="block text-sm font-medium text-gray-700 mb-1"
+                      >Sub Category</label
+                    >
                     <Select
                       v-model="form.sub_category_id"
                       :options="subcategoryOptions"
@@ -223,14 +256,16 @@ watchEffect(() => {
                     <small
                       v-if="form.errors.sub_category_id"
                       class="text-red-500"
+                      >{{ form.errors.sub_category_id }}</small
                     >
-                      {{ form.errors.sub_category_id }}
-                    </small>
                   </div>
-
                   <!-- Sub-subcategory -->
-                  <div class="flex flex-col gap-2">
-                    <label for="subsubcategory">Sub Subcategory</label>
+                  <div>
+                    <label
+                      for="subsubcategory"
+                      class="block text-sm font-medium text-gray-700 mb-1"
+                      >Sub Subcategory</label
+                    >
                     <Select
                       v-model="form.sub_sub_category_id"
                       :options="subSubcategoryOptions"
@@ -245,13 +280,16 @@ watchEffect(() => {
                     <small
                       v-if="form.errors.sub_sub_category_id"
                       class="text-red-500"
+                      >{{ form.errors.sub_sub_category_id }}</small
                     >
-                      {{ form.errors.sub_sub_category_id }}
-                    </small>
                   </div>
                   <!-- Brand -->
-                  <div class="flex flex-col gap-2">
-                    <label for="subsubcategory">Brand</label>
+                  <div>
+                    <label
+                      for="brand"
+                      class="block text-sm font-medium text-gray-700 mb-1"
+                      >Brand</label
+                    >
                     <Select
                       v-model="form.brand_id"
                       :options="$page.props.brands"
@@ -262,44 +300,49 @@ watchEffect(() => {
                       placeholder="Select a Brand"
                       class="w-full"
                     />
-                    <small v-if="form.errors.brand_id" class="text-red-500">
-                      {{ form.errors.brand_id }}
-                    </small>
+                    <small v-if="form.errors.brand_id" class="text-red-500">{{
+                      form.errors.brand_id
+                    }}</small>
                   </div>
-                  <!-- Product Sku -->
-                  <div class="flex flex-col gap-2">
-                    <label for="sku">
-                      Product Sku
-                      <span>
-                        <i
-                          v-tooltip.top="
-                            'Create a unique product code by clicking on the Generate button'
-                          "
-                          class="ml-2 pi pi-info-circle"
-                        ></i>
-                        <button
-                          type="button"
-                          @click="generateSku()"
-                          class="ml-2 text-primary hover:text-gray-400"
-                        >
-                          Generate
-                        </button>
-                      </span>
+                  <!-- Product SKU -->
+                  <div>
+                    <label
+                      for="sku"
+                      class=" text-sm font-medium text-gray-700 mb-1 flex items-center gap-2"
+                    >
+                      Product SKU
+                      <i
+                        v-tooltip.top="
+                          'Create a unique product code by clicking on the Generate button'
+                        "
+                        class="pi pi-info-circle text-gray-400"
+                      ></i>
+                      <button
+                        type="button"
+                        @click="generateSku()"
+                        class="ml-2 text-primary-600 hover:text-primary-800 text-xs underline"
+                      >
+                        Generate
+                      </button>
                     </label>
                     <InputText
                       id="sku"
                       v-model="form.sku"
-                      class="flex-auto"
+                      class="w-full"
                       autocomplete="off"
-                      placeholder="Product Sku"
+                      placeholder="Product SKU"
                     />
                     <small v-if="form.errors.sku" class="text-red-500">{{
                       form.errors.sku
                     }}</small>
                   </div>
                   <!-- Unit -->
-                  <div class="flex flex-col gap-2">
-                    <label for="subsubcategory">Unit</label>
+                  <div>
+                    <label
+                      for="unit"
+                      class="block text-sm font-medium text-gray-700 mb-1"
+                      >Unit</label
+                    >
                     <Select
                       v-model="form.unit_id"
                       :options="$page.props.units"
@@ -307,55 +350,110 @@ watchEffect(() => {
                       optionLabel="title"
                       optionValue="id"
                       checkmark
-                      placeholder="Select an Unit"
+                      placeholder="Select a Unit"
                       class="w-full"
                     />
-                    <small v-if="form.errors.unit_id" class="text-red-500">
-                      {{ form.errors.unit_id }}
-                    </small>
+                    <small v-if="form.errors.unit_id" class="text-red-500">{{
+                      form.errors.unit_id
+                    }}</small>
                   </div>
-
                   <!-- Barcode Input -->
-                  <div class="flex flex-col gap-2 mt-4">
-                    <label for="barcode">
+                  <div class="md:col-span-2">
+                    <label
+                      for="barcode"
+                      class="text-sm font-medium text-gray-700 mb-1 flex items-center gap-2"
+                    >
                       Barcode
-                      <span>
-                        <i
-                          v-tooltip.top="
-                            'Create a unique barcode by clicking on the Generate button'
-                          "
-                          class="ml-2 pi pi-info-circle"
-                        ></i>
-                        <button
-                          type="button"
-                          @click="generateIdentifiers"
-                          class="ml-2 text-primary hover:text-gray-400"
-                        >
-                          Generate
-                        </button>
-                      </span>
+                      <i
+                        v-tooltip.top="
+                          'Create a unique barcode by clicking on the Generate button'
+                        "
+                        class="pi pi-info-circle text-gray-400"
+                      ></i>
+                      <button
+                        type="button"
+                        @click="generateIdentifiers"
+                        class="ml-2 text-primary-600 hover:text-primary-800 text-xs underline"
+                      >
+                        Generate
+                      </button>
                     </label>
-                    <InputText v-model="form.barcode" placeholder="Barcode" />
-                    <!-- Barcode Image Preview -->
+                    <InputText
+                      v-model="form.barcode"
+                      placeholder="Barcode"
+                      class="w-full"
+                    />
                     <img
                       v-if="form.barcode && barcode_image"
                       :src="barcode_image"
                       alt="Barcode Image"
-                      class="mt-2 max-w-xs"
+                      class="mt-2 max-w-xs rounded border border-gray-200"
                     />
+                  </div>
+                  <!-- Product Dimension -->
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1"
+                      >Product Dimensions (L × W × H in cm)</label
+                    >
+                    <div class="flex gap-2">
+                      <InputText
+                        v-model="form.length"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Length"
+                        class="w-1/3"
+                      />
+                      <InputText
+                        v-model="form.width"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Width"
+                        class="w-1/3"
+                      />
+                      <InputText
+                        v-model="form.height"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Height"
+                        class="w-1/3"
+                      />
+                    </div>
+                    <div class="flex gap-2 mt-1">
+                      <small v-if="form.errors.length" class="text-red-500">{{
+                        form.errors.length
+                      }}</small>
+                      <small v-if="form.errors.width" class="text-red-500">{{
+                        form.errors.width
+                      }}</small>
+                      <small v-if="form.errors.height" class="text-red-500">{{
+                        form.errors.height
+                      }}</small>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="flex py-6 gap-2">
+              <div class="flex py-6 gap-4 justify-end">
                 <Button
                   label="Back"
                   severity="secondary"
-                  @click="activateCallback('1')"
+                  outlined
+                  class="rounded-lg px-6"
+                  @click="activateCallback(1)"
                 />
-                <Button label="Next" @click="activateCallback('3')" />
+                <Button
+                  label="Next"
+                  icon="pi pi-arrow-right"
+                  iconPos="right"
+                  class="rounded-lg px-6"
+                  @click="activateCallback('3')"
+                />
               </div>
             </StepPanel>
           </StepItem>
+
           <StepItem value="3">
             <Step>Pricing & Variations</Step>
             <StepPanel v-slot="{ activateCallback }">
@@ -422,7 +520,7 @@ watchEffect(() => {
                     <label for="max_qty">Max Order Quantity</label>
                     <InputText
                       id="max_qty"
-                      v-model="form.min_qty"
+                      v-model="form.max_qty"
                       class="flex-auto"
                       type="number"
                     />
@@ -553,63 +651,159 @@ watchEffect(() => {
                   </div>
                 </div>
               </div>
-              <div class="flex py-6 gap-2">
+
+              <div class="flex py-6 gap-4 justify-end">
                 <Button
                   label="Back"
                   severity="secondary"
+                  outlined
+                  class="rounded-lg px-6"
                   @click="activateCallback('2')"
                 />
-                <Button label="Next" @click="activateCallback('4')" />
+                <Button
+                  label="Next"
+                  icon="pi pi-arrow-right"
+                  iconPos="right"
+                  class="rounded-lg px-6"
+                  @click="activateCallback('4')"
+                />
               </div>
             </StepPanel>
           </StepItem>
           <StepItem value="4">
             <Step>Media</Step>
             <StepPanel v-slot="{ activateCallback }">
-              <div class="grid grid-cols-4 gap-4 card  border border-surface-200 shadow-lg">
-           <div>
-                 <div class="border border-surface-200 shadow rounded-lg">
-                  <img
-                    src="/no-image.png"
-                    alt="thumbnail"
-                    class=" w-40 mx-auto"
-                  />
-                  <FileUpload
-                    mode="basic"
-                    auto
-                    customUpload
-                    size="small"
-                    chooseLabel="Upload"
-                  />
+              <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-8 card border border-surface-200 shadow-lg p-8 bg-white rounded-2xl"
+              >
+                <!-- Thumbnail Upload -->
+                <div class="flex flex-col items-center gap-4">
+                  <label
+                    class="font-semibold text-gray-900 mb-2 text-base tracking-wide"
+                    >Thumbnail</label
+                  >
+                  <div
+                    class="bg-gray-100 rounded-2xl p-2 border border-gray-200 shadow transition-shadow hover:shadow-md"
+                  >
+                    <div
+                      class="rounded-xl overflow-hidden flex items-center justify-center bg-white"
+                    >
+                      <img
+                        :src="imagePreview"
+                        alt="Thumbnail"
+                        class="object-cover w-full h-full transition-transform duration-200 hover:scale-105"
+                      />
+                    </div>
+                    <FileUpload
+                      mode="basic"
+                      @select="(event) => onFileSelect(event, input)"
+                      auto
+                      accept="image/*"
+                      customUpload
+                      size="small"
+                      chooseLabel="Upload"
+                      class="w-full mt-3"
+                      :pt="{
+                        button:
+                          'rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium px-4 py-2 transition',
+                      }"
+                    />
+                  </div>
+                  <small
+                    v-if="form.errors.thumbnail"
+                    class="text-red-500 text-xs mt-1"
+                  >
+                    {{ form.errors.thumbnail }}
+                  </small>
                 </div>
-           </div>
-                                <MultipleImageUpload v-model="form.images" itemShow="lg:grid-cols-3" class="w-full col-span-3 m-0"/>
-
+                <!-- Multiple Images Upload -->
+                <div class="md:col-span-2 flex flex-col gap-4">
+                  <label
+                    class="font-semibold text-gray-900 mb-2 text-base tracking-wide"
+                    >Gallery Images</label
+                  >
+                  <MultipleImageUpload
+                    v-model="form.images"
+                    itemShow="lg:grid-cols-3"
+                    class="w-full"
+                  />
+                  <small
+                    v-if="form.errors.images"
+                    class="text-red-500 text-xs mt-1"
+                  >
+                    {{ form.errors.images }}
+                  </small>
+                </div>
               </div>
-              <div class="flex py-6 gap-2 justify-end">
+              <div class="flex py-8 gap-4 justify-end">
                 <Button
                   label="Back"
                   severity="secondary"
                   outlined
+                  class="rounded-lg px-6"
                   @click="activateCallback('3')"
                 />
                 <Button
                   label="Next"
                   icon="pi pi-arrow-right"
                   iconPos="right"
+                  class="rounded-lg px-6"
                   @click="activateCallback('5')"
                 />
               </div>
             </StepPanel>
           </StepItem>
+
           <StepItem value="5">
-            <Step>Seo section</Step>
+            <Step>SEO Section</Step>
             <StepPanel v-slot="{ activateCallback }">
-              <div class="flex flex-col h-48">
-                <div
-                  class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
-                >
-                  Content III
+              <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                  <label for="meta_title" class="font-semibold"
+                    >Meta Title</label
+                  >
+                  <InputText
+                    id="meta_title"
+                    v-model="form.meta_title"
+                    class="flex-auto"
+                    autocomplete="off"
+                    placeholder="Meta Title"
+                  />
+                  <small v-if="form.errors.meta_title" class="text-red-500">
+                    {{ form.errors.meta_title }}
+                  </small>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label for="meta_description" class="font-semibold"
+                    >Meta Description</label
+                  >
+                  <Textarea
+                    id="meta_description"
+                    v-model="form.meta_description"
+                    rows="3"
+                    class="flex-auto"
+                    placeholder="Meta Description"
+                  />
+                  <small
+                    v-if="form.errors.meta_description"
+                    class="text-red-500"
+                  >
+                    {{ form.errors.meta_description }}
+                  </small>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label for="meta_keywords" class="font-semibold"
+                    >Meta Keywords</label
+                  >
+                  <InputText
+                    id="meta_keywords"
+                    v-model="form.meta_keywords"
+                    class="flex-auto"
+                    placeholder="Meta Keywords (comma separated)"
+                  />
+                  <small v-if="form.errors.meta_keywords" class="text-red-500">
+                    {{ form.errors.meta_keywords }}
+                  </small>
                 </div>
               </div>
               <div class="py-6">

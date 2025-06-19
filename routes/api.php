@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Cached categories
 Route::get('/categories', fn () =>
-    Cache::remember('categories', 3600, fn () => Category::all())
+    Cache::remember('categories', 3600, fn () => Category::with(['subCategories.subSubCategories'])->get())
 );
 
 // Cached settings

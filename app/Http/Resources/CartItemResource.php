@@ -27,7 +27,6 @@ class CartItemResource extends JsonResource
                     ->map(fn($av) => [
                         'name' => $av->attribute->display_name,
                         'value' => $av->value,
-                        'image' => $av->image,
                     ])
             ],
             'product' => [

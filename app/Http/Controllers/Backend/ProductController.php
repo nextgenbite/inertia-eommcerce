@@ -15,6 +15,7 @@ use App\Imports\ProductImport;
 use App\Repositories\Interfaces\Product\ProductInterface;
 use App\Traits\ApiReturnFormatTrait;
 use App\Traits\ImageUploadTrait;
+use Illuminate\Support\Facades\DB;
 use Milon\Barcode\DNS1D;
 
 class ProductController extends Controller
@@ -89,65 +90,24 @@ $barcodeImage = 'data:image/png;base64,' . $pngData;
         return $this->responseWithInertia("Backend/{$this->title[0]}/Index",  $data);
     }
 
-    public function create(Request $request)
-    {
-        $title = 'Product';
-        $categories = Category::latest()->get();
-        $supplier = Supplier::latest()->get();
-        $brands = Brand::latest()->get();
-        $units = Unit::latest()->get();
-        $digits = 13;
-        // $random = Str::random(13);
-        $random = IdGenerator::generate(['table' => 'products', 'field' => 'sku', 'length' => 6, 'prefix' => 'PC']);
-        $randomNumber = IdGenerator::generate(['table' => 'products', 'field' => 'barcode', 'length' => 13, 'prefix' => '25632490']);
-        $generator = new \Picqer\Barcode\BarcodeGeneratorHTML();
-        // $randomNumber = str_pad(rand(0, pow(10, $digits) - 1), $digits, '0', STR_PAD_LEFT);
-        return view('backend.product.create', compact('title', 'categories', 'brands', 'units', 'randomNumber', 'random', 'generator'));
-    } // End Method
 
 
     public function store(Request $request)
-    {
+        {
+     if (isDemoMode()) {
+        return redirect()->back();
+    }
 
-        if ($request->has('thumbnail')) {
-            $imagePath = $this->uploadImage($request, 'thumbnail', $this->imagePath, 300, 300);
-        }
-
-        $product =   Product::insertGetId([
-
-            'title' => $request->title,
-            'category_id' => $request->category_id,
-            'brand_id' => $request->brand_id,
-            'unit_id' => $request->unit_id,
-            'sku' => $request->sku,
-            'barcode' => $request->barcode,
-            'weight' => $request->weight,
-            'thumbnail' => $imagePath ?? null,
-            'description' => $request->description,
-            'created_at' => Carbon::now(),
-
-        ]);
-        $invetory =  Inventory::create([
-            'product_id' => $product,
-            'min_alert' => $request->min_alert,
-            'max_alert' => $request->max_alert,
-        ]);
-        if ($product && $invetory) {
-            $notification = array(
-                'message' => 'Product Inserted Successfully',
-                'alert-type' => 'success'
-            );
-        } else {
-            $notification = array(
-                'message' => 'Product Inserted Faild',
-                'alert-type' => 'error'
-            );
-        }
-
-
-
-        return redirect()->route('all.product')->with($notification);
-    } // End Method
+        // DB::beginTransaction();
+        // try {
+            $product = $this->product->store($request);
+            // DB::commit();
+            return back()->with('success', "{$product->title} created successfully.");
+        // } catch (\Throwable $th) {
+        //     DB::rollBack();
+        //     return back()->with('error', "Error creating {$request->title}: " . $th->getMessage());
+        // }
+    }
 
 
 

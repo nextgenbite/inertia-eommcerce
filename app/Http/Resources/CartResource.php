@@ -18,9 +18,9 @@ class CartResource extends JsonResource
             'items' => CartItemResource::collection($this->items),
                 'count' => $this->items->sum('quantity'),
                 'subtotal' => $this->subtotal,
-                'shipping_cost' => $this->shipping_cost,
-                'tax' => $this->tax,
-                'discount' => $this->discount,
+                'shipping_cost' => $this->shipping_cost ?? 0,
+                'tax' => $this->tax ?? 0,
+                'discount' => $this->discount ?? 0,
                 'total' => $this->total,
         ];
     }

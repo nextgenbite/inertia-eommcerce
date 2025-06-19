@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Models\User;
 use Inertia\Inertia;
@@ -27,7 +28,6 @@ Route::get('/', [HomeController::class, 'homePage'])->name('home');
 
 Route::get('/product/{product}', [HomeController::class, 'ProductShow'])->name('product.show');
 Route::get('/shop', [HomeController::class, 'Shop'])->name('shop');
-Route::get('/checkout', [HomeController::class, 'Checkout'])->name('checkout');
 // Route::get('/order-confirmed', [HomeController::class, ''])->name('checkout');
 //cart
 // Route::post('/add-to-cart', [CartController::class, 'store'])->name('cart.store');
@@ -35,8 +35,9 @@ Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::delete('/cart', [CartController::class, 'destroy'])->name('cart.destroy');
 Route::put('/cart', [CartController::class, 'update'])->name('cart.update');
-Route::post('/create-invoice', [HomeController::class, 'CreateInvoice'])->name('create.invoice');
-Route::get('/order-confirmed', [HomeController::class, 'OrderConfirmed'])->name('order.confirmed');
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/order-confirmed', [CheckoutController::class, 'OrderConfirmed'])->name('order.confirmed');
 
 
 Route::get('/dashboard', function () {
@@ -124,7 +125,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     ///Category Routes
     Route::resource('categories', App\Http\Controllers\Backend\CategoryController::class)->except('create', 'show', 'edit');
-    Route::get('/all/categories',[App\Http\Controllers\Backend\CategoryController::class, 'allCategories' ] );
+    Route::get('/all/categories',[App\Http\Controllers\Backend\CategoryController::class, 'allCategories' ] )->name('all.categories');
     Route::resource('sub-categories', App\Http\Controllers\Backend\SubCategoryController::class)->except('create', 'show', 'edit');
     Route::resource('sub-subcategories', App\Http\Controllers\Backend\SubSubCategoryController::class)->except('create', 'show', 'edit');
     ///Brand Routes

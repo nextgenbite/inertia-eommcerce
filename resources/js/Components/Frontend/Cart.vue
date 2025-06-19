@@ -56,6 +56,16 @@
                 severity="danger"
               />
             </div>
+                                <!-- Color and Size display -->
+                    <div class="flex gap-4 text-sm text-gray-500 " v-if="item.variant.attributes && item.variant.attributes.length">
+                      <span  v-for="attribute in item.variant.attributes" :key="attribute"
+                        >{{attribute.name}}:
+                        <span class="font-semibold text-gray-700">{{
+                          attribute.value
+                        }}</span></span
+                      >
+
+                    </div>
             <!-- <p class="font-normal text-base leading-7 text-gray-500 mb-6">
                             Introducing our sleek round white portable speaker, the epitome of style and sound! Elevate your auditory experience with this compact yet powerful device that delivers crystal-clear audio wherever you go. <a href="javascript:;"
                             class="text-indigo-600">More....</a>

@@ -19,7 +19,7 @@ import ToastService from 'primevue/toastservice';
 
 import '@/sakai/assets/styles.scss';
 import '@/sakai/assets/tailwind.css';
-const appName = import.meta.env.VITE_APP_NAME || 'Nextgen Inventory';
+const appName = import.meta.env.VITE_APP_NAME || 'Nextgen Shop';
 // Function to get the theme based on settings
 const getTheme = (themeMode) => themeMode === 'Lara' ? Lara : Aura;
 
@@ -62,22 +62,18 @@ const createThemePreset = (selectedColor, selectedTheme) => {
     });
 };
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+    title: title => `${title ? title + ' - ' : ''}${appName}`,
+    resolve: name => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
-           const settings = props.initialPage.props.settings || {};
-        // console.log("Loaded settings:", settings); // Debug settings
+        const settings = props.initialPage?.props?.settings || {};
+        const selectedColor = primaryColors[settings.primary_color] || primaryColors.noir;
+        const selectedSurface = surfaces[settings.surface_color] || surfaces.slate;
 
-        // Retrieve selected primary color and surface
-        const selectedColor = primaryColors[settings.primary_color] || primaryColors['noir'];
-        const selectedSurface = surfaces[settings.surface_color] || surfaces['slate'];
-
-        // Apply Surface Palette
         updateSurfacePalette(selectedSurface);
 
-        // Get selected theme and preset
         const selectedTheme = getTheme(settings.theme_mode);
         const myPreset = createThemePreset(selectedColor, selectedTheme);
+
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(pinia)
@@ -94,25 +90,19 @@ createInertiaApp({
             .use(ConfirmationService)
             .mixin({
                 methods: {
-                    can: function (permissions) {
-                        var allPermissions = this.$page.props.auth.can;
-                        var hasPermission = false;
-                        permissions.forEach(function (item) {
-                            if (allPermissions[item]) hasPermission = true;
-                        });
-                        return hasPermission;
+                    can(permissions) {
+                        const allPermissions = this.$page.props.auth.can;
+                        return permissions.some(item => allPermissions[item]);
                     },
-                       formatCurrency(amount) {
-            const currencySymbol = settings.currency_symbol || '$';
-            return `${currencySymbol}${Math.round(amount)}`;
-        },
+                    formatCurrency(amount) {
+                        const currencySymbol = settings.currency_symbol || '$';
+                        return `${currencySymbol}${Math.round(amount)}`;
+                    },
                 },
             })
             .mount(el);
     },
     progress: {
         color: 'var(--p-primary-color)',
-        // delay: 250,
-
     },
 });

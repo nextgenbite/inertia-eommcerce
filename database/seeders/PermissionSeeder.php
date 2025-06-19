@@ -13,19 +13,16 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::create(['name' => 'delete user']);
-        Permission::create(['name' => 'update user']);
-        Permission::create(['name' => 'read user']);
-        Permission::create(['name' => 'create user']);
+        $names = ['role','permission','category', 'sub_category', 'sub_sub_category' , 'brand', 'unit','werehouse', 'product','order','shipping_cost', 'warehouse','user', 'admin','customer', 'supplier',  'purchase','expense_category','expense'
 
-        Permission::create(['name' => 'delete role']);
-        Permission::create(['name' => 'update role']);
-        Permission::create(['name' => 'read role']);
-        Permission::create(['name' => 'create role']);
 
-        Permission::create(['name' => 'delete permission']);
-        Permission::create(['name' => 'update permission']);
-        Permission::create(['name' => 'read permission']);
-        Permission::create(['name' => 'create permission']);
+];
+        foreach ($names as $name) {
+
+            Permission::updateOrCreate(['name' => $name . '.create', 'group_name' => $name, 'guard_name' => 'web']);
+            Permission::updateOrCreate(['name' => $name . '.read', 'group_name' => $name, 'guard_name' => 'web']);
+            Permission::updateOrCreate(['name' => $name . '.update', 'group_name' => $name, 'guard_name' => 'web']);
+            Permission::updateOrCreate(['name' => $name . '.delete', 'group_name' => $name, 'guard_name' => 'web']);
+        }
     }
 }

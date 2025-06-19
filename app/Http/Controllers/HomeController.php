@@ -17,7 +17,7 @@ class HomeController extends Controller
     public function homePage()
     {
 
-           $categories = Category::with(['subCategories.subSubCategories'])->limit(9)->get();
+        $categories = Category::with(['subCategories.subSubCategories'])->limit(9)->get();
 
 
         return Inertia::render('Index', [
@@ -29,19 +29,18 @@ class HomeController extends Controller
     {
         $product->load([
             'category',
-            'attributes.values',
-            'variants.attributeValues',
-            'variants.inventory',
+            'variants.attributeValues.attribute',
+            'attributeImages', // product_attribute_images
+            // 'variants.inventory',
         ]);
 
-        $availableCombinations = [];
 
-        foreach ($product->variants as $variant) {
-            if ($variant->inventory && $variant->inventory->quantity > 0) {
-                $combo = $variant->attributeValues->pluck('id')->sort()->values()->all();
-                $availableCombinations[] = $combo;
-            }
-        }
+        $availableCombinations = $product->variants
+            ->filter(fn($variant) => $variant->quantity > 0)
+            ->map(function ($variant) {
+                return $variant->attributeValues->pluck('id')->sort()->values()->all();
+            })
+            ->values();
 
         $relatedProduct = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
@@ -54,7 +53,8 @@ class HomeController extends Controller
         $shipping = ShippingCost::all();
         // return $product->attributes;
         return Inertia::render('Product', [
-            'product' => new ProductResource($product),
+            'product' => $product,
+            // 'product' => new ProductResource($product),
             'availableCombinations' => $availableCombinations,
             'relatedProducts' => $relatedProduct,
             'shipping' => $shipping,
@@ -139,37 +139,5 @@ class HomeController extends Controller
             'search' => $search,
         ]);
     }
-    public function Checkout(Request $request)
-    {
-        $dummyCart = [
-            [
-                'id' => 1,
-                'name' => 'Product 1',
-                'price' => 100,
-                'quantity' => 2,
-                'image' => 'https://placeholder.co/150',
-            ],
-            [
-                'id' => 2,
-                'name' => 'Product 2',
-                'price' => 200,
-                'quantity' => 1,
-                'image' => 'https://placeholder.co/150',
-            ],
-        ];
-        $total = collect($dummyCart)->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
-        });
-        $cartCount = collect($dummyCart)->sum('quantity');
-        return Inertia::render('Checkout', [
-            'cart' => $dummyCart,
-            'total' => $total,
-            'cartCount' => $cartCount,
-        ]);
-    }
 
-    public function OrderConfirmed(){
-        $data= Order::with('customer','orderdetails','orderdetails.product')->firstOrFail();
-         return Inertia::render('OrderConfirmed',['order'=> $data]);
-    }
 }

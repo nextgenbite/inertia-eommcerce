@@ -44,7 +44,7 @@ class OrderController extends Controller
     {
         $data = Order::query();
         if ($request->has('search')) {
-            $data->where('title', 'LIKE', "%" . $request->search . "%");
+            $data->where('invoice_no', 'LIKE', "%" . $request->search . "%");
         }
         if ($request->has(['field', 'order'])) {
             $data->orderBy($request->field, $request->order);

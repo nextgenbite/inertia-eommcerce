@@ -1,10 +1,10 @@
 <template>
   <default-layout>
     <div class="container mx-auto py-8">
-      <section class="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4">
-        <div class="col-span-4 w-full h-full max-lg:mx-auto mx-0">
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Product Gallery -->
+        <div class="col-span-4 flex flex-col items-center">
           <Galleria
-            class="w-full"
             v-if="galleryData.length"
             :value="galleryData"
             :activeIndex="activeIndex"
@@ -13,19 +13,20 @@
             :circular="true"
             :showItemNavigators="true"
             :showItemNavigatorsOnHover="true"
+            class="w-full rounded-xl shadow-md bg-white"
           >
             <template #item="slotProps">
               <img
                 :src="slotProps.item.itemImageSrc"
                 :alt="slotProps.item.alt"
-                style="width: 100%; display: block"
+                class="w-full object-cover rounded-xl"
               />
             </template>
             <template #thumbnail="slotProps">
               <img
                 :src="slotProps.item.thumbnailImageSrc"
                 :alt="slotProps.item.alt"
-                class="rounded-lg h-20"
+                class="rounded-lg h-20 object-cover"
               />
             </template>
           </Galleria>
@@ -33,203 +34,169 @@
             v-else
             :src="product.thumbnail ? `/${product.thumbnail}` : '/no-image.png'"
             alt="Product Image"
-            class="w-full h-auto rounded-lg shadow-lg"
+            class="w-full h-72 object-cover rounded-xl shadow-md bg-white"
           />
         </div>
-        <div class="col-span-5 flex justify-center items-center">
-          <div class="w-full h-full max-lg:mt-8 flex flex-col">
-            <div class="flex items-center justify-between gap-6 mb-6">
-              <div class="text">
-            <h1
-              class="font-manrope font-bold text-3xl leading-10 text-gray-900 mb-2 capitalize"
-            >
-              {{ product.title }}
-              {{ product.inventory }}
-            </h1>
-            <p class="font-normal text-base text-gray-500 capitalize">
-              {{ product.category?.title || "Uncategorized" }}
-            </p>
+
+        <!-- Product Info -->
+        <div class="col-span-5 flex flex-col gap-6">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-start justify-between">
+              <div>
+                <h1 class="font-bold text-3xl text-gray-900 capitalize">
+                  {{ product.title }}
+                </h1>
+                <p class="text-base text-gray-500 capitalize">
+                  {{ product.category?.title || "Uncategorized" }}
+                </p>
               </div>
               <Button
-            raised
-            outlined
-            rounded
-            size="large"
-            icon="pi pi-heart"
-            aria-label="Add to Wishlist"
+                icon="pi pi-heart"
+                aria-label="Add to Wishlist"
+                rounded
+                outlined
+                class="!border-gray-300"
               />
             </div>
-
-            <div
-              class="flex flex-col min-[400px]:flex-row min-[400px]:items-center mb-4 gap-y-3"
-            >
-              <div class="flex items-center">
-            <h5
-              class="font-manrope font-semibold text-2xl leading-6 text-gray-900"
-            >
-              $ {{ product.price }}
-            </h5>
-            <span class="ml-3 font-semibold text-lg text-primary-600"
-              >30% off</span
-            >
-              </div>
-              <span class="text-gray-200 mx-5 max-[400px]:hidden">|</span>
-              <button
-            class="flex items-center gap-1 rounded-lg bg-amber-400 text py-1.5 px-2.5 w-max"
+            <div class="flex flex-wrap items-center gap-4 mt-2">
+              <span class="text-2xl font-bold text-primary-700"
+                >${{ product.price }}</span
               >
-            <i class="pi pi-star-fill text-white"></i>
-            <span class="text-base font-medium text-white">4.8</span>
+              <span
+                class="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full"
+                >30% OFF</span
+              >
+              <span class="h-5 w-px bg-gray-200"></span>
+              <Tag
+                :severity="currentQuantity === 0 ? 'danger' : 'success'"
+                :value="
+                  currentQuantity === 0 ? 'Out of Stock' : currentQuantity
+                "
+              />
+              <span class="h-5 w-px bg-gray-200"></span>
+              <span
+                class="flex items-center gap-1 bg-yellow-400/90 text-white px-3 py-1 rounded-full text-sm"
+              >
+                <i class="pi pi-star-fill"></i>
+                <span class="font-semibold">4.8</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Attribute Selection -->
+          <div
+            v-for="attribute in groupedAttributes"
+            :key="attribute.id"
+            class="mb-2"
+          >
+            <h3 class="font-medium text-lg text-gray-900 mb-1">
+              {{ attribute.display_name }}
+            </h3>
+            <div class="flex flex-wrap gap-3">
+              <label
+                v-for="value in attribute.values"
+                :key="value.id"
+                class="cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  :name="'attribute-' + attribute.name"
+                  :value="value.id"
+                  class="hidden peer"
+                  @click="selectOption(attribute.id, value.id)"
+                />
+                <div
+                  class="p-1 border border-gray-200 rounded-md text-center transition-all duration-200 font-semibold shadow-sm hover:bg-gray-50"
+                  :class="[
+                    isSelected(attribute.id, value.id)
+                      ? 'ring-2 ring-primary-400 border-primary-400 bg-primary-50'
+                      : '',
+                    attribute.name === 'color'
+                      ? 'w-20'
+                      : 'px-4 py-1.5 rounded-full',
+                  ]"
+                >
+                  <img
+                    v-if="value.image"
+                    :src="`/${value.image}`"
+                    :alt="value.value"
+                    class="w-full h-14 object-cover rounded"
+                  />
+                  <p
+                    class="text-sm mt-1 capitalize"
+                    :class="
+                      isSelected(attribute.id, value.id)
+                        ? 'text-primary-600 font-semibold'
+                        : 'text-gray-600'
+                    "
+                  >
+                    {{ value.value }}
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Quantity & Cart Controls -->
+          <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
+            <div
+              class="flex items-center border rounded-full divide-x bg-white shadow-sm"
+            >
+              <button
+                @click="quantity > 1 ? quantity-- : ''"
+                class="px-4 py-2 text-primary-600 hover:bg-primary-50 rounded-l-full transition"
+                :disabled="quantity <= 1"
+              >
+                <i class="pi pi-minus"></i>
+              </button>
+              <span class="px-4 py-2 w-10 text-center">{{ quantity }}</span>
+              <button
+                @click="quantity < 10 ? quantity++ : ''"
+                class="px-4 py-2 text-primary-600 hover:bg-primary-50 rounded-r-full transition"
+                :disabled="quantity >= 10"
+              >
+                <i class="pi pi-plus"></i>
               </button>
             </div>
-    <div
-      v-for="attribute in product.attributes"
-      :key="attribute.id"
-      class="mb-6"
-    >
-      <h3 class="font-medium text-lg text-gray-900 mb-2">
-        {{ `${attribute.display_name}` }}
-      </h3>
-
-      <div class="flex flex-wrap gap-3">
-        <label
-          v-for="value in attribute.values"
-          :key="value.id"
-          class="cursor-pointer"
-        >
-          <input
-        type="radio"
-        :name="'attribute-' + attribute.name"
-        :value="value.id"
-        v-model="selected[attribute.name]"
-        class="hidden peer"
-        :disabled="!isSelectable(attribute.name, value.id)"
-        @change="handleChange(attribute.name, value.id)"
-          />
-          <div
-        class="p-1 border border-gray-200 rounded-md whitespace-nowrap text-gray-900 text-center peer-checked:ring-1 ring-primary-300 transition-all duration-200 font-semibold shadow-sm shadow-transparent hover:bg-gray-50 hover:shadow-primary-300"
-        :class="[
-          !isSelectable(attribute.name, value.id)
-            ? 'opacity-50 cursor-not-allowed'
-            : '',
-          attribute.name === 'color'
-            ? 'w-20'
-            : 'px-4 py-1.5 rounded-full',
-        ]"
-          >
-        <img
-          v-if="attribute.name === 'color' && value.image"
-          :src="`${value.image}`"
-          :alt="value.value"
-          class="w-full h-16 object-cover rounded"
-        />
-        <p
-          class="text-sm mt-1 capitalize"
-          :class="selected[attribute.name] == value.id ? 'text-primary-600 font-semibold' : 'text-gray-600'"
-        >
-          {{ value.value }}
-        </p>
+            <Button
+              raised
+              rounded
+              class="w-full sm:w-auto"
+              label="Add to Cart"
+              icon="pi pi-shopping-bag"
+              @click="addToCart"
+              :disabled="product.has_variant && !matchedVariant"
+            />
           </div>
-        </label>
-      </div>
-    </div>
 
-            <!-- If there are no attributes, push the controls to the bottom with mt-auto -->
-            <div
-            class="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 "
-            :class="product.attributes && product.attributes.length === 0 ? 'mt-auto' : ''"
-            >
-            <div
-                class="flex mx-auto text-gray-600 border rounded-full border-gray-300 divide-x divide-gray-300 lg:mx-0 w-max"
-            >
-                <div
-                @click="quantity > 1 ? quantity-- : ''"
-                class="relative rounded-l-full px-5 py-2.5 overflow-hidden font-medium text-primary-600 shadow-inner cursor-pointer group"
-                >
-                <span
-                    class="absolute top-0 left-0 w-0 h-0 transition-all duration-200 border-t-2 border-primary-600 group-hover:w-full ease"
-                ></span>
-                <span
-                    class="absolute bottom-0 right-0 w-0 h-0 transition-all duration-200 border-b-2 border-primary-600 group-hover:w-full ease"
-                ></span>
-                <span
-                    class="absolute top-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-primary-600 group-hover:h-full ease"
-                ></span>
-                <span
-                    class="absolute bottom-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-primary-600 group-hover:h-full ease"
-                ></span>
-                <span
-                    class="absolute inset-0 w-full h-full duration-300 delay-300 bg-primary opacity-0 group-hover:opacity-100"
-                ></span>
-                <span
-                    class="relative transition-colors duration-300 delay-200 group-hover:text-white ease"
-                    ><i class="pi pi-minus"></i
-                ></span>
-                </div>
-                <div class="flex items-center justify-center w-10">
-                {{ quantity }}
-                </div>
-                <div
-                @click="quantity < 10 ? quantity++ : ''"
-                class="relative px-5 py-2.5 rounded-r-full overflow-hidden font-medium text-primary-600 shadow-inner cursor-pointer group"
-                >
-                <span
-                    class="absolute top-0 left-0 w-0 h-0 transition-all duration-200 border-t-2 border-primary-600 group-hover:w-full ease"
-                ></span>
-                <span
-                    class="absolute bottom-0 right-0 w-0 h-0 transition-all duration-200 border-b-2 border-primary-600 group-hover:w-full ease"
-                ></span>
-                <span
-                    class="absolute top-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-primary-600 group-hover:h-full ease"
-                ></span>
-                <span
-                    class="absolute bottom-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-primary-600 group-hover:h-full ease"
-                ></span>
-                <span
-                    class="absolute inset-0 w-full h-full duration-300 delay-300 bg-primary opacity-0 group-hover:opacity-100"
-                ></span>
-                <span
-                    class="relative transition-colors duration-300 delay-200 group-hover:text-white ease"
-                    ><i class="pi pi-plus"></i
-                ></span>
-                </div>
-            </div>
-            <Button
-                raised
-                outlined
-                rounded
-                class="w-full"
-                label="Add to Cart"
-                icon="pi  pi-shopping-bag"
-                @click="addToCart"
-                :disabled="product.has_variant && !selectedVariant"
-            />
-            </div>
-            <div
-            class="flex mb-4 justify-between items-center rounded-full bg-primary/10 p-5 shadow-lg shadow-primary-100"
-            >
+          <!-- Total Price & Buy Now -->
+          <div
+            class="flex items-center justify-between rounded-xl bg-primary/10 p-5 shadow"
+          >
             <div>
-                <p class="text-sm text-gray-600">Total Price</p>
-                <h3 class="font-bold text-primary">
-                $ {{ (product.price * quantity).toFixed(2) }}
-                </h3>
+              <p class="text-sm text-gray-600">Total Price</p>
+              <h3 class="font-bold text-primary text-xl">
+                ${{ (product.price * quantity).toFixed(2) }}
+              </h3>
             </div>
             <Button
-                raised
-                rounded
-                icon="pi pi-shopping-cart"
-                label="Buy Now"
+              raised
+              rounded
+              icon="pi pi-shopping-cart"
+              label="Buy Now"
+              class="bg-primary-600 text-white"
             />
-            </div>
           </div>
         </div>
-        <div class="col-span-3 h-full" >
-    <!-- right sidebar -->
-    <right-side-bar :product="product" :shipping="shipping"/>
+
+        <!-- Right Sidebar -->
+        <div class="col-span-3">
+          <RightSideBar :product="product" :shipping="shipping" />
         </div>
       </section>
 
-     <!-- review -->
-     <Review :product="product" />
+      <!-- review -->
+      <Review :product="product" />
     </div>
 
     <div class="container pb-16">
@@ -250,13 +217,17 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from "vue";
-import {router} from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 import DefaultLayout from "@/Layouts/Default.vue";
 import SwiperSlider from "@/Components/Shared/SwiperSlider.vue";
 import ProductCard from "@/Components/ProductCard.vue";
-import { useCartStore } from '@/stores/cartStore'
-import RightSideBar from '@/Components/Frontend/Product/RightSideBar.vue'
-import Review from '@/Components/Frontend/Product/Review.vue'
+import { useCartStore } from "@/stores/cartStore";
+import RightSideBar from "@/Components/Frontend/Product/RightSideBar.vue";
+import Review from "@/Components/Frontend/Product/Review.vue";
+
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
 
 const cartStore = useCartStore();
 const props = defineProps({
@@ -287,23 +258,138 @@ const productOptions = {
   },
 };
 
+const quantity = ref(1);
 
-
-
-const colorOptions = computed(() => {
-  const colorAttr = props.product.attributes.find(attr => attr.name === 'color');
-  return colorAttr ? colorAttr.values : [];
-});
-
-
+const selected = ref({}); // { [attribute_id]: attribute_value_id }
 const activeIndex = ref(0);
 const galleryData = ref([]);
-
-
 const productImages = ref([]);
 
-onMounted(() => {
+// Group attributes with image support (e.g. color)
+const groupedAttributes = computed(() => {
+  const groups = {};
 
+  props.product.variants.forEach((variant) => {
+    variant.attribute_values.forEach((av) => {
+      const attr = av.attribute;
+      if (!groups[attr.id]) {
+        groups[attr.id] = {
+          id: attr.id,
+          name: attr.name,
+          display_name: attr.display_name,
+          values: [],
+        };
+      }
+
+      const exists = groups[attr.id].values.find((v) => v.id === av.id);
+      if (!exists) {
+        groups[attr.id].values.push({
+          id: av.id,
+          value: av.value,
+          image:
+            props.product.attribute_images?.find(
+              (img) => img.attribute_value_id === av.id
+            )?.image_path ?? null,
+        });
+      }
+    });
+  });
+
+  return Object.values(groups);
+});
+
+// Find matched variant by selected attributes
+const matchedVariant = computed(() => {
+  if (!props.product.has_variants || !Object.keys(selected.value).length)
+    return null;
+
+  return props.product.variants.find((variant) => {
+    const variantIds = variant.attribute_values
+      .map((av) => av.id)
+      .sort((a, b) => a - b)
+      .join("-");
+    const selectedIds = Object.values(selected.value)
+      .map(Number)
+      .sort((a, b) => a - b)
+      .join("-");
+    return variantIds === selectedIds;
+  });
+});
+
+// Total or selected variant quantity
+const currentQuantity = computed(() => {
+  if (matchedVariant.value) return matchedVariant.value.quantity;
+
+  return props.product.variants.reduce(
+    (sum, variant) => sum + variant.quantity,
+    0
+  );
+});
+
+const formErrors = ref(null);
+
+const addToCart = () => {
+  const requiredAttributes = groupedAttributes.value.length;
+  const selectedAttributes = Object.keys(selected.value).length;
+
+  if (props.product.has_variants) {
+    if (selectedAttributes !== requiredAttributes || !matchedVariant.value) {
+      toast.add({
+        severity: "warn",
+        summary: "Please select all variant options",
+        life: 3000,
+      });
+      return;
+    }
+
+    if (matchedVariant.value.quantity < 1) {
+      toast.add({
+        severity: "error",
+        summary: "Selected variant is out of stock",
+        life: 3000,
+      });
+      return;
+    }
+
+    const success = cartStore.addToCart({
+      variant_id: matchedVariant.value.id,
+      quantity: quantity.value,
+    });
+
+    if (success) {
+      toast.add({
+        severity: "success",
+        summary: "Added to cart",
+        life: 2000,
+      });
+    }
+  } else {
+    // if (props.product.variants.reduce((sum, v) => sum + v.quantity, 0) === 0) {
+    //   toast.add({
+    //     severity: 'error',
+    //     summary: 'Product is out of stock',
+    //     life: 3000,
+    //   })
+    //   return
+    // }
+
+    const success = cartStore.addToCart({
+      product_id: props.product.id,
+      quantity: quantity.value,
+    });
+
+    if (success) {
+      toast.add({
+        severity: "success",
+        summary: "Added to cart",
+        life: 2000,
+      });
+    }
+  }
+};
+
+// Initial load of main product images
+onMounted(() => {
   try {
     if (props.product?.images?.length) {
       const parsed =
@@ -317,85 +403,51 @@ onMounted(() => {
     console.error("Failed to parse product images:", e);
   }
 
+  updateGalleryData();
+});
+
+// ✅ Separate function to generate gallery
+const updateGalleryData = () => {
+  const colorAttr = groupedAttributes.value.find(
+    (attr) => attr.name === "color"
+  );
+  const colorImages =
+    colorAttr?.values
+      .filter((v) => v.image)
+      .map((v) => ({
+        itemImageSrc: "/" + v.image,
+        thumbnailImageSrc: "/" + v.image,
+        alt: v.value,
+      })) ?? [];
+
   galleryData.value = [
     ...productImages.value.map((img, index) => ({
       itemImageSrc: img,
       thumbnailImageSrc: img,
       alt: `Product Image ${index + 1}`,
     })),
-    ...colorOptions.value.map((color) => ({
-      itemImageSrc: color.image,
-      thumbnailImageSrc: color.image,
-      alt: color.value,
-    })),
+    ...colorImages,
   ];
-});
+};
 
+// ✅ This only updates the selected value + gallery index
+const selectOption = (attributeId, valueId) => {
+  selected.value[attributeId] = valueId;
 
+  const attr = groupedAttributes.value.find((attr) => attr.id === attributeId);
+  const selectedValue = attr?.values.find((v) => v.id === valueId);
 
-const quantity = ref(1);
-
-
-
-const selected = reactive({});
-watch(() => selected['color'], (newColorId) => {
-  const attribute = props.product.attributes.find(a => a.name === 'color')
-  const color = attribute?.values.find(v => v.id === newColorId)
-  if (color?.image) {
-    galleryData.value.unshift({
-      itemImageSrc: `${color.image}`,
-      thumbnailImageSrc: `${color.image}`,
-      alt: color.value
-    })
+  if (selectedValue?.image) {
+    const idx = galleryData.value.findIndex((img) =>
+      img.itemImageSrc?.includes(selectedValue.image)
+    );
+    if (idx !== -1) activeIndex.value = idx;
   }
-})
-const allCombinations = props.availableCombinations.map((c) => [...c].sort());
+};
 
-// Disable logic
-function isSelectable(attrId, valueId) {
-  const temp = { ...selected, [attrId]: valueId };
-  const values = Object.values(temp).map(Number).sort();
-
-  return allCombinations.some((combo) =>
-    values.every((val) => combo.includes(val))
-  );
-}
-
-function handleChange(attrId, valueId) {
-  selected[attrId] = valueId;
-}
-
-const formErrors = ref(null);
-// Find selected variant
-const selectedVariant = computed(() => {
-  const selectedValues = Object.values(selected).map(Number).sort()
-  return props.product.variants?.find(v => {
-    const ids = v.attribute_values.map(av => av.id).sort()
-    return JSON.stringify(ids) === JSON.stringify(selectedValues)
-  })
-})
-
-function addToCart() {
-  if (props.product.has_variant) {
-    if (!selectedVariant.value) {
-      formErrors.value = 'Please select all variant options.'
-      return
-    }
-
-cartStore.addToCart({
-    variant_id: selectedVariant.value.id,
-    quantity: quantity.value,
-  })
-
-  } else {
-    // Handle simple product without variants
-    cartStore.addToCart({
-      product_id: props.product.id,
-    quantity: quantity.value,
-  })
-
-  }
-}
+// Check selection
+const isSelected = (attributeId, valueId) =>
+  selected.value[attributeId] === valueId;
 </script>
 
 <style>

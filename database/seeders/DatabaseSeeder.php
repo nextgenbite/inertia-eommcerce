@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             // RoleSeeder::class,
             // UserSeeder::class,
             InventorySeeder::class,
+            // CategorySeeder::class,
+            // JsonDataSeeder::class,
         ]);
     }
 }

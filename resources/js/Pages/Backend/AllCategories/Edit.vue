@@ -1,16 +1,59 @@
 <script setup>
 import { useForm } from "@inertiajs/vue3";
-import { ref, watchEffect } from "vue";
-import Editor from "primevue/editor";
+import { onMounted, ref, watchEffect, computed } from "vue";
 const props = defineProps({
   show: Boolean,
   title: String,
   data: Object,
 });
+import axios from "axios";
+
+const categories = ref([]);
+
+const fetchCategories = async () => {
+  try {
+    const response = await axios.get("/api/categories");
+    categories.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+  }
+};
+onMounted(() => {
+  fetchCategories();
+});
+
+// Transform categories to tree structure for TreeSelect
+const treeData = computed(() =>
+  (categories.value || []).map((category, i) => ({
+    key: `${category.id}`,
+    label: category.title,
+    data: {
+      description: category.description,
+      image: category.thumbnail,
+      type: "Category",
+      status: category.status,
+    },
+    children: (category.sub_categories || []).map((sub, j) => ({
+      key: `${category.id}-${sub.id}`,
+      label: sub.title,
+      data: {
+        image: sub.thumbnail,
+        type: "Subcategory",
+      },
+      //   children: (sub.sub_sub_categories || []).map((subsub, k) => ({
+      //     key: `${i}-${j}-${k}`,
+      //     label: subsub.title,
+      //     data: {
+      //       image: subsub.thumbnail,
+      //       type: "Sub-subcategory",
+      //     },
+      //   })),
+    })),
+  }))
+);
 
 const imagePreview = ref(null);
 const emit = defineEmits(["close"]);
-
 
 const status = ref([
   { name: "Active", code: "1" },
@@ -24,20 +67,17 @@ const form = useForm({
   status: true,
 });
 
-
 const onFileSelect = (event, field) => {
   const file = event.files[0];
   if (!file) return;
 
-    form['thumbnail'] = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      imagePreview.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-
+  form["thumbnail"] = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imagePreview.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
 };
-
 
 const update = () => {
   form.put(route("categories.update", props.data?.id), {
@@ -61,7 +101,6 @@ watchEffect(() => {
 });
 
 const selectedCategory = ref();
-
 </script>
 
 <template>
@@ -89,31 +128,14 @@ const selectedCategory = ref();
             form.errors.title
           }}</small>
         </div>
-        <CascadeSelect
+        <TreeSelect
+          filter
+          filterMode="lenient"
           v-model="selectedCategory"
-          :options="$page.props.getData.data"
-          optionLabel="title"
-          optionGroupLabel="title"
-          :optionGroupChildren="['sub_categories']"
-          placeholder="Select a Category"
-        >
-          <template #option="slotProps">
-            <div class="flex items-center">
-              <i
-                v-if="slotProps.option.sub_categories"
-                class="pi pi-folder-open mr-2"
-              ></i>
-              <i v-else class="pi pi-tag mr-2"></i>
-              <span>{{ slotProps.option.title }}</span>
-            </div>
-          </template>
-          <template #dropdownicon>
-            <i class="pi pi-list" />
-          </template>
-          <template #header>
-            <div class="font-medium px-3 py-2">Available Categories</div>
-          </template>
-        </CascadeSelect>
+          :options="treeData"
+          placeholder="Select Category"
+          class="w-full"
+        />
 
         <div class="flex flex-col gap-2">
           <label for="title">Description</label>
@@ -130,11 +152,22 @@ const selectedCategory = ref();
             </template>
           </Editor>
         </div>
-           <div  class="card flex flex-col items-center gap-6">
-            <img v-if="imagePreview" :src="imagePreview" alt="Thumbnail" class="shadow-md rounded-xl w-full sm:w-64" />
-            <FileUpload mode="basic" @select="(event) => onFileSelect(event, input)" auto customUpload accept="image/*"
-              chooseLabel="Select Thumbnail" />
-          </div>
+        <div class="card flex flex-col items-center gap-6">
+          <img
+            v-if="imagePreview"
+            :src="imagePreview"
+            alt="Thumbnail"
+            class="shadow-md rounded-xl w-full sm:w-64"
+          />
+          <FileUpload
+            mode="basic"
+            @select="(event) => onFileSelect(event, input)"
+            auto
+            customUpload
+            accept="image/*"
+            chooseLabel="Select Thumbnail"
+          />
+        </div>
         <div class="flex flex-col gap-2">
           <label for="status">Status</label>
           <Select

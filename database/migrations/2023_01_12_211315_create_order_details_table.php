@@ -14,16 +14,15 @@ return new class extends Migration
     public function up()
     {
         Schema::create('order_details', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('order_id');
-            $table->mediumInteger('product_id');
-            $table->integer('quantity')->nullable()->default(0);
-            $table->decimal('unitcost',12,2)->nullable()->default(0);
-            $table->decimal('discount',8,2)->nullable()->default(0);
-            $table->decimal('tax',8,2)->nullable()->default(0);
-            $table->decimal('unit_price_inc_tax',12,2)->nullable()->default(0);
-            $table->decimal('total',12,2)->nullable()->default(0);
-
+            $table->bigIncrements('id');
+            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('product_variant_id')->nullable()->constrained('product_variants')->cascadeOnDelete();
+            $table->integer('quantity')->default(0);
+            $table->decimal('unit_cost', 12, 2)->default(0);
+            $table->decimal('discount', 8, 2)->default(0);
+            $table->decimal('vat', 8, 2)->default(0);
+            $table->decimal('total', 12, 2)->default(0);
             $table->timestamps();
         });
     }

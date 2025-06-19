@@ -10,13 +10,18 @@ class AttributeValue extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function attribute()
-{
-    return $this->belongsTo(Attribute::class);
-}
+ public function attribute()
+    {
+        return $this->belongsTo(Attribute::class);
+    }
 
-public function variants()
-{
-    return $this->belongsToMany(ProductVariant::class, 'variant_attribute_values');
-}
+    public function variantAttributeValues()
+    {
+        return $this->hasMany(VariantAttributeValue::class);
+    }
+
+    public function productAttributeImages()
+    {
+        return $this->hasMany(ProductAttributeImage::class);
+    }
 }
