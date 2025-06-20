@@ -415,7 +415,7 @@
                   <label class="font-semibold block mb-1" for="shipping"
                     >Available Shipping Area</label
                   >
-                  <Select v-model="form.shipping_cost" :options="shipping" id="shipping" optionLabel="title" :loading="!shipping" placeholder="Select a Area" class="w-full" />
+                  <Select v-model="form.shipping_cost" :options="shipping" id="shipping" optionLabel="title" optionValue="id" :loading="!shipping" placeholder="Select a Area" class="w-full" />
 
                 </div>
               <div class="flex pt-6 justify-between">

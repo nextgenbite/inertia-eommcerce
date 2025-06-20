@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
             // PermissionSeeder::class,
             // RoleSeeder::class,
             // UserSeeder::class,
-            InventorySeeder::class,
+            // InventorySeeder::class,
             // CategorySeeder::class,
-            // JsonDataSeeder::class,
+            JsonDataSeeder::class,
         ]);
     }
 }

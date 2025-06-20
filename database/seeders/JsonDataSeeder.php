@@ -75,7 +75,7 @@ public function run()
     }
 
     // Seed products
-    $response = Http::get('https://dummyjson.com/products?limit=10');
+    $response = Http::get('https://dummyjson.com/products?limit=100');
     $data = $response->json();
     $products = $data['products'];
 
@@ -104,26 +104,29 @@ public function run()
             continue;
         }
 
-        $randomSku = IdGenerator::generate([
+
+        $sku = IdGenerator::generate([
             'table' => 'products',
             'field' => 'sku',
-            'length' => 6,
-            'prefix' => 'PC'
+            'length' => 15,
+            'prefix' => 'PC-' . now()->format('Ymd') . '-',
+            'reset_on_prefix_change' => true
         ]);
 
-        $randomBarcode = IdGenerator::generate([
-            'table' => 'products',
-            'field' => 'barcode',
-            'length' => 13,
-            'prefix' => '25632490'
-        ]);
+ do {
+        $code12 = str_pad(mt_rand(0, 999999999999), 12, '0', STR_PAD_LEFT);
+        $checkDigit = $this->calculateEAN13CheckDigit($code12);
+        $barcode = $code12 . $checkDigit;
+    } while (\App\Models\Product::where('barcode', $barcode)->exists());
+
 
         Product::create([
             'category_id' => $category->id,
             'sub_category_id' => $subCategoryId,
-            'sku' => $randomSku,
-            'barcode' => $randomBarcode,
+            'sku' => $sku,
+            'barcode' =>  $barcode,
             'title' => $item['title'],
+            'slug' => Str::slug($item['title']),
             'price' => $item['price'],
             'discount_price' => ($item['price'] / 100) * $item['discountPercentage'],
             'description' => $item['description'],
@@ -164,4 +167,14 @@ public function run()
             return null;
         }
     }
+
+     private function calculateEAN13CheckDigit(string $code12): string {
+    $sum = 0;
+    for ($i = 0; $i < 12; $i++) {
+        $digit = (int) $code12[$i];
+        $sum += ($i % 2 === 0) ? $digit : $digit * 3;
+    }
+    $mod = $sum % 10;
+    return ($mod === 0) ? '0' : (string)(10 - $mod);
+}
 }

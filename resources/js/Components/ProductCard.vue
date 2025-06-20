@@ -48,7 +48,7 @@ const discountPercentage = (price, discount) => {
       <div
         class="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
       >
-        <Link title="Quick view" :href="'/product/' + product.id">
+        <Link title="Quick view" :href="'/product/' + product.slug">
           <Button icon="pi pi-eye" severity="secondary" raised rounded size="small" />
         </Link>
         <Button
@@ -75,7 +75,7 @@ const discountPercentage = (price, discount) => {
           ({{ product.rating_count ?? 0 }})
         </div>
       </div>
-      <Link :href="'/product/' + product.id" :title="product.title">
+      <Link :href="'/product/' + product.slug" :title="product.title">
         <h4
           class="capitalize font-semibold mb-1 text-gray-900 group-hover:text-primary transition truncate"
         >

@@ -2,7 +2,7 @@
     <DefaultLayout>
 
 
-        <div class="container mx-auto bg-white rounded-2xl shadow-xl flex justify-center items-center min-h-screen py-14 px-6">
+        <div class="container mx-auto bg-white  shadow-xl flex justify-center items-center min-h-screen py-14 px-6">
             <div class="w-full max-w-2xl">
                 <!-- Order Confirmation Header -->
                 <div class="flex flex-col items-center text-center mb-10">

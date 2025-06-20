@@ -25,8 +25,9 @@ class HomeController extends Controller
             'categories' =>  $categories,
         ]);
     }
-    public function ProductShow(Product $product)
+    public function ProductShow($slug)
     {
+         $product= Product::where('slug', $slug)->first();
         $product->load([
             'category',
             'variants.attributeValues.attribute',

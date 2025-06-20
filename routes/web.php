@@ -26,7 +26,7 @@ use App\Http\Controllers\PermissionController;
 
 Route::get('/', [HomeController::class, 'homePage'])->name('home');
 
-Route::get('/product/{product}', [HomeController::class, 'ProductShow'])->name('product.show');
+Route::get('/product/{slug}', [HomeController::class, 'ProductShow'])->name('product.show');
 Route::get('/shop', [HomeController::class, 'Shop'])->name('shop');
 // Route::get('/order-confirmed', [HomeController::class, ''])->name('checkout');
 //cart

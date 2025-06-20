@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductAttributeImage;
 use App\Models\ProductVariant;
 use App\Models\Unit;
+use App\Models\VariantAttributeValue;
 use App\Repositories\Interfaces\Product\ProductInterface;
 use App\Traits\ImageUploadTrait;
 use Illuminate\Support\Facades\DB;
@@ -62,34 +63,42 @@ class ProductRepository implements ProductInterface
             'price' => $request->price,
             'status' => $request->status,
         ]);
-        if ($request->attribute_images) {
-            foreach ($request->attribute_images as $item) {
-                            $image_path = $this->uploadImage($item['image_path'], $this->imagePath, 600, 600);
 
-                ProductAttributeImage::create([
-                    'product_id' => $product->id,
-                    'attribute_value_id' => $item['attribute_value_id'],
-                    'image_path' => $image_path, // upload separately
-                ]);
-            }
-        }
-        if ($request->has_variants && $request->variants) {
+
+              // Optional: attach variants
+        if ($product->has_variants && isset($request->variants)) {
             foreach ($request->variants as $variantData) {
                 $variant = ProductVariant::create([
                     'product_id' => $product->id,
-                    'sku' => $variantData['sku'],
-                    'price' => $variantData['price'],
+                    'sku' => $variantData['sku'] ?? null,
+                    'price' => $variantData['price'] ?? null,
+                    'quantity' => $variantData['quantity'] ?? 0,
                 ]);
 
-                $variant->attributeValues()->sync($variantData['attribute_value_ids']);
+                // Attach attribute values to variant
+                foreach ($variantData['attribute_value_ids'] as $valueId) {
+                    VariantAttributeValue::create([
+                        'product_variant_id' => $variant->id,
+                        'attribute_value_id' => $valueId,
+                    ]);
+                }
+            }
+        }
 
-                $variant->inventory()->create([
-                    'quantity' => $variantData['quantity'],
-                    'min_alert' => $request->min_qty ?? 0,
-                    'max_alert' => $request->max_qty ?? 0,
+        // Save attribute images (if color swatches etc.)
+        if (!empty($request->attribute_images)) {
+            foreach ($request->attribute_images as $valueId => $image) {
+                $path =  $this->uploadImage($image['image_path'], $this->imagePath, 600, 600);
+
+                ProductAttributeImage::create([
+                    'product_id' => $product->id,
+                    'attribute_value_id' => $valueId,
+                    'image_path' => $path,
                 ]);
             }
         }
+
+
         return $product;
     }
 
