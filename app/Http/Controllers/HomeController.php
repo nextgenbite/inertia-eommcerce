@@ -14,20 +14,19 @@ use App\Models\ShippingCost;
 
 class HomeController extends Controller
 {
-    public function homePage()
+    public function homePage(Request $request)
     {
-
         $categories = Category::with(['subCategories.subSubCategories'])->limit(9)->get();
-
-
+        $pagination = Product::latest()->paginate(10); // Adjust as needed
         return Inertia::render('Index', [
             'products' =>  Product::with('category')->limit(10)->get(),
             'categories' =>  $categories,
+            'pagination' =>  $pagination,
         ]);
     }
     public function ProductShow($slug)
     {
-         $product= Product::where('slug', $slug)->first();
+        $product = Product::where('slug', $slug)->first();
         $product->load([
             'category',
             'variants.attributeValues.attribute',
@@ -140,5 +139,4 @@ class HomeController extends Controller
             'search' => $search,
         ]);
     }
-
 }

@@ -54,28 +54,29 @@ class ProductController extends Controller
             'reset_on_prefix_change' => true
         ]);
 
- do {
-        $code12 = str_pad(mt_rand(0, 999999999999), 12, '0', STR_PAD_LEFT);
-        $checkDigit = $this->calculateEAN13CheckDigit($code12);
-        $barcode = $code12 . $checkDigit;
-    } while (\App\Models\Product::where('barcode', $barcode)->exists());
+        do {
+            $code12 = str_pad(mt_rand(0, 999999999999), 12, '0', STR_PAD_LEFT);
+            $checkDigit = $this->calculateEAN13CheckDigit($code12);
+            $barcode = $code12 . $checkDigit;
+        } while (\App\Models\Product::where('barcode', $barcode)->exists());
 
-    $generator = new DNS1D();
-    $generator->setStorPath(storage_path('framework/barcodes'));
-    // Black bars (0,0,0)
-$pngData = $generator->getBarcodePNG($barcode, 'C128', 2, 44, [0, 0, 0], true);
+        $generator = new DNS1D();
+        $generator->setStorPath(storage_path('framework/barcodes'));
+        // Black bars (0,0,0)
+        $pngData = $generator->getBarcodePNG($barcode, 'C128', 2, 44, [0, 0, 0], true);
 
-$barcodeImage = 'data:image/png;base64,' . $pngData;
+        $barcodeImage = 'data:image/png;base64,' . $pngData;
 
-    $attribute_values = AttributeValue::with('attribute')->get()
-            ->map(fn ($v) => [
+        $attribute_values = AttributeValue::with('attribute')->get()
+            ->map(fn($v) => [
                 'value' => $v->id,
                 'label' => "{$v->attribute->display_name}: {$v->value}"
             ]);
 
         $data =   array_merge([
             'filters'       => $request->all(['search', 'field', 'order']),
-            'getData'         => $data->with('category')->paginate(10),
+            'getData'         => $data->with('category',         'variants.attributeValues.attribute',
+            'attributeImages')->paginate(10),
             'categories' => Category::with(['subCategories.subSubCategories'])->get(),
             'attributes' => Attribute::with(['values'])->get(),
             'attribute_values' => $attribute_values,
@@ -83,7 +84,7 @@ $barcodeImage = 'data:image/png;base64,' . $pngData;
             'units' => Unit::get(),
             'sku' => $sku,
             'barcode' => $barcode,
-          'barcode_image' => $barcodeImage,
+            'barcode_image' => $barcodeImage,
 
         ], $this->product->baseData());
 
@@ -93,16 +94,16 @@ $barcodeImage = 'data:image/png;base64,' . $pngData;
 
 
     public function store(Request $request)
-        {
-     if (isDemoMode()) {
-        return redirect()->back();
-    }
+    {
+        if (isDemoMode()) {
+            return redirect()->back();
+        }
 
         // DB::beginTransaction();
         // try {
-            $product = $this->product->store($request);
-            // DB::commit();
-            return back()->with('success', "{$product->title} created successfully.");
+        $product = $this->product->store($request);
+        // DB::commit();
+        return back()->with('success', "{$product->title} created successfully.");
         // } catch (\Throwable $th) {
         //     DB::rollBack();
         //     return back()->with('error', "Error creating {$request->title}: " . $th->getMessage());
@@ -310,14 +311,14 @@ $barcodeImage = 'data:image/png;base64,' . $pngData;
         }
     }
 
- private function calculateEAN13CheckDigit(string $code12): string {
-    $sum = 0;
-    for ($i = 0; $i < 12; $i++) {
-        $digit = (int) $code12[$i];
-        $sum += ($i % 2 === 0) ? $digit : $digit * 3;
+    private function calculateEAN13CheckDigit(string $code12): string
+    {
+        $sum = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $digit = (int) $code12[$i];
+            $sum += ($i % 2 === 0) ? $digit : $digit * 3;
+        }
+        $mod = $sum % 10;
+        return ($mod === 0) ? '0' : (string)(10 - $mod);
     }
-    $mod = $sum % 10;
-    return ($mod === 0) ? '0' : (string)(10 - $mod);
-}
-
 }

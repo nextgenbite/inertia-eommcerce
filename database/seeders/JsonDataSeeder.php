@@ -2,179 +2,202 @@
 
 namespace Database\Seeders;
 
-
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductAttributeImage;
+use App\Models\ProductVariant;
+use App\Models\VariantAttributeValue;
+use App\Models\Attribute;
+use App\Models\AttributeValue;
+use App\Models\Brand;
 use App\Traits\ImageUploadTrait;
 use Illuminate\Http\UploadedFile;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 class JsonDataSeeder extends Seeder
 {
     use ImageUploadTrait;
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-public function run()
-{
-    $response = Http::get('https://dummyjson.com/products/categories');
-    $data = $response->json();
 
-    foreach ($data as $item) {
-        $categoryName = is_array($item) ? ($item['name'] ?? $item[0] ?? '') : $item;
+    public function run()
+    {
+        // Dummy Attributes
+        $color = Attribute::firstOrCreate(['name' => 'Color']);
+        $size = Attribute::firstOrCreate(['name' => 'Size']);
 
-        $category = Category::firstOrCreate(
-            ['title' => $categoryName],
-            ['slug' => Str::slug($categoryName)]
-        );
+        $colors = ['Red', 'Blue', 'Green'];
+        $sizes = ['S', 'M', 'L'];
 
-        // Generate 3 sub-categories per category
-        for ($i = 1; $i <= 3; $i++) {
-            $subCatTitle = "$categoryName Sub $i";
+        $colorValues = collect($colors)->map(function ($val) use ($color) {
+            return AttributeValue::firstOrCreate([
+                'attribute_id' => $color->id,
+                'value' => $val
+            ]);
+        });
 
-            $subCat = DB::table('sub_categories')->where('title', $subCatTitle)->first();
-            if (!$subCat) {
-                $subCatId = DB::table('sub_categories')->insertGetId([
-                    'category_id' => $category->id,
-                    'title' => $subCatTitle,
-                    'slug' => Str::slug($subCatTitle),
-                    'status' => true,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            } else {
-                $subCatId = $subCat->id;
-            }
+        $sizeValues = collect($sizes)->map(function ($val) use ($size) {
+            return AttributeValue::firstOrCreate([
+                'attribute_id' => $size->id,
+                'value' => $val
+            ]);
+        });
 
-            // Generate 2 sub-sub-categories per sub-category
-            for ($j = 1; $j <= 2; $j++) {
-                $subSubCatTitle = "$subCatTitle SubSub $j";
+        $response = Http::get('https://dummyjson.com/products/categories');
+        $data = $response->json();
 
-                $exists = DB::table('sub_sub_categories')->where('title', $subSubCatTitle)->exists();
-                if (!$exists) {
-                    DB::table('sub_sub_categories')->insert([
-                        'sub_category_id' => $subCatId,
-                        'title' => $subSubCatTitle,
-                        'slug' => Str::slug($subSubCatTitle),
-                        'status' => true,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+        foreach ($data as $item) {
+            $categoryName = is_array($item) ? ($item['name'] ?? $item[0] ?? '') : $item;
+
+            $category = Category::firstOrCreate(
+                ['title' => $categoryName],
+                ['slug' => Str::slug($categoryName)]
+            );
+
+            for ($i = 1; $i <= 2; $i++) {
+                $subCatTitle = "$categoryName Sub $i";
+                $subCat = DB::table('sub_categories')->where('title', $subCatTitle)->first();
+                if (!$subCat) {
+                    $subCatId = DB::table('sub_categories')->insertGetId([
+                        'category_id' => $category->id,
+                        'title'       => $subCatTitle,
+                        'slug'        => Str::slug($subCatTitle),
+                        'status'      => true,
+                        'created_at'  => now(),
+                        'updated_at'  => now(),
                     ]);
+                } else {
+                    $subCatId = $subCat->id;
+                }
+
+
+                for ($j = 1; $j <= 2; $j++) {
+                    $subSubCatTitle = "$subCatTitle SubSub $j";
+                    $subSubCat = DB::table('sub_sub_categories')->where('title', $subCatTitle)->first();
+                    if ($subSubCat) {
+                        DB::table('sub_sub_categories')->insert([
+                            'sub_category_id' => $subCatId,
+                            'title' => $subSubCatTitle,
+                            'slug' => Str::slug($subSubCatTitle),
+                            'status' => true,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
                 }
             }
         }
-    }
 
-    // Seed products
-    $response = Http::get('https://dummyjson.com/products?limit=100');
-    $data = $response->json();
-    $products = $data['products'];
+        $response = Http::get('https://dummyjson.com/products?limit=100');
+        $products = $response['products'];
 
-    foreach ($products as $item) {
-        $productExists = Product::where('title', $item['title'])->exists();
-        if ($productExists) {
-            continue; // Skip duplicate
-        }
-
-        $thumbnailUrl = $item['thumbnail'];
-        $smallImagePath = $this->storeImageFromUrl($thumbnailUrl, 'uploads/product', 500, 500);
-
-        $category = Category::where('title', $item['category'])->first();
-        if (!$category) {
-            Log::error("Category not found: " . $item['category']);
-            continue;
-        }
-
-        $subCategoryId = DB::table('sub_categories')
-            ->where('category_id', $category->id)
-            ->inRandomOrder()
-            ->value('id');
-
-        if (!$subCategoryId) {
-            Log::error("No sub-category found for category: " . $category->title);
-            continue;
-        }
-
-
-        $sku = IdGenerator::generate([
-            'table' => 'products',
-            'field' => 'sku',
-            'length' => 15,
-            'prefix' => 'PC-' . now()->format('Ymd') . '-',
-            'reset_on_prefix_change' => true
-        ]);
-
- do {
-        $code12 = str_pad(mt_rand(0, 999999999999), 12, '0', STR_PAD_LEFT);
-        $checkDigit = $this->calculateEAN13CheckDigit($code12);
-        $barcode = $code12 . $checkDigit;
-    } while (\App\Models\Product::where('barcode', $barcode)->exists());
-
-
-        Product::create([
-            'category_id' => $category->id,
-            'sub_category_id' => $subCategoryId,
-            'sku' => $sku,
-            'barcode' =>  $barcode,
-            'title' => $item['title'],
-            'slug' => Str::slug($item['title']),
-            'price' => $item['price'],
-            'discount_price' => ($item['price'] / 100) * $item['discountPercentage'],
-            'description' => $item['description'],
-            'thumbnail' => $smallImagePath,
-        ]);
-    }
+        foreach ($products as $item) {
+if (isset($item['brand'])) {
+    $brand = Brand::firstOrCreate(
+        ['title' => $item['brand']],
+        ['slug' => Str::slug($item['brand'])]
+    );
 }
+            if (Product::where('title', $item['title'])->exists()) continue;
 
+            $thumbnail = $this->storeImageFromUrl($item['thumbnail'], 'uploads/product', 500, 500);
+            $images = collect($item['images'] ?? [])->map(fn($img) => $this->storeImageFromUrl($img, 'uploads/product', 500, 500))->toArray();
 
+            $category = Category::where('title', $item['category'])->first();
+            if (!$category) continue;
+
+            $subCategoryId = DB::table('sub_categories')
+                ->where('category_id', $category->id)
+                ->inRandomOrder()
+                ->value('id');
+
+            $sku = IdGenerator::generate([
+                'table' => 'products',
+                'field' => 'sku',
+                'length' => 15,
+                'prefix' => 'PC-' . now()->format('Ymd') . '-',
+                'reset_on_prefix_change' => true
+            ]);
+
+            do {
+                $code12 = str_pad(mt_rand(0, 999999999999), 12, '0', STR_PAD_LEFT);
+                $checkDigit = $this->calculateEAN13CheckDigit($code12);
+                $barcode = $code12 . $checkDigit;
+            } while (Product::where('barcode', $barcode)->exists());
+
+            $product = Product::create([
+                'category_id' => $category->id,
+                'sub_category_id' => $subCategoryId,
+                'brand_id' => $brand->id,
+                'sku' => $sku,
+                'barcode' => $barcode,
+                'title' => $item['title'],
+                'slug' => Str::slug($item['title']),
+                'price' => $item['price'],
+                'discount_price' => ($item['price'] * $item['discountPercentage']) / 100,
+                'description' => $item['description'],
+                'thumbnail' => $thumbnail,
+                'images' => json_encode($images),
+                'has_variants'=> true
+            ]);
+
+            $variant = ProductVariant::create([
+                'product_id' => $product->id,
+                'sku' => $sku . '-V',
+                'price' => $item['price'],
+                'quantity' => $item['stock'] ?? 0,
+            ]);
+
+            $valueId = $colorValues->random()->id;
+            VariantAttributeValue::create([
+                'product_variant_id' => $variant->id,
+                'attribute_value_id' => $valueId,
+            ]);
+            $sizeValueId = $sizeValues->random()->id;
+            VariantAttributeValue::create([
+                'product_variant_id' => $variant->id,
+                'attribute_value_id' => $valueId,
+            ]);
+
+            ProductAttributeImage::create([
+                'product_id' => $product->id,
+                'attribute_value_id' => $sizeValueId,
+                'image_path' => $thumbnail,
+            ]);
+        }
+    }
 
     public function storeImageFromUrl($imageUrl, $destinationPath = 'images', $width, $height)
     {
         $client = new Client();
-
         try {
             $response = $client->get($imageUrl);
-            $fileContents = $response->getBody()->getContents();
-            $tempFilePath = sys_get_temp_dir() . '/' . Str::random(40);
-            file_put_contents($tempFilePath, $fileContents);
+            $tempPath = sys_get_temp_dir() . '/' . Str::random(40);
+            file_put_contents($tempPath, $response->getBody()->getContents());
 
-            $uploadedFile = new UploadedFile(
-                $tempFilePath,
-                basename($imageUrl),
-                mime_content_type($tempFilePath),
-                null,
-                true
-            );
+            $uploadedFile = new UploadedFile($tempPath, basename($imageUrl), mime_content_type($tempPath), null, true);
+            $storedPath = $this->uploadImage($uploadedFile, $destinationPath, $width, $height);
+            unlink($tempPath);
 
-            $filePath =  $this->uploadImage($uploadedFile, $destinationPath, $width, $height);
-
-            unlink($tempFilePath);
-
-            return $filePath;
+            return $storedPath;
         } catch (RequestException $e) {
-            // Handle request exception
-            // For example, you can log the error or return null
             Log::error($e->getMessage());
             return null;
         }
     }
 
-     private function calculateEAN13CheckDigit(string $code12): string {
-    $sum = 0;
-    for ($i = 0; $i < 12; $i++) {
-        $digit = (int) $code12[$i];
-        $sum += ($i % 2 === 0) ? $digit : $digit * 3;
+    private function calculateEAN13CheckDigit(string $code12): string
+    {
+        $sum = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $digit = (int) $code12[$i];
+            $sum += ($i % 2 === 0) ? $digit : $digit * 3;
+        }
+        return (string)((10 - ($sum % 10)) % 10);
     }
-    $mod = $sum % 10;
-    return ($mod === 0) ? '0' : (string)(10 - $mod);
-}
 }
