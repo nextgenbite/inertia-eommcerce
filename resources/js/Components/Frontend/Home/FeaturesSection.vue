@@ -1,6 +1,6 @@
 <template>
     <section class="container p-4 lg:p-6 bg-white/70">
-        <div class=" px-4">
+        <div class=" lg:px-4">
             <div
                 class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 rounded-xl shadow-lg border border-gray-100 bg-gray-50"
             >

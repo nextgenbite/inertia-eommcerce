@@ -1,14 +1,14 @@
 <template>
-<div>
-       <!-- ---- Start Header ----- -->
+  <div>
+    <!-- ---- Start Header ----- -->
 
     <header
       id="header"
-      class="py-1 px-8 md:pt-2 shadow-sm bg-primary lg:bg-white w-full top-0 right-0 left-0 z-50"
+      class="py-1 px-8 md:pt-2 shadow-sm bg-white/20 backdrop-blur-sm  w-full z-50"
     >
       <div class="flex items-center justify-between gap-4">
         <!-- logo  -->
-        <Link href="/" title="title"  class="">
+        <Link href="/" title="title" class="">
           <img
             :src="`/${$page.props.settings.logo}` || '/no-image.png'"
             alt="logo"
@@ -32,7 +32,7 @@
           </IconField>
         </div>
         <div class="w-full lg:max-w-lg hidden lg:flex">
-          <InputGroup>
+          <InputGroup class=" rounded-full">
             <InputText placeholder="what are you looking for..." />
             <Button icon="pi pi-search" />
           </InputGroup>
@@ -43,12 +43,17 @@
         <!-- NavIcons -->
 
         <div class="space-x-3 flex items-center">
-            <div class="hidden lg:flex items-center space-x-2">
-                           <OverlayBadge :value="'0'" severity="danger">
-   <Button icon="pi pi-heart"  variant="text" raised rounded aria-label="Filter"  />
-
-</OverlayBadge>
-                           <!-- <OverlayBadge :value="cartCount" severity="danger">
+          <div class="hidden lg:flex items-center space-x-2">
+            <OverlayBadge :value="'0'" severity="danger">
+              <Button
+                icon="pi pi-heart"
+                variant="text"
+                raised
+                rounded
+                aria-label="Filter"
+              />
+            </OverlayBadge>
+            <!-- <OverlayBadge :value="cartCount" severity="danger">
    <Button icon="pi pi-shopping-bag" @click="CartToggle"  variant="text" raised rounded aria-label="Filter"  />
       <Menu ref="cart" id="overlay_tmenu" :model="carts" popup>
             <template #item="{ item}">
@@ -62,41 +67,52 @@
             </template>
         </Menu>
 </OverlayBadge> -->
-                <CartComponent />
-                <div>
-  <div class="layout-topbar-menu hidden lg:block">
-        <div class="layout-topbar-menu-content">
-          <div class="relative">
-            <Button
-              icon="pi pi-user"
-               variant="text" raised rounded aria-label="Filter"
-              class="layout-topbar-action"
-              v-styleclass="{
-                selector: '@next',
-                enterFromClass: 'hidden',
-                enterActiveClass: 'animate-scalein',
-                leaveToClass: 'hidden',
-                leaveActiveClass: 'animate-fadeout',
-                hideOnOutsideClick: true,
-              }"
-            />
-            <div
-              class="hidden bg-white shadow-md absolute right-0 mt-2 w-48 py-2 rounded-md z-50"
-            >
-              <DropdownLink :href="route('login')" method="get" as="button">
-                Login
-              </DropdownLink>
-              <DropdownLink :href="route('logout')" method="post" as="button">
-                Log Out
-              </DropdownLink>
-              <!-- <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button> -->
+            <CartComponent />
+            <div>
+              <div class="layout-topbar-menu hidden lg:block">
+                <div class="layout-topbar-menu-content">
+                  <div class="relative">
+                    <Button
+                      icon="pi pi-user"
+                      variant="text"
+                      raised
+                      rounded
+                      aria-label="Filter"
+                      class="layout-topbar-action"
+                      v-styleclass="{
+                        selector: '@next',
+                        enterFromClass: 'hidden',
+                        enterActiveClass: 'animate-scalein',
+                        leaveToClass: 'hidden',
+                        leaveActiveClass: 'animate-fadeout',
+                        hideOnOutsideClick: true,
+                      }"
+                    />
+                    <div
+                      class="hidden bg-white shadow-md absolute right-0 mt-2 w-48 py-2 rounded-md z-50"
+                    >
+                      <DropdownLink
+                        :href="route('login')"
+                        method="get"
+                        as="button"
+                      >
+                        Login
+                      </DropdownLink>
+                      <DropdownLink
+                        :href="route('logout')"
+                        method="post"
+                        as="button"
+                      >
+                        Log Out
+                      </DropdownLink>
+                      <!-- <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-                </div>
-            </div>
-<!--
+          <!--
           <Link
             href="/login"
             title="Login"
@@ -111,23 +127,20 @@
             class="text-gray-800 hover:text-secondary transition font-semibold hidden lg:inline"
           > Register</Link> -->
 
-               <!-- <a  href="#" class="md:block hidden text-center text-white md:text-gray-700 hover:text-primary transition relative " title="Cart">
+          <!-- <a  href="#" class="md:block hidden text-center text-white md:text-gray-700 hover:text-primary transition relative " title="Cart">
                     <span class=" absolute -right-2 -top-1 w-4 h-4 lg:w-5 lg:h-5 xl:w-5 xl:h-5 rounded-full flex items-center justify-center  bg-primary text-white text-xs "> 5 </span>
                     <div class="text-xl lg:text-2xl">
                          <i class="pi pi-shopping-bag "></i>
                     </div>
                </a> -->
 
-
-
-
           <a
             href="#"
             id="menuBar"
-            class="lg:hidden text-center text-white lg:text-gray-700 hover:scale-75 transition relative"
+            class="lg:hidden text-gray-800 hover:text-primary transition"
             title="Account"
           >
-            <div class="text-xl lg:text-2xl" @click="toggleMenu = true">
+            <div class="text-xl lg:text-2xl"  @click.prevent="toggleMenu = true">
               <i class="pi pi-bars"></i>
             </div>
           </a>
@@ -140,123 +153,70 @@
 
     <!-- ---- Start NavBar ----- -->
     <nav class="bg-primary hidden lg:block">
-        <div class="container">
-            <div class="flex">
-                <!-- ---- All Category ----- -->
-                <div
-                    class="lg:px-[2.2rem] xl:px-[3.85rem] 2xl:px-[8.8rem] py-4 bg-white/10 flex items-center cursor-pointer group relative"
+      <div class="container">
+        <div class="flex">
+          <!-- ---- All Category ----- -->
+          <div
+            class="lg:px-[2.2rem] xl:px-[3.85rem] 2xl:px-[8.8rem] py-4 bg-white/10  flex items-center cursor-pointer group relative"
+          >
+            <span class="text-white text-lg">
+              <i class="pi pi-bars"></i>
+            </span>
+            <span
+              class="capitalize text-white text-lg font-semibold ml-[1.52rem]"
+              >All categories</span
+            >
+
+            <div
+              class="absolute left-0 top-full w-full bg-white shadow-md py-3 invisible opacity-0 group-hover:opacity-100 group-hover:visible transition duration-300 z-50 divide-y divide-gray-300 divide-dashed max-h-96 overflow-y-auto"
+            >
+              <!-- ---- Start single category ----- -->
+              <a
+                v-for="category in store.categories"
+                :key="category.id"
+                :title="category.title"
+                href="#"
+                class="px-6 py-3 flex items-center hover:bg-gray-100 transition"
+              >
+                <img
+                  :src="category.thumbnail || '/no-image.png'"
+                  :alt="category.title"
+                  class="w-5 h-5 object-contain"
+                />
+                <span class="ml-6 text-gray-700 text-sm font-semibold">
+                  {{ category.title }}</span
                 >
-                    <span class="text-white text-lg">
-                        <i class="pi pi-bars"></i>
-                    </span>
-                    <span
-                        class="capitalize text-white text-lg font-semibold ml-[1.52rem]"
-                        >All categories</span
-                    >
-
-                    <div
-                        class="absolute left-0 top-full w-full bg-white shadow-md py-3 invisible opacity-0 group-hover:opacity-100 group-hover:visible transition duration-300 z-50 divide-y divide-gray-300 divide-dashed max-h-96 overflow-y-auto"
-                    >
-                        <!-- ---- Start single category ----- -->
-                        <a
-                            v-for="category in store.categories"
-                            :key="category.id"
-                            :title="category.title"
-                            href="#"
-                            class="px-6 py-3 flex items-center hover:bg-gray-100 transition"
-                        >
-                            <img
-                                :src="category.thumbnail || '/no-image.png'"
-                                :alt="category.title"
-                                class="w-5 h-5 object-contain"
-                            />
-                            <span class="ml-6 text-gray-700 text-sm font-semibold">
-                                {{ category.title }}</span
-                            >
-                        </a>
-                        <!-- ---- single category End ----- -->
-                    </div>
-                </div>
-                <!-- ---- All Category End ----- -->
-
-                <!-- ---- Nav Menu ----- -->
-                <div class="flex flex-1 justify-center">
-                    <div class="flex items-center space-x-10 text-base capitalize">
-                        <Link v-for="item in menus" :key="item.label"
-                            :title="item.label"
-                            :href="item.route"
-                            class="relative  w-fit block after:block after:content-[''] after:absolute after:h-[2px] after:bg-white after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center text-gray-200 hover:text-white font-semibold transition-all ease-in-out duration-300"
-                            :class="{ 'text-white after:scale-x-100': item.route === $page.url }"
-                            >{{item.label}}</Link>
-
-                    </div>
-                </div>
-                <!-- ---- Nav Menu End ----- -->
+              </a>
+              <!-- ---- single category End ----- -->
             </div>
+          </div>
+          <!-- ---- All Category End ----- -->
+
+          <!-- ---- Nav Menu ----- -->
+          <div class="flex flex-1 justify-center">
+            <div class="flex items-center space-x-10 text-base capitalize">
+              <Link
+                v-for="item in menus"
+                :key="item.label"
+                :title="item.label"
+                :href="item.route"
+                class="relative w-fit block after:block after:content-[''] after:absolute after:h-[2px] after:bg-white after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center text-gray-200 hover:text-white font-semibold transition-all ease-in-out duration-300"
+                :class="{
+                  'text-white after:scale-x-100': item.route === $page.url,
+                }"
+                >{{ item.label }}</Link
+              >
+            </div>
+          </div>
+          <!-- ---- Nav Menu End ----- -->
         </div>
+      </div>
     </nav>
     <!-- ---- End NavBar ----- -->
 
     <!-- ---- Mobile Menu Bar ----- -->
 
-<div
-    class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-md mx-auto bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg rounded-2xl px-6 py-2 flex justify-between items-center lg:hidden"
-  >
-    <!-- Home -->
-    <Link
-      href="/"
-      title="Home"
-      class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
-    >
-      <i class="pi pi-home text-xl mb-1"></i>
-      <span class="text-[11px] font-medium">Home</span>
-    </Link>
-
-    <!-- Search -->
-    <Link
-      href="/search"
-      title="Search"
-      class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
-    >
-      <i class="pi pi-search text-xl mb-1"></i>
-      <span class="text-[11px] font-medium">Search</span>
-    </Link>
-
-    <!-- Wishlist -->
-    <Link
-      href="/wishlist"
-      title="Wishlist"
-      class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
-    >
-      <i class="pi pi-heart text-xl mb-1"></i>
-      <span class="text-[11px] font-medium">Wishlist</span>
-    </Link>
-
-    <!-- Cart -->
-    <Link
-      href="/checkout"
-      title="Cart"
-      class="relative flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
-    >
-      <span
-        class="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm"
-      >
-        5
-      </span>
-      <i class="pi pi-cart-plus text-xl mb-1"></i>
-      <span class="text-[11px] font-medium">Cart</span>
-    </Link>
-
-    <!-- Account -->
-    <Link
-      href="/account"
-      title="Account"
-      class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
-    >
-      <i class="pi pi-user text-xl mb-1"></i>
-      <span class="text-[11px] font-medium">Account</span>
-    </Link>
-  </div>
+    <BottomNavigation />
 
     <!-- ----End Mobile Menu Bar ----- -->
 
@@ -448,53 +408,52 @@
     </Drawer>
 
     <!-- ---- End Mobile Side Bar ----- -->
-</div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { Head, Link, usePage,router } from '@inertiajs/vue3'
-import { useAppStore } from '@/stores/appStore'
+import { ref, computed } from "vue";
+import { Head, Link, usePage, router } from "@inertiajs/vue3";
+import { useAppStore } from "@/stores/appStore";
 import DropdownLink from "@/Components/DropdownLink.vue";
-import CartComponent from '@/Components/Frontend/Cart.vue'
-const store = useAppStore()
+import CartComponent from "@/Components/Frontend/Cart.vue";
+import BottomNavigation from "./BottomNavigation.vue";
+const store = useAppStore();
 const toggleMenu = ref(false);
 const userMenu = ref();
 const userToggle = (event) => {
-    userMenu.value.toggle(event);
+  userMenu.value.toggle(event);
 };
 
 const user = ref([
-      {
-        label: 'Login',
-        icon: 'pi pi-key',
-        route: '/login'
-    },
-
+  {
+    label: "Login",
+    icon: "pi pi-key",
+    route: "/login",
+  },
 ]);
-const search = ref('');
+const search = ref("");
 
-const { props } = usePage()
+const { props } = usePage();
 
-const title = computed(() => props.title || 'NextGen Bite')
-const favicon = computed(() => props.settings?.favicon || '/no-image.png')
-const logo = computed(() => props.settings?.logo || '/no-image.png')
-
+const title = computed(() => props.title || "NextGen Bite");
+const favicon = computed(() => props.settings?.favicon || "/no-image.png");
+const logo = computed(() => props.settings?.logo || "/no-image.png");
 
 const menus = ref([
-    { label: 'Home', icon: 'pi pi-home', route: '/' },
+  { label: "Home", icon: "pi pi-home", route: "/" },
 
-    { label: 'Top Products', icon: 'pi pi-star', route: '/top-products' },
-    { label: 'Flash Sale', icon: 'pi pi-bolt', route: '/flash-sale' },
-    { label: 'Top Deals', icon: 'pi pi-tag', route: '/top-deals' },
-    { label: 'Top New Arrivals', icon: 'pi pi-envelope', route: '/contact' },
-    // { label: 'Categories', icon: 'pi pi-list', route: '/categories' },
-    // { label: 'Brands', icon: 'pi pi-tags', route: '/brands' },
-    // { label: 'Blog', icon: 'pi pi-pencil', route: '/blog' },
+  { label: "Top Products", icon: "pi pi-star", route: "/top-products" },
+  { label: "Flash Sale", icon: "pi pi-bolt", route: "/flash-sale" },
+  { label: "Top Deals", icon: "pi pi-tag", route: "/top-deals" },
+  { label: "Top New Arrivals", icon: "pi pi-envelope", route: "/contact" },
+  // { label: 'Categories', icon: 'pi pi-list', route: '/categories' },
+  // { label: 'Brands', icon: 'pi pi-tags', route: '/brands' },
+  // { label: 'Blog', icon: 'pi pi-pencil', route: '/blog' },
 
-    { label: 'Shop', icon: 'pi pi-shopping-bag', route: '/shop' },
-    { label: 'About', icon: 'pi pi-info-circle', route: '/about' },
-    { label: 'Contact', icon: 'pi pi-envelope', route: '/contact' },
+  { label: "Shop", icon: "pi pi-shopping-bag", route: "/shop" },
+  { label: "About", icon: "pi pi-info-circle", route: "/about" },
+  { label: "Contact", icon: "pi pi-envelope", route: "/contact" },
 ]);
 </script>
 

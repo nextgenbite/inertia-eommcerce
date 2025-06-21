@@ -78,12 +78,10 @@ const loadMore = () => {
 useIntersectionObserver(
   loadMoreRef,
   ([{ isIntersecting }]) => {
-    if (isIntersecting) {
-      loadMore()
-    }
+    if (isIntersecting) loadMore()
   },
   {
-    threshold: 1.0
+    threshold: 0.1, // or 0
   }
 )
 </script>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Expense;
+namespace App\Repositories\Contact;
 
 use App\Http\Resources\CategoryCollection;
 use App\Models\Category;

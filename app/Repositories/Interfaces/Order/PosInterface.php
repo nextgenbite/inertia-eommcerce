@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Interfaces\Expense;
+namespace App\Repositories\Interfaces\Order;
 
 use App\Models\Category;
 

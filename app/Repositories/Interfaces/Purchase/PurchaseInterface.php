@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces\Purchase;
 
 use App\Models\Purchase;
 
-interface SaleInterface
+interface PurchaseInterface
 {
 /**
      * Retrieve a purchase by its ID.
