@@ -4,7 +4,7 @@
 
     <header
       id="header"
-      class="py-1 px-8 md:pt-2 shadow-sm bg-white/20 backdrop-blur-sm  w-full z-50"
+      class="py-1 px-8 md:pt-2 shadow-sm bg-white/20   w-full z-50"
     >
       <div class="flex items-center justify-between gap-4">
         <!-- logo  -->
