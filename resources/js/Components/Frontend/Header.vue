@@ -443,16 +443,16 @@ const logo = computed(() => props.settings?.logo || "/no-image.png");
 const menus = ref([
   { label: "Home", icon: "pi pi-home", route: "/" },
 
-  { label: "Top Products", icon: "pi pi-star", route: "/top-products" },
-  { label: "Flash Sale", icon: "pi pi-bolt", route: "/flash-sale" },
+//   { label: "Top Products", icon: "pi pi-star", route: "/top-products" },
+//   { label: "Flash Sale", icon: "pi pi-bolt", route: "/flash-sale" },
   { label: "Top Deals", icon: "pi pi-tag", route: "/top-deals" },
-  { label: "Top New Arrivals", icon: "pi pi-envelope", route: "/contact" },
+//   { label: "Top New Arrivals", icon: "pi pi-envelope", route: "/contact" },
   // { label: 'Categories', icon: 'pi pi-list', route: '/categories' },
   // { label: 'Brands', icon: 'pi pi-tags', route: '/brands' },
   // { label: 'Blog', icon: 'pi pi-pencil', route: '/blog' },
 
   { label: "Shop", icon: "pi pi-shopping-bag", route: "/shop" },
-  { label: "About", icon: "pi pi-info-circle", route: "/about" },
+//   { label: "About", icon: "pi pi-info-circle", route: "/about" },
   { label: "Contact", icon: "pi pi-envelope", route: "/contact" },
 ]);
 </script>

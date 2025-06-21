@@ -42,9 +42,8 @@
           />
           <div class="flex-1">
             <div class="flex items-center justify-between w-full">
-              <h5 class="font-manrope font-semibold text-sm text-gray-900">
-                {{ item.product.title }} -
-                {{ item.variant?.sku || "Base Product" }}
+              <h5 class="font-manrope font-semibold text-sm text-gray-900 truncate">
+                {{ item.product.title }}
               </h5>
               <Button
                 @click="remove(item)"
