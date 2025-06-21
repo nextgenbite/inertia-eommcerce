@@ -1,5 +1,5 @@
 <template>
-       <div class="container pb-16">
+       <div class="container  p-4 lg:p-6">
       <h2 class="text-lg md:text-xl font-bold text-gray-800 uppercase mb-6">
         Top Products
         <hr

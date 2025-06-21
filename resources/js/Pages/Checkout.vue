@@ -2,9 +2,9 @@
 <template>
   <default-layout>
     <Head title="Checkout" />
-    <div class="container mx-auto my-10 px-4">
+    <div class="container p-4 lg:p-0 lg:py-4">
       <div
-        class="lg:max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6"
+        class="lg:max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-2 lg:p-6"
       >
         <div
           v-if="!cartStore.cart?.items?.length"
@@ -116,7 +116,7 @@
           <StepPanels>
             <StepPanel v-slot="{ activateCallback }" :value="1">
               <div class="">
-                <div class="max-h-96 overflow-y-auto">
+                <div class="">
                   <div
                     v-for="item in cartStore.cart.items"
                     :key="item.id"

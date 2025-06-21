@@ -43,7 +43,7 @@ const ratingPercent = (rating) => {
 };
 </script>
 <template>
-     <div class="card mt-4">
+     <div class=" mt-4">
         <Tabs value="0">
           <TabList>
             <Tab value="0">Overview</Tab>
@@ -54,8 +54,8 @@ const ratingPercent = (rating) => {
               <div v-html="product.description"></div>
             </TabPanel>
             <TabPanel value="1">
-              <section class="py-12 relative">
-                <div class="w-full max-w-4xl px-4 md:px-5 mx-auto">
+              <section class="relative">
+                <div class="w-full">
                   <h2
                     class="font-bold text-2xl md:text-3xl text-black mb-8 text-center"
                   >

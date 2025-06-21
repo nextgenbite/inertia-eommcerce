@@ -1,6 +1,6 @@
 <template>
-<div class="container my-4 bg-white shadow-md p-4 lg:p-6">
-      <div class="grid grid-cols-1 lg:grid-cols-6">
+<div class=" my-4 container p-4 lg:p-6 bg-white/70">
+      <div class="grid grid-cols-1 lg:grid-cols-6 gap-4">
         <div class="lg:col-span-2 bg-[url('https://images.unsplash.com/photo-1605362001336-f91645086f32?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-no-repeat bg-center h-64 lg:h-auto rounded-lg p-6">
           <div class="flex flex-col items-center justify-center h-full text-center">
               <h2 class="text-lg md:text-2xl font-bold text-white uppercase">

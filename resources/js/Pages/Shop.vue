@@ -2,7 +2,7 @@
   <default-layout>
     <!-- ---- Shop Wrapper --->
     <div
-      class="container grid grid-cols-1 lg:grid-cols-4 gap-6 pt-4 pb-16 items-start"
+      class="container grid grid-cols-1 lg:grid-cols-4 gap-6  items-start p-4 lg:p-0 lg:py-4"
     >
       <!-- ---- Sidebar --->
       <aside
@@ -177,7 +177,7 @@
       <!-- ---- End Sidebar --->
 
       <!-- ---- Product --->
-      <div class="col-span-3 card rounded-lg">
+      <div class="col-span-3 p-2 bg-white rounded-lg">
         <!-- ---Product Wrapper --->
 
         <DataView
@@ -303,7 +303,7 @@
           </template>
 
           <template #grid="slotProps">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 py-4">
               <ProductCard
                 v-for="(item, index) in slotProps.items"
                 :key="index"

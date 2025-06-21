@@ -186,6 +186,7 @@ const getSeverity = (status) => {
   // Default
   return null;
 };
+const currentRow = ref(null);
 </script>
 
 <template>
@@ -316,6 +317,7 @@ const getSeverity = (status) => {
         <Column style="width: 10rem">
           <template #body="slotProps">
             <div class="flex flex-wrap gap-2 items-center">
+                <!-- {{slotProps.data}} -->
               <Button
                 type="button"
                 icon="pi pi-ellipsis-v"
@@ -324,7 +326,7 @@ const getSeverity = (status) => {
                 variant="text"
                 aria-haspopup="true"
                 aria-controls="overlay_menu"
-                @click="(e) => $refs.menu.toggle(e)"
+                @click="(e) => {currentRow = slotProps.data;$refs.menu.toggle(e)}"
               />
               <Menu
                 ref="menu"
@@ -334,7 +336,8 @@ const getSeverity = (status) => {
                     icon: 'pi pi-pencil',
                     command: () => {
                       data.editOpen = true;
-                      data.item = data.item = slotProps.data;
+                      data.item =  currentRow;
+
                     },
                   },
                   {
@@ -342,7 +345,7 @@ const getSeverity = (status) => {
                     icon: 'pi pi-trash',
                     command: () => {
                       deleteDialog = true;
-                      data.item = data.item = slotProps.data;
+                      data.item =  currentRow;
                     },
                   },
                 ]"

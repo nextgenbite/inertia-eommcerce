@@ -1,9 +1,9 @@
 <template>
   <default-layout>
-    <div class="container mx-auto py-8">
-      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="container p-4 lg:p-0 lg:py-4">
+      <section class="grid grid-cols-12 gap-6">
         <!-- Product Gallery -->
-        <div class="col-span-4 flex flex-col items-center">
+        <div class="col-span-12 lg:col-span-4 flex flex-col items-center">
           <Galleria
             v-if="galleryData.length"
             :value="galleryData"
@@ -39,7 +39,7 @@
         </div>
 
         <!-- Product Info -->
-        <div class="col-span-5 flex flex-col gap-6">
+        <div class="col-span-12 lg:col-span-5 flex flex-col gap-6">
           <div class="flex flex-col gap-2">
             <div class="flex items-start justify-between">
               <div>
@@ -190,7 +190,7 @@
         </div>
 
         <!-- Right Sidebar -->
-        <div class="col-span-3">
+        <div class="col-span-12 lg:col-span-3">
           <RightSideBar :product="product" :shipping="shipping" />
         </div>
       </section>
@@ -199,7 +199,7 @@
       <Review :product="product" />
     </div>
 
-    <div class="container pb-16">
+    <div class="container p-4 lg:p-0 lg:pb-4">
       <h2 class="text-lg md:text-xl font-bold text-gray-800 uppercase mb-6">
         Top Related Products
         <hr
@@ -422,8 +422,8 @@ const updateGalleryData = () => {
 
   galleryData.value = [
     ...productImages.value.map((img, index) => ({
-      itemImageSrc: img,
-      thumbnailImageSrc: img,
+      itemImageSrc: "/" +img,
+      thumbnailImageSrc:"/" + img,
       alt: `Product Image ${index + 1}`,
     })),
     ...colorImages,

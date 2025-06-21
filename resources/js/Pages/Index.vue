@@ -30,9 +30,39 @@
 <TopArrivalsSection/>
 
     <!-- ---- End Top New Arrival  ----- -->
+<!-- <div class="p-4">
+    <h2 class="text-2xl font-bold mb-4">Products</h2>
 
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div
+        v-for="product in allProducts"
+        :key="product.id"
+        class="border p-2 rounded"
+      >
+        <img
+          :src="product.thumbnail"
+          alt=""
+          class="w-full h-40 object-cover mb-2"
+        />
+        <h3 class="font-semibold">{{ product.title }}</h3>
+        <p class="text-gray-600">${{ product.price }}</p>
+      </div>
+    </div>
+
+    <div
+      ref="loadMoreRef"
+      class="text-center mt-6"
+      v-if="hasMore && !loading"
+    >
+      <ProgressSpinner style="width: 40px; height: 40px" />
+    </div>
+
+    <div v-if="!hasMore" class="text-center text-sm text-gray-500 mt-6">
+      You've reached the end.
+    </div>
+  </div> -->
     <!-- ---- Start Brand  ----- -->
-    <section class="container mx-auto py-8">
+    <section class="container p-4 lg:p-6">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Top Brands</h2>
         <a href="#" class="inline-flex items-center text-primary-600 hover:underline font-medium transition">
@@ -69,6 +99,8 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { useIntersectionObserver } from '@vueuse/core'
+import { router } from '@inertiajs/vue3'
 import DefaultLayout from "@/Layouts/Default.vue";
 import BaseIcon from "@/Components/BaseIcon.vue";
 import ProductCard from "@/Components/ProductCard.vue";
@@ -88,13 +120,13 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  pagination: {
+    type: Object,
+    default: () => [],
+  },
 });
 
 const flashSaleProducts = (props.products || []).slice(0, 10);
-
-
-
-
 
 const bgColors = [
   "bg-red-200",
@@ -107,6 +139,51 @@ const bgColors = [
   "bg-orange-200",
 ];
 
+
+
+const allProducts = ref([...props.pagination.data])
+const currentPage = ref(props.pagination.current_page)
+const totalPages = ref(props.pagination.last_page)
+const loading = ref(false)
+const hasMore = ref(currentPage.value < totalPages.value)
+const loadMoreRef = ref(null)
+
+const loadMore = () => {
+  if (loading.value || !hasMore.value) return
+  loading.value = true
+
+  router.get(
+    route('home'),
+    { page: currentPage.value + 1 },
+    {
+      preserveScroll: true,
+      preserveState: true,
+      only: ['pagination'],
+      onSuccess: (page) => {
+        const newProducts = page.props.pagination.data
+        allProducts.value.push(...newProducts)
+        currentPage.value = page.props.pagination.current_page
+        hasMore.value = currentPage.value < totalPages.value
+      },
+      onFinish: () => {
+        loading.value = false
+      }
+    }
+  )
+}
+
+// 🔍 VueUse Intersection Observer
+useIntersectionObserver(
+  loadMoreRef,
+  ([{ isIntersecting }]) => {
+    if (isIntersecting) {
+      loadMore()
+    }
+  },
+  {
+    threshold: 1.0
+  }
+)
 </script>
 
 <style scoped>

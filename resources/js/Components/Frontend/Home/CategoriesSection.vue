@@ -1,5 +1,5 @@
 <template>
-  <div class="container mb-6 card">
+  <div class="container p-4 lg:p-6 bg-white/70">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-lg md:text-xl font-bold text-gray-800 uppercase">
         Categories

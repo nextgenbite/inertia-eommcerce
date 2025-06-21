@@ -186,7 +186,7 @@
                             :title="item.label"
                             :href="item.route"
                             class="relative  w-fit block after:block after:content-[''] after:absolute after:h-[2px] after:bg-white after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center text-gray-200 hover:text-white font-semibold transition-all ease-in-out duration-300"
-                            :class="{ 'after:scale-x-100': item.route === $page.url }"
+                            :class="{ 'text-white after:scale-x-100': item.route === $page.url }"
                             >{{item.label}}</Link>
 
                     </div>
@@ -199,45 +199,64 @@
 
     <!-- ---- Mobile Menu Bar ----- -->
 
-    <div
-      class="fixed w-full border-t border-gray-200 shadow-sm bg-white py-2 bottom-0 left-0 flex justify-between px-6 lg:hidden z-40"
+<div
+    class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-md mx-auto bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg rounded-2xl px-6 py-2 flex justify-between items-center lg:hidden"
+  >
+    <!-- Home -->
+    <Link
+      href="/"
+      title="Home"
+      class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
     >
-      <a
-        href="/"
-        class="block text-center text-gray-700 hover:text-primary transition relative"
-        title="Menu"
-      >
-        <div class="text-xs flex justify-center flex-col items-center">
-<i class="pi pi-home"></i>
-          <span class="font-serif">Home</span>
-        </div>
-      </a>
-      <a
-        title="phone"
-        href="tel:+8801715808563"
-        class="block text-center text-gray-700 hover:text-primary transition relative"
-      >
-        <div class="text-xs flex justify-center flex-col items-center">
-<i class="pi pi-phone"></i>
-          <span class="font-serif">Call Us Now</span>
-        </div>
-      </a>
+      <i class="pi pi-home text-xl mb-1"></i>
+      <span class="text-[11px] font-medium">Home</span>
+    </Link>
 
-      <a
-        href="javascript:void(0)"
-        class="block text-center text-gray-700 hover:text-primary transition relative"
-        title="Cart"
+    <!-- Search -->
+    <Link
+      href="/search"
+      title="Search"
+      class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
+    >
+      <i class="pi pi-search text-xl mb-1"></i>
+      <span class="text-[11px] font-medium">Search</span>
+    </Link>
+
+    <!-- Wishlist -->
+    <Link
+      href="/wishlist"
+      title="Wishlist"
+      class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
+    >
+      <i class="pi pi-heart text-xl mb-1"></i>
+      <span class="text-[11px] font-medium">Wishlist</span>
+    </Link>
+
+    <!-- Cart -->
+    <Link
+      href="/checkout"
+      title="Cart"
+      class="relative flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
+    >
+      <span
+        class="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm"
       >
-        <span
-          class="absolute -right-3 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs"
-          >5
-        </span>
-        <div class="text-xs flex justify-center flex-col items-center">
-          <i class="pi pi-cart-plus"></i>
-          <span class="font-serif">Cart</span>
-        </div>
-      </a>
-    </div>
+        5
+      </span>
+      <i class="pi pi-cart-plus text-xl mb-1"></i>
+      <span class="text-[11px] font-medium">Cart</span>
+    </Link>
+
+    <!-- Account -->
+    <Link
+      href="/account"
+      title="Account"
+      class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
+    >
+      <i class="pi pi-user text-xl mb-1"></i>
+      <span class="text-[11px] font-medium">Account</span>
+    </Link>
+  </div>
 
     <!-- ----End Mobile Menu Bar ----- -->
 
