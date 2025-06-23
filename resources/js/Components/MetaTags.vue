@@ -1,6 +1,7 @@
 <script setup>
 import { Head } from "@inertiajs/vue3";
 const appName = import.meta.env.VITE_APP_NAME;
+const apiUrl = import.meta.env.VITE_API_URL;
 const props = defineProps({
   title: {
     type: String,
@@ -28,7 +29,7 @@ const props = defineProps({
             <meta property="og:title" :content="props.title || 'IT Software Solutions for Businesses'">
             <meta property="og:description" :content="props.description || 'We provide innovative IT solutions for businesses, including custom software development, cloud services, and more.'">
             <meta property="og:image" :content="$page.props.ziggy.url+(props.og_image ||  'images/default-og-image.png')">
-            <meta property="og:url" :content="$page.props.ziggy.url">
+            <meta property="og:url" :content="apiUrl">
             <meta property="og:site_name" :content="$page.props.settings?.title || appName">
             <meta property="og:locale" content="en_US">
             <meta property="og:type" content="website">

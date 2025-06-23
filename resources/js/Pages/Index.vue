@@ -1,5 +1,7 @@
 <template>
   <default-layout>
+             <MetaTags :title="meta?.title" :description="meta?.description" :og_image="meta?.og_image" />
+
     <!-- ----  Hero ----- -->
     <hero-section :categories="$page.props.categories" />
     <!-- ---- End Hero ----- -->
@@ -95,6 +97,7 @@
 
 <script setup>
 import { ref } from "vue";
+import MetaTags from "@/Components/MetaTags.vue";
 import DefaultLayout from "@/Layouts/Default.vue";
 import HeroSection from "@/Components/Frontend/Home/HeroSection.vue";
 import FeaturesSection from "@/Components/Frontend/Home/FeaturesSection.vue";
@@ -113,8 +116,18 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  settings: {
+    type: Object,
+  },
 });
 
+const meta = {
+  title: props.settings?.title || "IT Software Solutions for Businesses",
+  description:
+    props.settings?.description ||
+    "We provide innovative IT solutions for businesses, including custom software development, cloud services, and more.",
+  og_image: props.settings?.og_image,
+};
 const bgColors = [
   "bg-red-200",
   "bg-blue-200",

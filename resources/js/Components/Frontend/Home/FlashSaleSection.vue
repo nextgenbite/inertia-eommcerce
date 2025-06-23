@@ -12,9 +12,8 @@
               <h2 class="text-lg md:text-2xl font-bold text-white uppercase">
             {{flashSale.title}}
           </h2>
-          <h3 class="text-white mb-4" v-html="flashSale.description || 'Hurry Up ! The offer is limited. Grab while it lasts'">
-
-
+          <h3 class="text-white mb-4">
+            {{flashSale.description || 'Hurry Up ! The offer is limited. Grab while it lasts'}}
           </h3>
           <div class="card bg-white/80 shadow-lg rounded-lg p-4">
             <div

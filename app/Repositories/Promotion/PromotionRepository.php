@@ -121,7 +121,7 @@ class PromotionRepository implements PromotionInterface
                 ['name' => 'Buy One Get One', 'code' => 'bogo'],
             ]],
             ['key' => 'thumbnail', 'label' => 'Thumbnail', 'type' => 'image', 'path' => 'thumbnail', 'class' => ' lg:col-span-6'],
-            ['key' => 'description', 'label' => 'Description', 'path' => 'description', 'type' => 'textarea', 'class' => ' lg:col-span-6'],
+            ['key' => 'description', 'label' => 'Description', 'path' => 'description', 'type' => 'text', 'class' => ' lg:col-span-6'],
             ['key' => 'start_time', 'label' => 'Start Time', 'path' => 'start_time', 'type' => 'date_time', 'class' => ' lg:col-span-6'],
             ['key' => 'end_time', 'label' => 'End Time', 'path' => 'end_time', 'type' => 'date_time', 'class' => ' lg:col-span-6'],
 
