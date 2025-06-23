@@ -15,8 +15,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Lato', ...defaultTheme.fontFamily.sans],
-            },
+             sans: ['Open Sans', ...defaultTheme.fontFamily.sans],
+          },
         },
         screens: {
             sm: '576px',

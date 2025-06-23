@@ -92,7 +92,7 @@ class SubCategoryRepository implements SubCategoryInterface
 
         $form = [
             ['key' => 'title', 'label' => 'Title', 'path' => 'title', 'type' => 'text'],
-            ['key' => 'category_id', 'label' => 'Category', 'path' => 'category_id', 'type' => 'select', 'class' => ' col-span-6', 'optionLabel' => 'title', 'optionValue' => 'id', 'options' => Category::select('id', 'title', 'created_at', 'updated_at')->get()],
+            ['key' => 'category_id', 'label' => 'Category', 'path' => 'category_id', 'type' => 'select', 'class' => ' lg:col-span-6', 'optionLabel' => 'title', 'optionValue' => 'id', 'options' => Category::select('id', 'title', 'created_at', 'updated_at')->get()],
             ['key' => 'thumbnail', 'label' => 'Thumbnail', 'type' => 'image', 'path' => 'thumbnail'],
             ['key' => 'description', 'label' => 'Description', 'path' => 'description', 'type' => 'textarea'],
             ['key' => 'status', 'label' => 'Status', 'path' => 'status', 'type' => 'select', 'optionLabel' => 'name', 'optionValue' => 'code',  'options' => [

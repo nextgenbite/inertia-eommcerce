@@ -17,13 +17,14 @@ const item = ref({});
 // Helper function to initialize form fields
 function initializeForm() {
   props.dynamicFrom.forEach((field) => {
-    const defaultValue = field.type === "attribute"
-      ? []
-    //   : field.type === "select" && field.options[0]
-    //     ? field.options[0][field.optionValue] || ""
-        : field.type === "images"
-          ? []
-          : "";
+    const defaultValue =
+      field.type === "attribute"
+        ? []
+        : //   : field.type === "select" && field.options[0]
+        //     ? field.options[0][field.optionValue] || ""
+        field.type === "images"
+        ? []
+        : "";
 
     item.value[field.path] = defaultValue;
   });
@@ -138,21 +139,21 @@ function onFileSelect(event, field) {
 }
 
 const columnClassMap = {
-  1: 'grid-cols-1',
-  2: 'grid-cols-2',
-  3: 'grid-cols-3',
-  4: 'grid-cols-4',
-  5: 'grid-cols-5',
-  6: 'grid-cols-6',
-  7: 'grid-cols-7',
-  8: 'grid-cols-8',
-  9: 'grid-cols-9',
-  10: 'grid-cols-10',
+  1: "grid-cols-1",
+  2: "grid-cols-2",
+  3: "grid-cols-3",
+  4: "grid-cols-4",
+  5: "grid-cols-5",
+  6: "grid-cols-6",
+  7: "grid-cols-7",
+  8: "grid-cols-8",
+  9: "grid-cols-9",
+  10: "grid-cols-10",
 };
 
 const columnClass = computed(() => {
   const count = (form.attribute.items ?? []).length;
-  return columnClassMap[count] || 'grid-cols-1';
+  return columnClassMap[count] || "grid-cols-1";
 });
 </script>
 
@@ -170,10 +171,10 @@ const columnClass = computed(() => {
     <form @submit.prevent="create">
       <div class="grid grid-cols-12 gap-2">
         <div
-          class="field"
-          :class="input.class ? input.class : ' col-span-12'"
           v-for="input in dynamicFrom"
           :key="input.key"
+             class="field col-span-12"
+          :class="input.class || ''"
         >
           <label :for="input.path">{{ input.label }}</label>
           <Editor
@@ -183,8 +184,8 @@ const columnClass = computed(() => {
           />
           <!-- select option-->
           <Select
-          filter
-          checkmark
+            filter
+            checkmark
             class="w-full"
             v-else-if="input.type === 'select'"
             :id="input.path"
@@ -193,6 +194,19 @@ const columnClass = computed(() => {
             :optionValue="input.optionValue"
             :optionLabel="input.optionLabel"
             :placeholder="'Select a ' + input.label"
+          />
+          <!-- multi select option-->
+          <MultiSelect
+            v-else-if="input.type === 'multi_select'"
+            class="w-full"
+            v-model="form[input.path]"
+            filter
+            checkmark
+            :options="input.options"
+            display="chip"
+            :optionValue="input.optionValue"
+            :optionLabel="input.optionLabel"
+            :placeholder="'Select ' + input.label"
           />
 
           <!-- Thumbnail Input and Preview -->
@@ -226,19 +240,63 @@ const columnClass = computed(() => {
             />
           </div>
 
-            <MultipleImageUpload v-else-if="input?.type === 'images'" v-model="form[input.path]"
-             />
+          <MultipleImageUpload
+            v-else-if="input?.type === 'images'"
+            v-model="form[input.path]"
+          />
 
-             <div v-else-if="input.type === 'attribute'" class="grid gap-1" :class="columnClass" >
-
-            <div v-for="(attribute, index) in form.attribute" :key="index" class="flex gap-2">
-              <div v-for="(value, key) in attribute" :key="key" class="col-span-1">
-                <InputText v-model="attribute[key]" :placeholder="key" required class=" w-full" />
+          <div
+            v-else-if="input.type === 'attribute'"
+            class="grid gap-1"
+            :class="columnClass"
+          >
+            <div
+              v-for="(attribute, index) in form.attribute"
+              :key="index"
+              class="flex gap-2"
+            >
+              <div
+                v-for="(value, key) in attribute"
+                :key="key"
+                class="col-span-1"
+              >
+                <InputText
+                  v-model="attribute[key]"
+                  :placeholder="key"
+                  required
+                  class="w-full"
+                />
               </div>
-              <Button v-if="index > 0" @click="remove(index)" icon="pi pi-minus" severity="danger" rounded raised outlined size="small" />
+              <Button
+                v-if="index > 0"
+                @click="remove(index)"
+                icon="pi pi-minus"
+                severity="danger"
+                rounded
+                raised
+                outlined
+                size="small"
+              />
             </div>
-            <Button @click="addMore" icon="pi pi-plus" severity="success" rounded raised outlined size="small" />
+            <Button
+              @click="addMore"
+              icon="pi pi-plus"
+              severity="success"
+              rounded
+              raised
+              outlined
+              size="small"
+            />
           </div>
+
+          <DatePicker
+            id="datepicker-24h"
+            v-else-if="input.type === 'date_time'"
+            v-model="form[input.path]"
+            showTime
+            hourFormat="24"
+            fluid
+          />
 
           <!-- text input -->
           <InputText

@@ -61,17 +61,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::resource('/permission', PermissionController::class)->except('create', 'show', 'edit');
 });
 
-Route::get('/form', function () {
-    return Inertia::render('SakaiForm');
-});
 
-Route::get('/button', function () {
-    return Inertia::render('SakaiButton');
-});
-
-Route::get('/list', function () {
-    return Inertia::render('SakaiList');
-});
 
 // Route::get('/', function () {
 //     return Inertia::render('Welcome', [
@@ -128,11 +118,15 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/all/categories',[App\Http\Controllers\Backend\CategoryController::class, 'allCategories' ] )->name('all.categories');
     Route::resource('sub-categories', App\Http\Controllers\Backend\SubCategoryController::class)->except('create', 'show', 'edit');
     Route::resource('sub-subcategories', App\Http\Controllers\Backend\SubSubCategoryController::class)->except('create', 'show', 'edit');
-    ///Brand Routes
+    //Brand Routes
     Route::resource('brands', App\Http\Controllers\Backend\BrandController::class)->except('create', 'show', 'edit');
 
-    ///Unit Routes
+    //Unit Routes
     Route::resource('units', App\Http\Controllers\Backend\UnitController::class)->except('create', 'show', 'edit');
+    //Promotion Routes
+    Route::resource('promotions', App\Http\Controllers\Backend\PromotionController::class)->except('create', 'show', 'edit');
+    //Slider Routes
+    Route::resource('sliders', App\Http\Controllers\Backend\SliderController::class)->except('create', 'show', 'edit');
 
     Route::controller(App\Http\Controllers\Backend\UnitController::class)->prefix('units')->group(function () {
         Route::get('trashed', 'trashed')->name('trashed.unit');

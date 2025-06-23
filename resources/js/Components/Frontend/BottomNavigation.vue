@@ -2,7 +2,7 @@
   <transition name="fade-slide">
     <div
       v-show="showNav"
-      class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-md mx-auto bg-white/20 backdrop-blur-sm border border-gray-200 shadow-lg rounded-2xl px-6 py-2 flex justify-between items-center lg:hidden transition-all duration-300"
+      class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-md mx-auto bg-white/50   backdrop-blur-sm border border-gray-200 shadow-lg rounded-2xl px-6 py-2 flex justify-between items-center lg:hidden transition-all duration-300"
     >
       <Link
         href="/"
@@ -58,28 +58,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch  } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import { useCartStore } from "@/stores/cartStore";
+import { useWindowScroll } from '@vueuse/core'
 const cartStore = useCartStore();
+
 const showNav = ref(true)
-let lastScrollY = window.scrollY
+const lastScrollY = ref(0)
 
-const handleScroll = () => {
-  const currentScroll = window.scrollY
+const { y: scrollY } = useWindowScroll()
 
-  if (Math.abs(currentScroll - lastScrollY) < 10) return // avoid micro scrolls
+watch(scrollY, (currentScroll) => {
+  // Avoid micro scrolls
+  if (Math.abs(currentScroll - lastScrollY.value) < 10) return
 
-  showNav.value = currentScroll < lastScrollY || currentScroll < 80
-  lastScrollY = currentScroll
-}
+  // Show nav if scrolling up OR near the top of page
+  showNav.value = currentScroll < lastScrollY.value || currentScroll < 80
 
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll)
+  lastScrollY.value = currentScroll
 })
 </script>
 

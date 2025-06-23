@@ -48,7 +48,7 @@ class HandleInertiaRequests extends Middleware
                     'location' => $request->url(),
                 ]);
             },
-            'settings' => fn() => Cache::remember('settings', 3600, fn() => \App\Models\Setting::pluck('value', 'key')->toArray()),
+            'settings' => fn() => Cache::rememberForever('settings',  fn() => \App\Models\Setting::pluck('value', 'key')->toArray()),
 
 
         ];

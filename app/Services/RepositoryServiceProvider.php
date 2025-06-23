@@ -43,6 +43,11 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Repositories\Interfaces\Product\UnitInterface',
             'App\Repositories\Product\UnitRepository'
         );
+         //Promotion
+         $this->app->bind(
+            'App\Repositories\Interfaces\Promotion\PromotionInterface',
+            'App\Repositories\Promotion\PromotionRepository'
+        );
          //product
          $this->app->bind(
             'App\Repositories\Interfaces\Product\ProductInterface',
@@ -57,6 +62,12 @@ class RepositoryServiceProvider extends ServiceProvider
          $this->app->bind(
             'App\Repositories\Interfaces\Warehouse\WarehouseInterface',
             'App\Repositories\Warehouse\WarehouseRepository'
+        );
+
+            //Slider
+         $this->app->bind(
+            'App\Repositories\Interfaces\Slider\SliderInterface',
+            'App\Repositories\Slider\SliderRepository'
         );
     }
 }

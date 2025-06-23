@@ -15,17 +15,17 @@ class Product extends Model
         return $query->where('status', true);
     }
     // Define accessor for createdDate
-    public function getCreatedDateAttribute()
-    {
-        return date('d-m-Y', strtotime($this->attributes['created_at']));
-    }
+    // public function getCreatedDateAttribute()
+    // {
+    //     return date('d-m-Y', strtotime($this->attributes['created_at']));
+    // }
 
-    // Define accessor for updatedDate
-    public function getUpdatedDateAttribute()
-    {
-        return date('d-m-Y', strtotime($this->attributes['updated_at']));
-    }
-    protected $appends = ['created_date', 'updated_date'];
+    // // Define accessor for updatedDate
+    // public function getUpdatedDateAttribute()
+    // {
+    //     return date('d-m-Y', strtotime($this->attributes['updated_at']));
+    // }
+    // protected $appends = ['created_date', 'updated_date'];
 
     public function category()
     {
@@ -42,25 +42,30 @@ class Product extends Model
         return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
 
+    public function promotions()
+    {
+        return $this->belongsToMany(Promotion::class);
+    }
+
     //old
 
 
-// public function getAttributesAttribute()
-// {
-//     return $this->variants
-//         ->flatMap(function ($variant) {
-//             return $variant->attributeValues;
-//         })
-//         ->pluck('attribute')
-//         ->unique('id')
-//         ->values();
-// }
+    // public function getAttributesAttribute()
+    // {
+    //     return $this->variants
+    //         ->flatMap(function ($variant) {
+    //             return $variant->attributeValues;
+    //         })
+    //         ->pluck('attribute')
+    //         ->unique('id')
+    //         ->values();
+    // }
 
 
-// public function attributeValues()
-// {
-//     return $this->belongsToMany(AttributeValue::class, 'variant_attribute_values');
-// }
+    // public function attributeValues()
+    // {
+    //     return $this->belongsToMany(AttributeValue::class, 'variant_attribute_values');
+    // }
 
 
 
@@ -86,7 +91,7 @@ class Product extends Model
     //     return $this->hasManyThrough(AttributeValue::class, ProductVariant::class, 'product_id', 'id');
     // }
 
-     public function variants()
+    public function variants()
     {
         return $this->hasMany(ProductVariant::class);
     }

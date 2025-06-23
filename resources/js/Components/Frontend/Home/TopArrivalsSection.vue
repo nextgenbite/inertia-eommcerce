@@ -39,7 +39,7 @@ import { router, usePage } from '@inertiajs/vue3'
 import ProductCard from '@/Components/ProductCard.vue'
 import ProductCardSkeleton from '@/Components/ProductCardSkeleton.vue'
 
-const products = usePage().props.pagination
+const products = usePage().props.products
 
 const allProducts = ref([...products.data])
 const currentPage = ref(products.current_page)
@@ -60,12 +60,12 @@ const loadMore = () => {
     {
       preserveScroll: true,
       preserveState: true,
-      only: ['pagination'],
+      only: ['products'],
       onSuccess: (page) => {
-        const newProducts = page.props.pagination.data
+        const newProducts = page.props.products.data
         allProducts.value.push(...newProducts)
-        currentPage.value = page.props.pagination.current_page
-        totalPages.value = page.props.pagination.last_page
+        currentPage.value = page.props.products.current_page
+        totalPages.value = page.props.products.last_page
       },
       onFinish: () => {
         loading.value = false

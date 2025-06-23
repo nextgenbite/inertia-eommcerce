@@ -22,13 +22,14 @@ const item = ref({});
 // Helper function to initialize form fields
 function initializeForm() {
   props.dynamicFrom.forEach((field) => {
-    const defaultValue = field.type === "attribute"
-      ? []
-      : field.type === "select" && field.options[0]
+    const defaultValue =
+      field.type === "attribute"
+        ? []
+        : field.type === "select" && field.options[0]
         ? field.options[0][field.optionValue] || ""
         : field.type === "images"
-          ? []
-          : "";
+        ? []
+        : "";
 
     item.value[field.path] = defaultValue;
   });
@@ -43,7 +44,7 @@ function convertSelectValue(value, options, optionValue) {
   const isBoolean = typeof sampleOptionValue === "boolean";
 
   if (isNumber) return Number(value);
-  if (isBoolean) return value === 'true' || value === true;
+  if (isBoolean) return value === "true" || value === true;
   return String(value);
 }
 
@@ -75,11 +76,15 @@ watchEffect(() => {
 
     props.dynamicFrom.forEach((field) => {
       if (field.type === "image") {
-        imagePreview.value = "/" + props.data[field.path];
+        imagePreview.value = props.data[field.path]
+          ? "/" + props.data[field.path]
+          : null;
       } else if (field.type === "images") {
         form[field.path] = [];
       } else if (field.type === "attribute") {
-        const data = props.data[field.path] ? JSON.parse(props.data[field.path]) : [];
+        const data = props.data[field.path]
+          ? JSON.parse(props.data[field.path])
+          : [];
         field.items = data.map((item) => {
           return Object.keys(field.items[0] || {}).reduce((acc, key) => {
             acc[key] = item[key] || "";
@@ -88,7 +93,31 @@ watchEffect(() => {
         });
         form[field.key] = [...field.items];
       } else if (field.type === "select") {
-        form[field.path] = convertSelectValue(props.data[field.path], field.options, field.optionValue);
+        form[field.path] = convertSelectValue(
+          props.data[field.path],
+          field.options,
+          field.optionValue
+        );
+      } else if (field.type === "multi_select") {
+        let values = props.data[field.path];
+
+        if (Array.isArray(values)) {
+          // 🔧 FIX: Make sure we extract raw IDs (like [1, 2, 3])
+          form[field.path] = values.map((item) =>
+            typeof item === "object" && field.optionValue in item
+              ? item[field.optionValue]
+              : item.id ?? item
+          );
+        } else {
+          try {
+            values = values ? JSON.parse(values) : [];
+          } catch {
+            values = [];
+          }
+          form[field.path] = (values || []).map((val) =>
+            convertSelectValue(val, field.options, field.optionValue)
+          );
+        }
       } else {
         form[field.path] = props.data[field.path] ?? "";
       }
@@ -102,13 +131,18 @@ watchEffect(() => {
 
 // Add more attributes
 const addMore = () => {
-  const attributeInput = props.dynamicFrom.find((item) => item.key === "attribute");
+  const attributeInput = props.dynamicFrom.find(
+    (item) => item.key === "attribute"
+  );
 
   if (attributeInput && Array.isArray(attributeInput.items)) {
-    const newItem = Object.keys(attributeInput.items[0] || {}).reduce((acc, key) => {
-      acc[key] = "";
-      return acc;
-    }, {});
+    const newItem = Object.keys(attributeInput.items[0] || {}).reduce(
+      (acc, key) => {
+        acc[key] = "";
+        return acc;
+      },
+      {}
+    );
     attributeInput.items.push(newItem);
     form[attributeInput.type] = [...attributeInput.items];
   }
@@ -116,7 +150,9 @@ const addMore = () => {
 
 // Remove attribute
 const remove = (index) => {
-  const attributeInput = props.dynamicFrom.find((item) => item.key === "attribute");
+  const attributeInput = props.dynamicFrom.find(
+    (item) => item.key === "attribute"
+  );
 
   if (attributeInput && Array.isArray(attributeInput.items)) {
     attributeInput.items.splice(index, 1);
@@ -142,9 +178,11 @@ const onFileSelect = (event, field) => {
 // Parse images for preview
 function parseImages(value) {
   try {
-    const images = typeof value === 'string' ? JSON.parse(value) : value || [];
+    const images = typeof value === "string" ? JSON.parse(value) : value || [];
     return images.map((img) =>
-      typeof img === 'string' ? { url: '/' + img, name: img.split('/').pop() } : img
+      typeof img === "string"
+        ? { url: "/" + img, name: img.split("/").pop() }
+        : img
     );
   } catch (e) {
     return [];
@@ -152,60 +190,169 @@ function parseImages(value) {
 }
 
 const columnClassMap = {
-  1: 'grid-cols-1',
-  2: 'grid-cols-2',
-  3: 'grid-cols-3',
-  4: 'grid-cols-4',
-  5: 'grid-cols-5',
-  6: 'grid-cols-6',
-  7: 'grid-cols-7',
-  8: 'grid-cols-8',
-  9: 'grid-cols-9',
-  10: 'grid-cols-10',
+  1: "grid-cols-1",
+  2: "grid-cols-2",
+  3: "grid-cols-3",
+  4: "grid-cols-4",
+  5: "grid-cols-5",
+  6: "grid-cols-6",
+  7: "grid-cols-7",
+  8: "grid-cols-8",
+  9: "grid-cols-9",
+  10: "grid-cols-10",
 };
 
 const columnClass = computed(() => {
   const count = (form.attribute.items ?? []).length;
-  return columnClassMap[count] || 'grid-cols-1';
+  return columnClassMap[count] || "grid-cols-1";
 });
 </script>
 
 <template>
-  <Dialog v-model:visible="props.show" position="top" modal :header="'Update ' + props.title"
-    :style="{ width: props.modalWidth || '32rem' }" :closable="false">
-
+  <Dialog
+    v-model:visible="props.show"
+    position="top"
+    modal
+    :header="'Update ' + props.title"
+    :style="{ width: props.modalWidth || '32rem' }"
+    :closable="false"
+  >
     <form @submit.prevent="update">
       <div class="grid grid-cols-12 gap-2">
-        <div v-for="input in dynamicFrom" :key="input.key" class="field col-span-12" :class="input.class || ''">
+        <div
+          v-for="input in dynamicFrom"
+          :key="input.key"
+          class="field col-span-12"
+          :class="input.class || ''"
+        >
           <label :for="input.path">{{ input.label }}</label>
 
-          <Editor v-if="input.type === 'textarea'" v-model="form[input.path]" editorStyle="height: 120px" />
+          <Editor
+            v-if="input.type === 'textarea'"
+            v-model="form[input.path]"
+            editorStyle="height: 120px"
+          />
 
-          <Select v-else-if="input.type === 'select'" class="w-full" v-model="form[input.path]" :options="input.options"
-            :optionValue="input.optionValue" :optionLabel="input.optionLabel" :placeholder="'Select ' + input.label" />
+          <Select
+            v-else-if="input.type === 'select'"
+            class="w-full"
+            v-model="form[input.path]"
+            filter
+            checkmark
+            :options="input.options"
+            :optionValue="input.optionValue"
+            :optionLabel="input.optionLabel"
+            :placeholder="'Select ' + input.label"
+          />
+          <MultiSelect
+            v-else-if="input.type === 'multi_select'"
+            class="w-full"
+            v-model="form[input.path]"
+            filter
+            checkmark
+            :options="input.options"
+            display="chip"
+            :optionValue="input.optionValue"
+            :optionLabel="input.optionLabel"
+            :placeholder="'Select ' + input.label"
+          />
 
-          <div v-else-if="input.type === 'image'" class="card flex flex-col items-center gap-6">
-            <img v-if="imagePreview" :src="imagePreview" alt="Thumbnail" class="shadow-md rounded-xl w-full sm:w-64" />
-            <FileUpload mode="basic" @select="(event) => onFileSelect(event, input)" auto customUpload accept="image/*"
-              chooseLabel="Select Thumbnail" />
-          </div>
-
-          <MultipleImageUpload v-else-if="input?.type === 'images'" v-model="form[input.path]"
-            :existingImages="parseImages(data[input.path])" @update:existingImages="form[input.path] = $event" />
-
-          <div v-else-if="input.type === 'attribute'" class="grid gap-1" :class="columnClass">
-            <div v-for="(attribute, index) in form.attribute" :key="index" class="flex gap-2">
-              <div v-for="(value, key) in attribute" :key="key" class="col-span-1">
-                <InputText v-model="attribute[key]" :placeholder="key" required />
-              </div>
-              <Button v-if="index > 0" @click="remove(index)" icon="pi pi-minus" severity="danger" rounded raised outlined size="small" />
+          <div
+            v-else-if="input.type === 'image'"
+            class="card flex flex-col items-center gap-6"
+          >
+            <div v-if="imagePreview">
+              <!-- Image Preview -->
+              <img
+                :src="imagePreview"
+                alt="Thumbnail"
+                class="shadow-md rounded-xl w-full sm:w-64"
+              />
             </div>
-            <Button @click="addMore" icon="pi pi-plus" severity="success" rounded raised outlined size="small" />
+            <div v-else>
+              <!-- Placeholder when no image is selected -->
+              <div class="placeholder-image">No thumbnail selected.</div>
+            </div>
+            <FileUpload
+              mode="basic"
+              @select="(event) => onFileSelect(event, input)"
+              auto
+              customUpload
+              accept="image/*"
+              chooseLabel="Select Thumbnail"
+              severity="secondary"
+              class="p-button-outlined"
+            />
           </div>
 
-          <InputText v-else class="w-full" v-model="form[input.path]" :type="input.type" />
+          <MultipleImageUpload
+            v-else-if="input?.type === 'images'"
+            v-model="form[input.path]"
+            :existingImages="parseImages(data[input.path])"
+            @update:existingImages="form[input.path] = $event"
+          />
 
-          <small v-if="form.errors[input.path]" class="text-red-500">{{ form.errors[input.path] }}</small>
+          <div
+            v-else-if="input.type === 'attribute'"
+            class="grid gap-1"
+            :class="columnClass"
+          >
+            <div
+              v-for="(attribute, index) in form.attribute"
+              :key="index"
+              class="flex gap-2"
+            >
+              <div
+                v-for="(value, key) in attribute"
+                :key="key"
+                class="col-span-1"
+              >
+                <InputText
+                  v-model="attribute[key]"
+                  :placeholder="key"
+                  required
+                />
+              </div>
+              <Button
+                v-if="index > 0"
+                @click="remove(index)"
+                icon="pi pi-minus"
+                severity="danger"
+                rounded
+                raised
+                outlined
+                size="small"
+              />
+            </div>
+            <Button
+              @click="addMore"
+              icon="pi pi-plus"
+              severity="success"
+              rounded
+              raised
+              outlined
+              size="small"
+            />
+          </div>
+          <DatePicker
+            id="datepicker-24h"
+            v-else-if="input.type === 'date_time'"
+            v-model="form[input.path]"
+            showTime
+            hourFormat="24"
+            fluid
+          />
+
+          <InputText
+            v-else
+            class="w-full"
+            v-model="form[input.path]"
+            :type="input.type"
+          />
+
+          <small v-if="form.errors[input.path]" class="text-red-500">{{
+            form.errors[input.path]
+          }}</small>
         </div>
       </div>
 

@@ -10,18 +10,32 @@ use Inertia\Inertia;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Promotion;
 use App\Models\ShippingCost;
+use App\Models\Slider;
 
 class HomeController extends Controller
 {
     public function homePage(Request $request)
     {
         $categories = Category::with(['subCategories.subSubCategories'])->limit(9)->get();
-        $pagination = Product::latest()->paginate(10); // Adjust as needed
+        $flashSales = Promotion::with('products')
+            ->active()
+            ->where('type', 'flash_sale')
+            ->first();
+        $promotions = Promotion::with('products')
+            ->where('status', 1)
+            ->where('type', '!=', 'flash_sale')
+            ->get();
+
+
         return Inertia::render('Index', [
-            'products' =>  Product::with('category')->limit(10)->get(),
+            'products' =>  Product::latest()->paginate(10),
+            'brands' =>  Brand::latest()->limit(6)->get(),
+            'sliders' =>  Slider::latest()->limit(6)->get(),
             'categories' =>  $categories,
-            'pagination' =>  $pagination,
+            'flashSales' => $flashSales,
+            'promotions' => $promotions,
         ]);
     }
     public function ProductShow($slug)

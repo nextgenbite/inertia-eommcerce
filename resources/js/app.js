@@ -84,7 +84,8 @@ createInertiaApp({
                     options: {
                         darkModeSelector: '.app-dark',
                     },
-                }
+                },
+                 ripple: true
             })
             .use(ToastService)
             .use(ConfirmationService)

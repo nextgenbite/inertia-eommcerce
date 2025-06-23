@@ -42,7 +42,7 @@
           />
           <div class="flex-1">
             <div class="flex items-center justify-between w-full">
-              <h5 class="font-manrope font-semibold text-sm text-gray-900 truncate">
+              <h5 class="font-manrope font-semibold text-sm text-gray-900 whitespace-pre-line">
                 {{ item.product.title }}
               </h5>
               <Button
@@ -56,7 +56,7 @@
               />
             </div>
                                 <!-- Color and Size display -->
-                    <div class="flex gap-4 text-sm text-gray-500 " v-if="item.variant.attributes && item.variant.attributes.length">
+                    <div class="flex gap-4 text-sm text-gray-500 " v-if="item?.variant?.attributes && item?.variant?.attributes.length">
                       <span  v-for="attribute in item.variant.attributes" :key="attribute"
                         >{{attribute.name}}:
                         <span class="font-semibold text-gray-700">{{

@@ -1,219 +1,3 @@
-<template>
-  <default-layout>
-    <div class="container p-4 lg:p-0 lg:py-4">
-      <section class="grid grid-cols-12 gap-6">
-        <!-- Product Gallery -->
-        <div class="col-span-12 lg:col-span-4 flex flex-col items-center">
-          <Galleria
-            v-if="galleryData.length"
-            :value="galleryData"
-            :activeIndex="activeIndex"
-            :responsiveOptions="responsiveOptions"
-            :numVisible="5"
-            :circular="true"
-            :showItemNavigators="true"
-            :showItemNavigatorsOnHover="true"
-            class="w-full rounded-xl shadow-md bg-white"
-          >
-            <template #item="slotProps">
-              <img
-                :src="slotProps.item.itemImageSrc"
-                :alt="slotProps.item.alt"
-                class="w-full object-cover rounded-xl"
-              />
-            </template>
-            <template #thumbnail="slotProps">
-              <img
-                :src="slotProps.item.thumbnailImageSrc"
-                :alt="slotProps.item.alt"
-                class="rounded-lg h-20 object-cover"
-              />
-            </template>
-          </Galleria>
-          <img
-            v-else
-            :src="product.thumbnail ? `/${product.thumbnail}` : '/no-image.png'"
-            alt="Product Image"
-            class="w-full h-72 object-cover rounded-xl shadow-md bg-white"
-          />
-        </div>
-
-        <!-- Product Info -->
-        <div class="col-span-12 lg:col-span-5 flex flex-col gap-6">
-          <div class="flex flex-col gap-2">
-            <div class="flex items-start justify-between">
-              <div>
-                <h1 class="font-bold text-3xl text-gray-900 capitalize">
-                  {{ product.title }}
-                </h1>
-                <p class="text-base text-gray-500 capitalize">
-                  {{ product.category?.title || "Uncategorized" }}
-                </p>
-              </div>
-              <Button
-                icon="pi pi-heart"
-                aria-label="Add to Wishlist"
-                rounded
-                outlined
-                class="!border-gray-300"
-              />
-            </div>
-            <div class="flex flex-wrap items-center gap-4 mt-2">
-              <span class="text-2xl font-bold text-primary-700"
-                >${{ product.price }}</span
-              >
-              <span
-                class="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full"
-                >30% OFF</span
-              >
-              <span class="h-5 w-px bg-gray-200"></span>
-              <Tag
-                :severity="currentQuantity === 0 ? 'danger' : 'success'"
-                :value="
-                  currentQuantity === 0 ? 'Out of Stock' : currentQuantity
-                "
-              />
-              <span class="h-5 w-px bg-gray-200"></span>
-              <span
-                class="flex items-center gap-1 bg-yellow-400/90 text-white px-3 py-1 rounded-full text-sm"
-              >
-                <i class="pi pi-star-fill"></i>
-                <span class="font-semibold">4.8</span>
-              </span>
-            </div>
-          </div>
-
-          <!-- Attribute Selection -->
-          <div
-            v-for="attribute in groupedAttributes"
-            :key="attribute.id"
-            class="mb-2"
-          >
-            <h3 class="font-medium text-lg text-gray-900 mb-1">
-              {{ attribute.display_name }}
-            </h3>
-            <div class="flex flex-wrap gap-3">
-              <label
-                v-for="value in attribute.values"
-                :key="value.id"
-                class="cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  :name="'attribute-' + attribute.name"
-                  :value="value.id"
-                  class="hidden peer"
-                  @click="selectOption(attribute.id, value.id)"
-                />
-                <div
-                  class="p-1 border border-gray-200 rounded-md text-center transition-all duration-200 font-semibold shadow-sm hover:bg-gray-50"
-                  :class="[
-                    isSelected(attribute.id, value.id)
-                      ? 'ring-2 ring-primary-400 border-primary-400 bg-primary-50'
-                      : '',
-                    attribute.name === 'color'
-                      ? 'w-20'
-                      : 'px-4 py-1.5 rounded-full',
-                  ]"
-                >
-                  <img
-                    v-if="value.image"
-                    :src="`/${value.image}`"
-                    :alt="value.value"
-                    class="w-full h-14 object-cover rounded"
-                  />
-                  <p
-                    class="text-sm mt-1 capitalize"
-                    :class="
-                      isSelected(attribute.id, value.id)
-                        ? 'text-primary-600 font-semibold'
-                        : 'text-gray-600'
-                    "
-                  >
-                    {{ value.value }}
-                  </p>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <!-- Quantity & Cart Controls -->
-          <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
-            <div
-              class="flex items-center border rounded-full divide-x bg-white shadow-sm"
-            >
-              <button
-                @click="quantity > 1 ? quantity-- : ''"
-                class="px-4 py-2 text-primary-600 hover:bg-primary-50 rounded-l-full transition"
-                :disabled="quantity <= 1"
-              >
-                <i class="pi pi-minus"></i>
-              </button>
-              <span class="px-4 py-2 w-10 text-center">{{ quantity }}</span>
-              <button
-                @click="quantity < 10 ? quantity++ : ''"
-                class="px-4 py-2 text-primary-600 hover:bg-primary-50 rounded-r-full transition"
-                :disabled="quantity >= 10"
-              >
-                <i class="pi pi-plus"></i>
-              </button>
-            </div>
-            <Button
-              raised
-              rounded
-              class="w-full sm:w-auto"
-              label="Add to Cart"
-              icon="pi pi-shopping-bag"
-              @click="addToCart"
-              :disabled="product.has_variant && !matchedVariant"
-            />
-          </div>
-
-          <!-- Total Price & Buy Now -->
-          <div
-            class="flex items-center justify-between rounded-xl bg-primary/10 p-5 shadow"
-          >
-            <div>
-              <p class="text-sm text-gray-600">Total Price</p>
-              <h3 class="font-bold text-primary text-xl">
-                ${{ (product.price * quantity).toFixed(2) }}
-              </h3>
-            </div>
-            <Button
-              raised
-              rounded
-              icon="pi pi-shopping-cart"
-              label="Buy Now"
-              class="bg-primary-600 text-white"
-            />
-          </div>
-        </div>
-
-        <!-- Right Sidebar -->
-        <div class="col-span-12 lg:col-span-3">
-          <RightSideBar :product="product" :shipping="shipping" />
-        </div>
-      </section>
-
-      <!-- review -->
-      <Review :product="product" />
-    </div>
-
-    <div class="container p-4 lg:p-0 lg:pb-4">
-      <h2 class="text-lg md:text-xl font-bold text-gray-800 uppercase mb-6">
-        Top Related Products
-        <hr
-          class="lg:w-1/4 min-h-0.5 my-4 bg-gray-300 border-0 rounded lg:my-1 dark:bg-gray-700"
-        />
-      </h2>
-      <SwiperSlider :items="relatedProducts" :swiperOptions="productOptions">
-        <template #default="{ item }">
-          <ProductCard :product="item" />
-        </template>
-      </SwiperSlider>
-    </div>
-  </default-layout>
-</template>
 
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from "vue";
@@ -224,6 +8,7 @@ import ProductCard from "@/Components/ProductCard.vue";
 import { useCartStore } from "@/stores/cartStore";
 import RightSideBar from "@/Components/Frontend/Product/RightSideBar.vue";
 import Review from "@/Components/Frontend/Product/Review.vue";
+import MetaTags from "@/Components/MetaTags.vue";
 
 import { useToast } from "primevue/usetoast";
 
@@ -449,6 +234,226 @@ const selectOption = (attributeId, valueId) => {
 const isSelected = (attributeId, valueId) =>
   selected.value[attributeId] === valueId;
 </script>
+
+
+<template>
+  <default-layout>
+         <MetaTags :title="product.title" :description="product?.subtitle" :og_image="product?.thumbnail" />
+
+    <div class="container p-4 lg:p-0 lg:py-4">
+      <section class="grid grid-cols-12 gap-6">
+        <!-- Product Gallery -->
+        <div class="col-span-12 lg:col-span-4 flex flex-col items-center">
+          <Galleria
+            v-if="galleryData.length"
+            :value="galleryData"
+            :activeIndex="activeIndex"
+            :responsiveOptions="responsiveOptions"
+            :numVisible="5"
+            :circular="true"
+            :showItemNavigators="true"
+            :showItemNavigatorsOnHover="true"
+            class="w-full rounded-xl shadow-md bg-white"
+          >
+            <template #item="slotProps">
+              <img
+                :src="slotProps.item.itemImageSrc"
+                :alt="slotProps.item.alt"
+                class="w-full object-cover rounded-xl"
+              />
+            </template>
+            <template #thumbnail="slotProps">
+              <img
+                :src="slotProps.item.thumbnailImageSrc"
+                :alt="slotProps.item.alt"
+                class="rounded-lg h-20 object-cover"
+              />
+            </template>
+          </Galleria>
+          <img
+            v-else
+            :src="product.thumbnail ? `/${product.thumbnail}` : '/no-image.png'"
+            alt="Product Image"
+            class="w-full h-72 object-cover rounded-xl shadow-md bg-white"
+          />
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-span-12 lg:col-span-5 flex flex-col gap-6">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-start justify-between">
+              <div>
+                <h1 class="font-bold text-3xl text-gray-900 capitalize">
+                  {{ product.title }}
+                </h1>
+                <p class="text-base text-gray-500 capitalize">
+                  {{ product.category?.title || "Uncategorized" }}
+                </p>
+              </div>
+              <Button
+                icon="pi pi-heart"
+                aria-label="Add to Wishlist"
+                rounded
+                outlined
+                class="!border-gray-300"
+              />
+            </div>
+            <div class="flex flex-wrap items-center gap-4 mt-2">
+              <span class="text-2xl font-bold text-primary-700"
+                >${{ product.price }}</span
+              >
+              <span
+                class="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full"
+                >30% OFF</span
+              >
+              <span class="h-5 w-px bg-gray-200"></span>
+              <Tag
+                :severity="currentQuantity === 0 ? 'danger' : 'success'"
+                :value="
+                  currentQuantity === 0 ? 'Out of Stock' : currentQuantity
+                "
+              />
+              <span class="h-5 w-px bg-gray-200"></span>
+              <span
+                class="flex items-center gap-1 bg-yellow-400/90 text-white px-3 py-1 rounded-full text-sm"
+              >
+                <i class="pi pi-star-fill"></i>
+                <span class="font-semibold">4.8</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Attribute Selection -->
+          <div
+            v-for="attribute in groupedAttributes"
+            :key="attribute.id"
+            class="mb-2"
+          >
+            <h3 class="font-medium text-lg text-gray-900 mb-1">
+              {{ attribute.display_name }}
+            </h3>
+            <div class="flex flex-wrap gap-3">
+              <label
+                v-for="value in attribute.values"
+                :key="value.id"
+                class="cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  :name="'attribute-' + attribute.name"
+                  :value="value.id"
+                  class="hidden peer"
+                  @click="selectOption(attribute.id, value.id)"
+                />
+                <div
+                  class="p-1 border border-gray-200 rounded-md text-center transition-all duration-200 font-semibold shadow-sm hover:bg-gray-50"
+                  :class="[
+                    isSelected(attribute.id, value.id)
+                      ? 'ring-2 ring-primary-400 border-primary-400 bg-primary-50'
+                      : '',
+                    attribute.name === 'color'
+                      ? 'w-20'
+                      : 'px-4 py-1.5 rounded-full',
+                  ]"
+                >
+                  <img
+                    v-if="value.image"
+                    :src="`/${value.image}`"
+                    :alt="value.value"
+                    class="w-full h-14 object-cover rounded"
+                  />
+                  <p
+                    class="text-sm mt-1 capitalize"
+                    :class="
+                      isSelected(attribute.id, value.id)
+                        ? 'text-primary-600 font-semibold'
+                        : 'text-gray-600'
+                    "
+                  >
+                    {{ value.value }}
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Quantity & Cart Controls -->
+          <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
+            <div
+              class="flex items-center border rounded-full divide-x bg-white shadow-sm"
+            >
+              <button
+                @click="quantity > 1 ? quantity-- : ''"
+                class="px-4 py-2 text-primary-600 hover:bg-primary-50 rounded-l-full transition"
+                :disabled="quantity <= 1"
+              >
+                <i class="pi pi-minus"></i>
+              </button>
+              <span class="px-4 py-2 w-10 text-center">{{ quantity }}</span>
+              <button
+                @click="quantity < 10 ? quantity++ : ''"
+                class="px-4 py-2 text-primary-600 hover:bg-primary-50 rounded-r-full transition"
+                :disabled="quantity >= 10"
+              >
+                <i class="pi pi-plus"></i>
+              </button>
+            </div>
+            <Button
+              raised
+              rounded
+              class="w-full sm:w-auto"
+              label="Add to Cart"
+              icon="pi pi-shopping-bag"
+              @click="addToCart"
+              :disabled="product.has_variant && !matchedVariant"
+            />
+          </div>
+
+          <!-- Total Price & Buy Now -->
+          <div
+            class="flex items-center justify-between rounded-xl bg-primary/10 p-5 shadow"
+          >
+            <div>
+              <p class="text-sm text-gray-600">Total Price</p>
+              <h3 class="font-bold text-primary text-xl">
+                ${{ (product.price * quantity).toFixed(2) }}
+              </h3>
+            </div>
+            <Button
+              raised
+              rounded
+              icon="pi pi-shopping-cart"
+              label="Buy Now"
+              class="bg-primary-600 text-white"
+            />
+          </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="col-span-12 lg:col-span-3">
+          <RightSideBar :product="product" :shipping="shipping" />
+        </div>
+      </section>
+
+      <!-- review -->
+      <Review :product="product" />
+    </div>
+
+    <div class="container p-4 lg:p-0 lg:pb-4">
+      <h2 class="text-lg md:text-xl font-bold text-gray-800 uppercase mb-6">
+        Top Related Products
+        <hr
+          class="lg:w-1/4 min-h-0.5 my-4 bg-gray-300 border-0 rounded lg:my-1 dark:bg-gray-700"
+        />
+      </h2>
+      <SwiperSlider :items="relatedProducts" :swiperOptions="productOptions">
+        <template #default="{ item }">
+          <ProductCard :product="item" />
+        </template>
+      </SwiperSlider>
+    </div>
+  </default-layout>
+</template>
 
 <style>
 /* .nav-for-slider .swiper-slide {

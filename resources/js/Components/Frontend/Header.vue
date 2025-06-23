@@ -1,10 +1,12 @@
 <template>
   <div>
-    <!-- ---- Start Header ----- -->
+<div ref="header"
+      id="header" class="w-full z-50">
+        <!-- ---- Start Header ----- -->
 
     <header
-      id="header"
-      class="py-1 px-8 md:pt-2 shadow-sm bg-white/20   w-full z-50"
+
+      class="py-1 px-8 md:pt-2 shadow-sm bg-white/20 w-full "
     >
       <div class="flex items-center justify-between gap-4">
         <!-- logo  -->
@@ -152,9 +154,9 @@
     <!-- ---- End Header ----- -->
 
     <!-- ---- Start NavBar ----- -->
-    <nav class="bg-primary hidden lg:block">
+    <nav class="bg-primary hidden lg:block w-full" id="navbar">
       <div class="container">
-        <div class="flex">
+        <div class="flex justify-between">
           <!-- ---- All Category ----- -->
           <div
             class="lg:px-[2.2rem] xl:px-[3.85rem] 2xl:px-[8.8rem] py-4 bg-white/10  flex items-center cursor-pointer group relative"
@@ -193,7 +195,8 @@
           <!-- ---- All Category End ----- -->
 
           <!-- ---- Nav Menu ----- -->
-          <div class="flex flex-1 justify-center">
+          <!-- <div class="flex flex-1 justify-center"> -->
+          <div class="flex justify-center">
             <div class="flex items-center space-x-10 text-base capitalize">
               <Link
                 v-for="item in menus"
@@ -202,9 +205,9 @@
                 :href="item.route"
                 class="relative w-fit block after:block after:content-[''] after:absolute after:h-[2px] after:bg-white after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center text-gray-200 hover:text-white font-semibold transition-all ease-in-out duration-300"
                 :class="{
-                  'text-white after:scale-x-100': item.route === $page.url,
+                  'text-white after:scale-x-100': $page.component ===  item.component,
                 }"
-                >{{ item.label }}</Link
+                >{{ item.label}}</Link
               >
             </div>
           </div>
@@ -212,6 +215,7 @@
         </div>
       </div>
     </nav>
+</div>
     <!-- ---- End NavBar ----- -->
 
     <!-- ---- Mobile Menu Bar ----- -->
@@ -221,7 +225,46 @@
     <!-- ----End Mobile Menu Bar ----- -->
 
     <!-- ---- Mobile Side Bar ----- -->
-    <Drawer v-model:visible="toggleMenu">
+ <!-- <Drawer v-model:visible="toggleMenu">
+    <template #container="{ closeCallback }">
+      <div class="flex flex-col h-full">
+        <div class="flex items-center justify-between px-6 pt-4 shrink-0">
+          <span class="inline-flex items-center gap-2">
+            <span class="font-semibold text-2xl text-primary">Menu</span>
+          </span>
+          <Button
+            type="button"
+            @click="closeCallback"
+            icon="pi pi-times pi"
+            rounded
+            outlined
+          />
+        </div>
+
+        <div class="overflow-y-auto">
+          <ul class="list-none p-4 m-0">
+            <MenuItem
+              v-for="(item, index) in menuItems"
+              :key="index"
+              :item="item"
+            />
+          </ul>
+        </div>
+
+        <div class="mt-auto">
+          <hr class="mb-4 mx-4 border-t border-0 border-surface-200 dark:border-surface-700" />
+          <a
+            v-ripple
+            class="m-4 flex items-center cursor-pointer p-4 gap-2 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
+          >
+            <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
+            <span class="font-bold">Amy Elsner</span>
+          </a>
+        </div>
+      </div>
+    </template>
+  </Drawer> -->
+ <Drawer v-model:visible="toggleMenu">
       <template #container="{ closeCallback }">
         <div class="flex flex-col h-full">
           <div class="flex items-center justify-between px-6 pt-4 shrink-0">
@@ -252,140 +295,17 @@
                   }"
                   class="p-4 flex items-center justify-between text-surface-500 dark:text-surface-400 cursor-pointer p-ripple"
                 >
-                  <span class="font-medium">FAVORITES</span>
+                  <span class="font-medium">Menu</span>
                   <i class="pi pi-chevron-down"></i>
                 </div>
                 <ul class="list-none p-0 m-0 overflow-hidden">
-                  <li>
-                    <a
-                      v-ripple
-                      class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                    >
-                      <i class="pi pi-home mr-2"></i>
-                      <span class="font-medium">Dashboard</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      v-ripple
-                      class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                    >
-                      <i class="pi pi-bookmark mr-2"></i>
-                      <span class="font-medium">Bookmarks</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      v-ripple
-                      v-styleclass="{
-                        selector: '@next',
-                        enterFromClass: 'hidden',
-                        enterActiveClass: 'animate-slidedown',
-                        leaveToClass: 'hidden',
-                        leaveActiveClass: 'animate-slideup',
-                      }"
-                      class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                    >
-                      <i class="pi pi-chart-line mr-2"></i>
-                      <span class="font-medium">Reports</span>
-                      <i class="pi pi-chevron-down ml-auto"></i>
-                    </a>
-                    <ul
-                      class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out"
-                    >
-                      <li>
-                        <a
-                          v-ripple
-                          v-styleclass="{
-                            selector: '@next',
-                            enterFromClass: 'hidden',
-                            enterActiveClass: 'animate-slidedown',
-                            leaveToClass: 'hidden',
-                            leaveActiveClass: 'animate-slideup',
-                          }"
-                          class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                        >
-                          <i class="pi pi-chart-line mr-2"></i>
-                          <span class="font-medium">Revenue</span>
-                          <i class="pi pi-chevron-down ml-auto"></i>
-                        </a>
-                        <ul
-                          class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out"
-                        >
-                          <li>
-                            <a
-                              v-ripple
-                              class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                            >
-                              <i class="pi pi-table mr-2"></i>
-                              <span class="font-medium">View</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              v-ripple
-                              class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                            >
-                              <i class="pi pi-search mr-2"></i>
-                              <span class="font-medium">Search</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li>
-                        <a
-                          v-ripple
-                          class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                        >
-                          <i class="pi pi-chart-line mr-2"></i>
-                          <span class="font-medium">Expenses</span>
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <a
-                      v-ripple
-                      class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                    >
-                      <i class="pi pi-users mr-2"></i>
-                      <span class="font-medium">Team</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      v-ripple
-                      class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                    >
-                      <i class="pi pi-comments mr-2"></i>
-                      <span class="font-medium">Messages</span>
-                      <span
-                        class="inline-flex items-center justify-center ml-auto bg-primary text-primary-contrast rounded-full"
-                        style="min-width: 1.5rem; height: 1.5rem"
-                        >3</span
-                      >
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      v-ripple
-                      class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                    >
-                      <i class="pi pi-calendar mr-2"></i>
-                      <span class="font-medium">Calendar</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      v-ripple
-                      class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                    >
-                      <i class="pi pi-cog mr-2"></i>
-                      <span class="font-medium">Settings</span>
-                    </a>
-                  </li>
+                <MenuItem
+              v-for="(item, index) in menus"
+              :key="index"
+              :item="item"
+            />
                 </ul>
-              </li>
+            </li>
             </ul>
           </div>
           <div class="mt-auto">
@@ -406,24 +326,27 @@
         </div>
       </template>
     </Drawer>
-
     <!-- ---- End Mobile Side Bar ----- -->
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed,watch ,onMounted, onUnmounted } from "vue";
 import { Head, Link, usePage, router } from "@inertiajs/vue3";
+import { useScroll, useEventListener } from '@vueuse/core'
 import { useAppStore } from "@/stores/appStore";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import CartComponent from "@/Components/Frontend/Cart.vue";
 import BottomNavigation from "./BottomNavigation.vue";
+import MenuItem from './MenuItem.vue';
 const store = useAppStore();
 const toggleMenu = ref(false);
 const userMenu = ref();
 const userToggle = (event) => {
   userMenu.value.toggle(event);
 };
+
+
 
 const user = ref([
   {
@@ -441,22 +364,103 @@ const favicon = computed(() => props.settings?.favicon || "/no-image.png");
 const logo = computed(() => props.settings?.logo || "/no-image.png");
 
 const menus = ref([
-  { label: "Home", icon: "pi pi-home", route: "/" },
+  { label: "Home", icon: "pi pi-home", route: "/", component: 'Index' },
 
 //   { label: "Top Products", icon: "pi pi-star", route: "/top-products" },
 //   { label: "Flash Sale", icon: "pi pi-bolt", route: "/flash-sale" },
-  { label: "Top Deals", icon: "pi pi-tag", route: "/top-deals" },
+  { label: "Top Deals", icon: "pi pi-tag", route: "/top-deals", component: 'TopDeals' },
 //   { label: "Top New Arrivals", icon: "pi pi-envelope", route: "/contact" },
   // { label: 'Categories', icon: 'pi pi-list', route: '/categories' },
   // { label: 'Brands', icon: 'pi pi-tags', route: '/brands' },
   // { label: 'Blog', icon: 'pi pi-pencil', route: '/blog' },
 
-  { label: "Shop", icon: "pi pi-shopping-bag", route: "/shop" },
+  { label: "Shop", icon: "pi pi-shopping-bag", route: "/shop", component: 'Shop' },
 //   { label: "About", icon: "pi pi-info-circle", route: "/about" },
   { label: "Contact", icon: "pi pi-envelope", route: "/contact" },
+  //   {
+//     label: 'Reports',
+//     icon: 'pi pi-chart-line',
+//     children: [
+//       {
+//         label: 'Revenue',
+//         icon: 'pi pi-chart-line',
+//         children: [
+//           { label: 'View', icon: 'pi pi-table' },
+//           { label: 'Search', icon: 'pi pi-search' },
+//         ],
+//       },
+//       {
+//         label: 'Expenses',
+//         icon: 'pi pi-chart-line',
+//       },
+//     ],
+//   },
+
+//   {
+//     label: 'Messages',
+//     icon: 'pi pi-comments',
+//     badge: 3,
+//   },
 ]);
+
+
+// onMounted(() => {
+//   const header = document.getElementById('header');
+
+//   const handleScroll = () => {
+//     const scrollY = window.scrollY;
+
+//     if (scrollY > 50) {
+//         header.classList.add('fixed','backdrop-blur-sm', 'animate-slide-down');
+
+//     } else {
+//       header?.classList.remove('fixed','backdrop-blur-sm', 'animate-slide-down');
+//       document.body.style.paddingTop = '0';
+//     }
+//   };
+
+//   window.addEventListener('scroll', handleScroll);
+
+//   onUnmounted(() => {
+//     window.removeEventListener('scroll', handleScroll);
+//   });
+// });
+
+const header = ref(null)
+const { y } = useScroll(window)
+
+const handleScroll = () => {
+  if (!header.value) return
+
+  if (y.value > 50) {
+    header.value.classList.add('fixed', 'backdrop-blur-sm', 'animate-slide-down')
+  } else {
+    header.value.classList.remove('fixed', 'backdrop-blur-sm', 'animate-slide-down')
+    document.body.style.paddingTop = '0'
+  }
+}
+
+onMounted(() => {
+  handleScroll() // Initial check
+  useEventListener(window, 'scroll', handleScroll)
+})
+
+// Optional: make it reactive in case `y` changes and you want to auto-apply styles
+watch(y, () => handleScroll())
 </script>
 
 <style scoped>
-/* Add any scoped custom styles if needed */
+/* This is optional if not using Tailwind custom animations */
+@keyframes slideDown {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
 </style>

@@ -58,7 +58,7 @@
     <!-- ---- End Category  ----- -->
     <div class="md:col-span-3 lg:col-span-4">
       <!-- ---- Start Banner  ----- -->
-         <!-- <swiper
+      <!-- <swiper
                 :modules="[Autoplay, EffectCreative, Pagination]"
                 :autoplay="{
                     delay: 7000,
@@ -109,22 +109,39 @@
                 </swiper-slide>
             </swiper> -->
 
-
-      <Galleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="5"
-    :showThumbnails="false" :showIndicators="true" :changeItemOnIndicatorHover="true" :showIndicatorsOnItem="true" containerClass=" max-h-[28rem] rounded-none"  :autoPlay="true" :transitionInterval="5000" indicatorsPosition="bottom"  :circular="true" :showItemNavigators="true" :showItemNavigatorsOnHover="true">
-    <template #item="slotProps">
-<img :src="slotProps.item.itemImageSrc" class=" max-h-[28rem] rounded-none" :alt="slotProps.item.alt" style="width: 100%; display: block" />
-
-    </template>
-</Galleria>
+      <Galleria
+        :value="$page.props.sliders"
+        :responsiveOptions="responsiveOptions"
+        :numVisible="5"
+        :showThumbnails="false"
+        :showIndicators="true"
+        :changeItemOnIndicatorHover="true"
+        :showIndicatorsOnItem="true"
+        containerClass=" max-h-[28rem] rounded-none"
+        :autoPlay="true"
+        :transitionInterval="5000"
+        indicatorsPosition="bottom"
+        :circular="true"
+        :showItemNavigators="true"
+        :showItemNavigatorsOnHover="true"
+      >
+        <template #item="slotProps">
+          <img
+            :src="'/' + slotProps.item.image"
+            fetchpriority="high"
+            class="max-h-[28rem] rounded-none"
+            :alt="slotProps.item.alt"
+            style="width: 100%; display: block"
+          />
+        </template>
+      </Galleria>
 
       <!-- ---- End Banner ----- -->
     </div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
-import { PhotoService } from "@/sakai//service/PhotoService";
+import { ref } from "vue";
 
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -135,17 +152,13 @@ import "swiper/css/effect-creative";
 import { Autoplay, EffectCreative, Pagination } from "swiper/modules";
 
 const onSwiper = (swiper) => {
-  console.log(swiper);
+//   console.log(swiper);
 };
 const onSlideChange = () => {
   console.log("slide change");
 };
 
-onMounted(() => {
-  PhotoService.getImages().then((data) => (images.value = data));
-});
 
-const images = ref();
 const responsiveOptions = ref([
   {
     breakpoint: "991px",

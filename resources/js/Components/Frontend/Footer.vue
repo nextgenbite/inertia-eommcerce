@@ -1,201 +1,69 @@
 <template>
-    <!-- ---- Start Footer  ----- -->
-    <footer class="bg-primary-950 pt-16 pb-12 border-t border-gray-100">
-      <div class="container">
-        <div class="xl:grid xl:grid-cols-3 xl:gap-8">
-          <div class="space-y-8 xl:col-span-1">
-            <img
-              :src="`/${$page.props.settings.logo}` || 'no-image.png'"
-              :alt="$page.props.settings.app_name"
-              class="h-12"
-            />
-            <p class="text-white text-base font-roboto">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit
-              consectetur adipiscing.
-            </p>
-            <div class="flex space-x-5">
-              <a
-                title="title"
-                href="#"
-                class="text-gray-400 hover:text-gray-500"
-              >
-                <i class="pi pi-facebook-f"></i>
-              </a>
+  <!-- Footer -->
+  <footer class="bg-primary-800 text-white border-t border-gray-700">
+    <div class="container mx-auto px-4 py-16 grid gap-12 lg:grid-cols-3">
+      <!-- Logo + Description -->
+      <div>
+        <img
+          :src="`/${$page.props.settings.logo}` || 'no-image.png'"
+          :alt="$page.props.settings.app_name"
+          class="h-12 mb-4"
+        />
+        <p class="text-sm leading-relaxed">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin gravida nibh vel velit auctor aliquet.
+        </p>
 
-              <a
-                title="title"
-                href="#"
-                class="text-gray-400 hover:text-gray-500"
-              >
-                <i class="pi pi-twitter"></i>
-              </a>
-
-              <a
-                title="title"
-                href="#"
-                class="text-gray-400 hover:text-gray-500"
-              >
-                <i class="pi pi-instagram"></i>
-              </a>
-
-              <a
-                title="title"
-                href="#"
-                class="text-gray-400 hover:text-gray-500"
-              >
-                <i class="pi pi-linkedin-in"></i>
-              </a>
-            </div>
-          </div>
-
-          <!-- ---- Footer link   ----- -->
-
-          <div class="mt-12 grid grid-cols-1 gap-8 xl:mt-0 xl:col-span-2">
-            <div class="grid grid-cols-2 gap-8">
-              <div>
-                <h3
-                  class="text-sm lg:text-base font-semibold text-white tracking-wide uppercase"
-                >
-                  Quick links
-                </h3>
-                <div class="mt-4 space-y-2">
-                  <a
-                    title="Flash Deals"
-                    href="#"
-                    class="text-base text-white hover:text-gray-400 block"
-                  >
-                    Flash Deals
-                  </a>
-                  <a
-                    title="Featured Products"
-                    href="#"
-                    class="text-base text-white hover:text-gray-400 block"
-                  >
-                    Featured Products
-                  </a>
-                  <a
-                    title="Best Selling Products"
-                    href="#"
-                    class="text-base text-white hover:text-gray-400 block"
-                  >
-                    Best Selling Products
-                  </a>
-                  <a
-                    title=" Truck Order"
-                    href="#"
-                    class="text-base text-white hover:text-gray-400 block"
-                  >
-                    Truck Order
-                  </a>
-                </div>
-              </div>
-
-              <div class="">
-                <h3
-                  class="text-sm lg:text-base font-semibold text-white tracking-wide uppercase"
-                >
-                  Other
-                </h3>
-                <div class="mt-4 space-y-2">
-                  <a
-                    title="About Us"
-                    href="#"
-                    class="text-base text-white hover:text-gray-400 block"
-                  >
-                    About Us
-                  </a>
-                  <a
-                    title="Terms And Conditions"
-                    href="#"
-                    class="text-base text-white hover:text-gray-400 block"
-                  >
-                    Terms And Conditions
-                  </a>
-                  <a
-                    title="title"
-                    href="#"
-                    class="text-base text-white hover:text-gray-400 block"
-                  >
-                    Privacy Policy
-                  </a>
-                  <a
-                    title="title"
-                    href="#"
-                    class="text-base text-white hover:text-gray-400 block"
-                  >
-                    Return Policy
-                  </a>
-                  <a
-                    title="title"
-                    href="#"
-                    class="text-base text-white hover:text-gray-400 block"
-                  >
-                    Contact Us
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <!-- <div class="md:grid md:grid-cols-2 md:gap-8 ">
-          <div>
-               <h3 class="text-sm font-semibold text-gray-400 tracking-wide uppercase " > Company </h3>
-               <div class="mt-4 space-y-4 ">
-                    <a title="title" href="#" class="text-base text-gray-500 hover:text-gray-900 block font-semibold " >
-                         About
-                    </a>
-                    <a title="title" href="#" class="text-base text-gray-500 hover:text-gray-900 block font-semibold " >
-                         Blog
-                    </a>
-                    <a title="title" href="#" class="text-base text-gray-500 hover:text-gray-900 block font-semibold " >
-                         Jobs
-                    </a>
-                    <a title="title" href="#" class="text-base text-gray-500 hover:text-gray-900 block font-semibold " >
-                         Service
-                    </a>
-               </div>
-          </div>
-
-
-
-          <div class="mt-12 md:mt-0">
-               <h3 class="text-sm font-semibold text-gray-400 tracking-wide uppercase " > Legal </h3>
-               <div class="mt-4 space-y-4 ">
-                    <a title="title" href="#" class="text-base text-gray-500 hover:text-gray-900 block font-semibold " >
-                         Claim
-                    </a>
-                    <a title="title" href="#" class="text-base text-gray-500 hover:text-gray-900 block font-semibold " >
-                         Privacy
-                    </a>
-                    <a title="title" href="#" class="text-base text-gray-500 hover:text-gray-900 block font-semibold " >
-                         Policy
-                    </a>
-                    <a title="title" href="#" class="text-base text-gray-500 hover:text-gray-900 block font-semibold " >
-                        Terms
-                    </a>
-               </div>
-          </div>
-
-
-     </div> -->
-          </div>
-          <!-- ----End Footer link   ----- -->
+        <!-- Social Icons -->
+        <div class="mt-6 flex space-x-4">
+          <a href="#" aria-label="Facebook" class="hover:text-primary-300">
+            <i class="pi pi-facebook-f text-xl"></i>
+          </a>
+          <a href="#" aria-label="Twitter" class="hover:text-primary-300">
+            <i class="pi pi-twitter text-xl"></i>
+          </a>
+          <a href="#" aria-label="Instagram" class="hover:text-primary-300">
+            <i class="pi pi-instagram text-xl"></i>
+          </a>
+          <a href="#" aria-label="LinkedIn" class="hover:text-primary-300">
+            <i class="pi pi-linkedin text-xl"></i>
+          </a>
         </div>
       </div>
-    </footer>
-    <!-- ---- End Footer   ----- -->
 
-    <!-- ---- Copyright  ----- -->
-    <div class="bg-gray-800 py-4">
-      <div class="container flex items-center justify-between">
-        <p class="text-white font-semibold">© Nextgenbite 2024</p>
-
+      <!-- Footer Links -->
+      <div class="grid grid-cols-2 gap-8 lg:col-span-2">
+        <!-- Quick Links -->
         <div>
-          <img alt="image" src="/images/methods.png" class="h-5" />
+          <h4 class="text-lg font-semibold uppercase tracking-wide mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-gray-300">Flash Deals</a></li>
+            <li><a href="#" class="hover:text-gray-300">Featured Products</a></li>
+            <li><a href="#" class="hover:text-gray-300">Best Selling Products</a></li>
+            <li><a href="#" class="hover:text-gray-300">Truck Order</a></li>
+          </ul>
+        </div>
+
+        <!-- Other Links -->
+        <div>
+          <h4 class="text-lg font-semibold uppercase tracking-wide mb-4">Support</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-gray-300">About Us</a></li>
+            <li><a href="#" class="hover:text-gray-300">Terms & Conditions</a></li>
+            <li><a href="#" class="hover:text-gray-300">Privacy Policy</a></li>
+            <li><a href="#" class="hover:text-gray-300">Return Policy</a></li>
+            <li><a href="#" class="hover:text-gray-300">Contact Us</a></li>
+          </ul>
         </div>
       </div>
     </div>
 
-    <!-- ---- End Copyright   ----- -->
+    <!-- Bottom Bar -->
+    <div class="bg-gray-800 border-t border-gray-700 py-4">
+      <div class="container mx-auto px-4 flex flex-col sm:flex-row justify-center items-center text-sm">
+        <p>© {{ new Date().getFullYear() }} Nextgenbite. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 </template>
 
 <script setup>

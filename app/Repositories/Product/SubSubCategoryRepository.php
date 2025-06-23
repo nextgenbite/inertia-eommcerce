@@ -35,6 +35,7 @@ class SubSubCategoryRepository implements SubSubCategoryInterface
         return SubSubCategory::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
+            'category_id' => $request->category_id,
             'sub_category_id' => $request->sub_category_id,
             'thumbnail' => $thumbnail ?? null,
 
@@ -96,9 +97,9 @@ class SubSubCategoryRepository implements SubSubCategoryInterface
 
         $form = [
             ['key' => 'title', 'label' => 'Title', 'path' => 'title', 'type' => 'text'],
-            ['key' => 'category_id', 'label' => 'Category', 'path' => 'category_id', 'type' => 'select', 'class' => ' col-span-6', 'optionLabel' => 'title', 'optionValue' => 'id', 'options' => Category::select('id', 'title', 'created_at', 'updated_at')->get()],
-            ['key' => 'sub_category_id', 'label' => 'Sub Category', 'path' => 'sub_category_id', 'type' => 'select', 'class' => ' col-span-6', 'optionLabel' => 'title', 'optionValue' => 'id', 'options' => \App\Models\SubCategory::select('id', 'title', 'created_at', 'updated_at')->get()],
-            ['key' => 'thumbnail', 'label' => 'Thumbnail', 'type' => 'image', 'path' => 'thumbnail'],
+            // ['key' => 'category_id', 'label' => 'Category', 'path' => 'category_id', 'type' => 'select', 'class' => ' lg:col-span-6', 'optionLabel' => 'title', 'optionValue' => 'id', 'options' => Category::select('id', 'title')->get()],
+            ['key' => 'sub_category_id', 'label' => 'Sub Category', 'path' => 'sub_category_id', 'type' => 'select', 'class' => ' lg:col-span-6', 'optionLabel' => 'title', 'optionValue' => 'id', 'options' => \App\Models\SubCategory::select('id', 'title')->get()],
+            ['key' => 'thumbnail', 'label' => 'Thumbnail', 'type' => 'image', 'path' => 'thumbnail', 'class' => ' lg:col-span-6'],
             ['key' => 'description', 'label' => 'Description', 'path' => 'description', 'type' => 'textarea'],
             ['key' => 'status', 'label' => 'Status', 'path' => 'status', 'type' => 'select', 'optionLabel' => 'name', 'optionValue' => 'code',  'options' => [
                 ['name' => 'Active', 'code' => '1'],

@@ -8,12 +8,13 @@ use App\Traits\ApiReturnFormatTrait;
 use Illuminate\Http\Request;
 use App\Traits\ImageUploadTrait;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 
 class SettingController extends Controller
 {
     use ImageUploadTrait, ApiReturnFormatTrait;
 
-    private $imagePath = 'upload/setting';
+     private $imgLocation = "uploads/settings/";
     /**
      * Display a listing of the resource.
      *
@@ -25,6 +26,7 @@ class SettingController extends Controller
         $data = ['settings' => $setting];
         return $this->responseWithInertia("Backend/Setup/Index",  $data);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -63,23 +65,29 @@ class SettingController extends Controller
     }
     public function update(Request $request)
     {
-        $request->validate([
-            'key' => 'required|array',
-        ]);
+        // Validate the request
+        // $request->validate([
+        //     'key' => 'required|array',
+        //     'key.*' => 'required',
+        // ]);
+
+        // Retrieve all settings at once and index them by 'key'
+        $settings = Setting::whereIn('key', array_keys($request->key))->get()->keyBy('key');
 
         foreach ($request->key as $key => $value) {
-            if ($key == 'logo' || $key == 'favicon') {
-                $setting = Setting::where('key', $key)->first();
-                if ($setting) {
+            $setting = $settings->get($key);
+
+            // Check if key is 'logo' or 'favicon' and if value is different
+            if (in_array($key, ['logo', 'favicon']) && $value && (!isset($setting->value) || $value !== $setting->value)) {
+                if (!empty($setting->value)) {
                     $this->deleteImage($setting->value);
                 }
                 // Process image upload
-                $value = $this->storeImage( $value,$this->imagePath, 300, 300);
+                $value = $this->uploadBase64Image($value, $this->imgLocation);
             }
 
-            // Check if $value is not null
+            // Only update if value is not null
             if ($value !== null) {
-                // Store configuration setting
                 Setting::updateOrCreate(
                     ['key' => $key],
                     ['value' => $value]
@@ -87,19 +95,13 @@ class SettingController extends Controller
             }
         }
 
-        $notification = [
-            'message' =>  'Settings Updated Successfully' ,
-            'alert-type' => 'success'
-        ];
-
-        return redirect()->back()->with($notification);
+        return back()->with('success', 'Settings updated successfully');
     }
-
 
 
     public function overWriteEnvFile($type, $val)
     {
-        \Log::info("Type: $type, Value: $val"); // Log the values
+        Log::info("Type: $type, Value: $val"); // Log the values
 
             $path = base_path('.env');
             if (file_exists($path)) {
@@ -157,7 +159,7 @@ class SettingController extends Controller
                 'alert-type'  => 'success'
             ]);
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
             return redirect()->back()->with([
                 'message'     => 'Failed to update settings: ' . $e->getMessage(),
                 'alert-type'  => 'error'
