@@ -298,7 +298,7 @@ const model = ref([
           {
             label: "General Settings",
             icon: "pi pi-fw pi-cog",
-            to: "/general-settings",
+            to: "/admin/general-settings",
           },
 
           {

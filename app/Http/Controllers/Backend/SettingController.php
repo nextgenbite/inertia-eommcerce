@@ -64,6 +64,9 @@ class SettingController extends Controller
     }
     public function update(Request $request)
     {
+               if (isDemoMode()) {
+            return redirect()->back();
+        }
         // Validate the request
         // $request->validate([
         //     'key' => 'required|array',
