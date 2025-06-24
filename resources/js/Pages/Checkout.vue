@@ -157,10 +157,7 @@
                       <!-- Color and Size display -->
                       <div
                         class="flex gap-4 text-sm text-gray-500 mb-2"
-                        v-if="
-                          item.variant.attributes &&
-                          item.variant.attributes.length
-                        "
+                       v-if="item?.variant?.attributes && item?.variant?.attributes.length"
                       >
                         <span
                           v-for="attribute in item.variant.attributes"

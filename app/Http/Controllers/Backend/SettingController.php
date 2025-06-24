@@ -23,8 +23,7 @@ class SettingController extends Controller
     public function index()
     {
         $setting = Setting::all()->pluck('value', 'key');
-        $data = ['settings' => $setting];
-        return $this->responseWithInertia("Backend/Setup/Index",  $data);
+        return $this->responseWithInertia("Backend/Settings/Index",  ['data' => $setting]);
     }
 
 

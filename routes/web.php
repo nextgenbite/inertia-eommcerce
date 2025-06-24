@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
@@ -13,6 +14,8 @@ use App\Http\Controllers\UserController;
 use Spatie\Permission\Models\Permission;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
+use Illuminate\Support\Facades\Artisan;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -85,6 +88,35 @@ Route::middleware('auth', 'verified')->group(function () {
 require __DIR__ . '/auth.php';
 
 Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
+
+            Route::get('/cache', function () {
+            Artisan::call('optimize');
+            return back()->with('success', 'Cache cleared successfully');
+        })->name('cache.clear');
+        Route::get('/cache-clear', function () {
+            Artisan::call('optimize:clear');
+            return back()->with('success', 'Cache cleared successfully');
+        })->name('cache.clear');
+        Route::get('/storage-link', function () {
+            Artisan::call('storage:link');
+            return back()->with('success', 'Storage link created successfully');
+        })->name('storage.link');
+        Route::get('/migrate', function () {
+            Artisan::call('migrate');
+            return back()->with('success', 'Migrate successfully');
+        })->name('migrate');
+        Route::get('/migrate-refresh', function () {
+            Artisan::call('migrate:refresh');
+            return back()->with('success', 'Migrate refresh successfully');
+        })->name('migrate.refresh');
+        Route::get('/migrate-seed', function () {
+            Artisan::call('migrate --seed');
+            return back()->with('success', 'Migrate seed successfully');
+        })->name('migrate.seed');
+        Route::get('/inertia/start', function () {
+            exec('node ' . base_path('bootstrap/ssr/ssr.js') . ' > /dev/null 2>&1 &');
+            return back()->with('success', 'SSR started');
+        });
 
     //role & permission Route
     Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
@@ -260,6 +292,13 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     //   Route::post('/update/user', 'UpdateAdmin')->name('user.update');
     //   Route::get('/delete/admin/{id}', 'DeleteAdmin')->name('delete.user');
 
+            //settings
+        Route::get('/general-settings', [SettingController::class, 'index'])->name('general.settings');
+        Route::put('/general-settings', [SettingController::class, 'update'])->name('general.settings.update');
+        Route::get('/sitemap', [SettingController::class, 'sitemap'])->name('sitemap');
+        Route::get('/update-sitemap', [SettingController::class, 'sitemapGenerate'])->name('sitemap.update');
+
+
     //   // Database Backup
     //   Route::get('/database/backup', 'DatabaseBackup')->name('database.backup');
     //   Route::get('/backup/now', 'BackupNow');
@@ -267,3 +306,4 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     //   Route::get('/delete/database/{getFilename}', 'DeleteDatabase');
     // });
 }); // End User Middleware
+
