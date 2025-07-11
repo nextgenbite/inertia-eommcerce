@@ -37,12 +37,20 @@ class CartController extends Controller
             'quantity' => ['required', 'integer', 'min:1'],
         ]);
 
+        $variantId = $validated['variant_id'] ?? null;
+        $productId = $validated['product_id'] ?? null;
+
+        if (!$productId && $variantId) {
+            $variant = ProductVariant::find($variantId);
+            $productId = $variant ? $variant->product_id : null;
+        }
+
         if (auth()->check()) {
             $cart = auth()->user()->cart()->firstOrCreate([]);
 
             $cartItem = $cart->items()->firstOrNew([
-                'variant_id' => $validated['variant_id'] ?? null,
-                'product_id' => $validated['product_id'] ?? ProductVariant::find($validated['variant_id'])->product_id,
+                'variant_id' => $variantId,
+                'product_id' => $productId,
             ]);
 
             $cartItem->quantity += $validated['quantity'];
@@ -51,31 +59,31 @@ class CartController extends Controller
             $this->recalculateCartSummary($cart);
         } else {
             $cart = session()->get('cart', []);
+            $found = false;
 
-            $existingKey = null;
             foreach ($cart as $key => $item) {
                 if (
-                    (isset($validated['variant_id']) && isset($item['variant_id']) && $item['variant_id'] == $validated['variant_id']) ||
-                    (!isset($validated['variant_id']) && isset($item['product_id']) && $item['product_id'] == $validated['product_id'])
+                    ($variantId && isset($item['variant_id']) && $item['variant_id'] == $variantId) ||
+                    (!$variantId && isset($item['product_id']) && $item['product_id'] == $productId)
                 ) {
-                    $existingKey = $key;
+                    $cart[$key]['quantity'] += $validated['quantity'];
+                    $found = true;
                     break;
                 }
             }
 
-            if ($existingKey !== null) {
-                $cart[$existingKey]['quantity'] += $validated['quantity'];
-            } else {
+            if (!$found) {
                 $key = uniqid();
                 $cart[$key] = [
-                    'variant_id' => $validated['variant_id'] ?? null,
-                    'product_id' => $validated['product_id'] ?? null,
-                    'quantity' => $validated['quantity']
+                    'variant_id' => $variantId,
+                    'product_id' => $productId,
+                    'quantity' => $validated['quantity'],
                 ];
             }
 
             session()->put('cart', $cart);
         }
+
         return $this->responseWithSuccess(
             'Item added to cart',
             auth()->check()

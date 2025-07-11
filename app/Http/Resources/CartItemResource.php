@@ -17,25 +17,27 @@ class CartItemResource extends JsonResource
         return [
             'id' => $this->id,
             'quantity' => $this->quantity,
-            'variant' => [
-                'id' => $this->variant?->id,
-                'sku' => $this->variant?->sku,
-                'price' => $this->variant?->price,
-                'attributes' => $this->variant?->attributeValues()
-                    ->with('attribute')
-                    ->get()
-                    ->map(fn($av) => [
-                        'name' => $av->attribute->display_name,
-                        'value' => $av->value,
-                    ])
-            ],
-            'product' => [
-                'id' => $this->product?->id,
-                'title' => $this->product?->title,
-                'price' => $this->product?->discount_price ?:$this->product?->price,
-                'thumbnail' => $this->product?->thumbnail,
-                'slug' => $this->product?->slug,
-            ]
+            'variant' => $this->whenLoaded('variant', function () {
+                return [
+                    'id' => $this->variant->id,
+                    'sku' => $this->variant->sku,
+                    'price' => $this->variant->price,
+                    'attributes' => $this->variant->attributeValues
+                        ->map(fn($av) => [
+                            'name' => $av->attribute->display_name,
+                            'value' => $av->value,
+                        ])
+                ];
+            }),
+            'product' => $this->whenLoaded('product', function () {
+                return [
+                    'id' => $this->product->id,
+                    'title' => $this->product->title,
+                    'price' => $this->product->discount_price ?? $this->product->price,
+                    'thumbnail' => $this->product->thumbnail,
+                    'slug' => $this->product->slug,
+                ];
+            }),
         ];
     }
 }

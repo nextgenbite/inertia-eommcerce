@@ -2,8 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\{Product,ProductVariant};
-use Illuminate\Http\Request;
+use App\Models\{Product, ProductVariant};
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GuestCartResource extends JsonResource
@@ -13,7 +12,7 @@ class GuestCartResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-  public function toArray($request)
+    public function toArray($request)
     {
         $cart = $this->resource;
 
@@ -22,7 +21,7 @@ class GuestCartResource extends JsonResource
 
             if (!empty($item['variant_id'])) {
                 $variant = ProductVariant::with('product')->find($item['variant_id']);
-                if (!$variant) return null;
+                if (!$variant || !$variant->product) return null;
 
                 return [
                     'id' => $key,
@@ -60,7 +59,7 @@ class GuestCartResource extends JsonResource
                     'product' => [
                         'id' => $product->id,
                         'title' => $product->title,
-                        'price' => $product?->discount_price ?:$product?->price,
+                        'price' => $product->discount_price ?? $product->price,
                         'thumbnail' => $product->thumbnail,
                     ]
                 ];
@@ -69,15 +68,14 @@ class GuestCartResource extends JsonResource
             return null;
         })->filter()->values();
 
-        $subtotal = $items->sum(function ($item) {
-            return ($item['variant']['price'] ?? $item['product']['price']) * $item['quantity'];
-        });
+        $subtotal = $items->sum(fn($item) =>
+            ($item['variant']['price'] ?? $item['product']['price']) * $item['quantity']
+        );
 
         $shipping = 5;
         $tax = $subtotal * 0.1;
         $discount = 0;
-        $total = $subtotal + $shipping - $discount;
-        // $total = $subtotal + $shipping + $tax - $discount;
+        $total = $subtotal + $shipping + $tax - $discount;
 
         return [
             'items' => $items,

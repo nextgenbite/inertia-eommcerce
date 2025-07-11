@@ -4,35 +4,33 @@
       <h2 class="text-lg md:text-xl font-bold text-gray-800 uppercase">
         Categories
       </h2>
-      <a href="#" class="text-primary font-bold text-lg"
+      <Link href="/" class="text-primary font-bold text-lg"
         >View All <span class="pi pi-chevron-right"></span
-      ></a>
+      ></Link>
     </div>
     <SwiperSlider :items="categories" :swiperOptions="productOptions">
       <template #default="{ item }">
         <!-- ---- Start Single Category  ----- -->
-        <div
-          class="group rounded transition duration-300 ease-in-out text-center"
-        >
-          <!-- color bgColors -->
-          <!-- <div class="rounded-full shadow-md p-4 mb-2 flex items-center justify-center  mx-auto overflow-hidden  group-hover:ring-4 group-hover:ring-primary group-hover:scale-95" :class="bgColors[index % bgColors.length]"> -->
+        <Link :title="item.title" :href="`/shop?categories[]=${item.id}`">
           <div
-            class="rounded-full p-3 mb-2 h-20 w-20 flex items-center justify-center mx-auto overflow-hidden group-hover:ring-4 group-hover:ring-primary-100 group-hover:scale-95 white-box"
+            class="group rounded transition duration-300 ease-in-out text-center"
           >
-            <img
-              :src="item.thumbnail || '/no-image.png'"
-              :alt="item.title"
-              class="w-full h-full object-cover rounded-full group-hover:brightness-75 transition-all duration-300 ease-in-out"
-            />
+            <!-- color bgColors -->
+            <!-- <div class="rounded-full shadow-md p-4 mb-2 flex items-center justify-center  mx-auto overflow-hidden  group-hover:ring-4 group-hover:ring-primary group-hover:scale-95" :class="bgColors[index % bgColors.length]"> -->
+            <div
+              class="rounded-full p-3 mb-2 h-20 w-20 flex items-center justify-center mx-auto overflow-hidden group-hover:ring-4 group-hover:ring-primary-100 group-hover:scale-95 white-box"
+            >
+              <img
+                :src="item.thumbnail || '/no-image.png'"
+                :alt="item.title"
+                class="w-full h-full object-cover rounded-full group-hover:brightness-75 transition-all duration-300 ease-in-out"
+              />
+            </div>
+            <p class="w-full text-center font-roboto font-semibold capitalize">
+              {{ item.title }}
+            </p>
           </div>
-          <a
-            :title="item.title"
-            href="#"
-            class="w-full text-center font-roboto font-semibold capitalize"
-          >
-            {{ item.title }}
-          </a>
-        </div>
+        </Link>
         <!-- ---- End Single Category  ----- -->
       </template>
     </SwiperSlider>
@@ -41,6 +39,7 @@
 </template>
 
 <script setup>
+import { Link } from "@inertiajs/vue3";
 import SwiperSlider from "@/Components/Shared/SwiperSlider.vue";
 const props = defineProps({
   categories: {

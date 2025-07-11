@@ -1,6 +1,6 @@
 <template>
   <li v-if="item.children">
-    <a
+    <div
       v-ripple
       v-styleclass="{
         selector: '@next',
@@ -9,7 +9,7 @@
         leaveToClass: 'hidden',
         leaveActiveClass: 'animate-slideup',
       }"
-      class="flex items-center justify-between p-4 rounded cursor-pointer text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 transition-colors duration-150"
+      class="flex items-center justify-between p-2 rounded cursor-pointer text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 transition-colors duration-150"
     >
       <div class="flex items-center gap-2">
         <i :class="item.icon"></i>
@@ -24,11 +24,11 @@
         </span>
       </template>
       <i v-if="item.children" class="pi pi-chevron-down ml-auto"></i>
-    </a>
+    </div>
 
     <ul
       v-if="item.children"
-      class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-hidden transition-all duration-[400ms] ease-in-out"
+      class="list-none py-0 pl-4 pr-0 m-0 hidden  animate-duration-300  overflow-hidden transition-all duration-[400ms] ease-in-out"
     >
       <MenuItem v-for="(child, i) in item.children" :key="i" :item="child" />
     </ul>
@@ -37,7 +37,7 @@
     <Link
       v-ripple
       :href="item.route"
-      class="flex items-center justify-between p-4 rounded cursor-pointer text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 transition-colors duration-150"
+      class="flex items-center justify-between p-4 rounded cursor-pointer text-surface-700 hover:bg-primary-200 dark:text-surface-0 dark:hover:bg-surface-800 transition-colors duration-150"
     >
       <div class="flex items-center gap-2">
         <i :class="item.icon"></i>

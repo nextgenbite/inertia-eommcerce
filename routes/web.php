@@ -30,6 +30,8 @@ use Illuminate\Support\Facades\Artisan;
 Route::get('/', [HomeController::class, 'homePage'])->name('home');
 
 Route::get('/product/{slug}', [HomeController::class, 'ProductShow'])->name('product.show');
+Route::get('/products/search', [HomeController::class, 'ProductSearch']);
+
 Route::get('/shop', [HomeController::class, 'Shop'])->name('shop');
 // Route::get('/order-confirmed', [HomeController::class, ''])->name('checkout');
 //cart

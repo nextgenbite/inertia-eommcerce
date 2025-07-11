@@ -17,7 +17,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
 import FeatureCard from './FeatureCard.vue'
 
 const features = [

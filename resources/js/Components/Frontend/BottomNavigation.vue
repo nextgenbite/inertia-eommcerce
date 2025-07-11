@@ -14,12 +14,12 @@
       </Link>
 
       <Link
-        href="/search"
-        title="Search"
+        href="/shop"
+        title="Shop"
         class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
       >
-        <i class="pi pi-search text-xl mb-1"></i>
-        <span class="text-[11px] font-medium">Search</span>
+        <i class="pi pi-shopping-bag text-xl mb-1"></i>
+        <span class="text-[11px] font-medium">Shop</span>
       </Link>
 
       <Link
@@ -46,7 +46,7 @@
       </Link>
 
       <Link
-        href="/account"
+        href="/login"
         title="Account"
         class="flex flex-col items-center text-sm text-gray-700 hover:text-primary transition"
       >

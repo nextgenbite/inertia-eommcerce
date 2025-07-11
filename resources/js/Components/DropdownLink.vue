@@ -12,7 +12,10 @@ defineProps({
 <template>
     <Link
         :href="href"
-        class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out"
+        class="block w-full px-4 py-2 text-start text-sm text-gray-700 hover:bg-primary-100 hover:text-primary-700 focus:outline-none focus:bg-primary-200 focus:text-primary-800 rounded transition-colors duration-150 ease-in-out cursor-pointer"
+        tabindex="0"
+        @keydown.enter="$el.click()"
+        @keydown.space.prevent="$el.click()"
     >
         <slot />
     </Link>

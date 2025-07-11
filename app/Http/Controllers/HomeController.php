@@ -75,6 +75,18 @@ class HomeController extends Controller
         ]);
     }
 
+    public function ProductSearch(Request $request)
+{
+    $query = $request->input('query');
+    $products = Product::where('title', 'like', '%' . $query . '%')
+        ->select('id', 'title as title', 'slug') // `name` is required for PrimeVue `optionLabel`
+        ->limit(10)
+        ->get();
+
+    return response()->json($products);
+}
+
+
     //     public function ProductShow(Product $product)
     // {
     //     $product->load(['attributes.values', 'variants.attributeValues', 'variants.inventory']);

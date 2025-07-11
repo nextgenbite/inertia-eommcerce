@@ -1,11 +1,10 @@
 <script setup>
 import Create from "@/Components/Crud/Create.vue";
 import Edit from "@/Components/Crud/Edit.vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, router } from "@inertiajs/vue3";
 
 import { reactive, ref, watch } from "vue";
 import pkg from "lodash";
-import { router } from "@inertiajs/vue3";
 const { _, debounce, pickBy } = pkg;
 import { loadToast } from "@/composables/loadToast";
 const props = defineProps({
