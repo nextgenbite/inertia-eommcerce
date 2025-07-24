@@ -1231,7 +1231,7 @@
     ]
   },
   "resources/js/Pages/Backend/Categories/Index.vue": {
-    "file": "assets/Index-Dii2AJfx.js",
+    "file": "assets/Index-Cl4_CM1X.js",
     "name": "Index",
     "src": "resources/js/Pages/Backend/Categories/Index.vue",
     "isDynamicEntry": true,
@@ -1292,7 +1292,7 @@
     ]
   },
   "resources/js/Pages/Backend/Common/Index.vue": {
-    "file": "assets/Index-DW5giaed.js",
+    "file": "assets/Index-qm1W1EXQ.js",
     "name": "Index",
     "src": "resources/js/Pages/Backend/Common/Index.vue",
     "isDynamicEntry": true,
@@ -1353,7 +1353,7 @@
     ]
   },
   "resources/js/Pages/Backend/Expenses/Index.vue": {
-    "file": "assets/Index-Cl4_CM1X.js",
+    "file": "assets/Index-Dii2AJfx.js",
     "name": "Index",
     "src": "resources/js/Pages/Backend/Expenses/Index.vue",
     "isDynamicEntry": true,
@@ -1414,7 +1414,7 @@
     ]
   },
   "resources/js/Pages/Backend/Invoice/Index.vue": {
-    "file": "assets/Index-qm1W1EXQ.js",
+    "file": "assets/Index-DW5giaed.js",
     "name": "Index",
     "src": "resources/js/Pages/Backend/Invoice/Index.vue",
     "isDynamicEntry": true,
