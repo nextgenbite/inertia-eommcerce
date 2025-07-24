@@ -49,7 +49,7 @@ class HandleInertiaRequests extends Middleware
                 ]);
             },
             // 'settings' => fn() => Cache::rememberForever('settings',  fn() => \App\Models\Setting::pluck('value', 'key')->toArray()),
-            'settings' => fn() => \App\Models\Setting::pluck('value', 'key')->toArray(),
+            'settings' => fn() => \App\Models\TenantSetting::pluck('value', 'key')->toArray(),
 
 
         ];

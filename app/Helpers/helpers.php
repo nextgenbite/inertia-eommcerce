@@ -70,7 +70,7 @@ if (!function_exists('settingHelper')) {
     function settingHelper($key, $default = null)
     {
         // Fetch the setting from the database, cache, or config.
-        // return \App\Models\Setting::getValue($key, $default);
+        return \App\Models\Setting::getValue($key, $default);
     }
 }
 if (!function_exists('isDemoMode')) {
