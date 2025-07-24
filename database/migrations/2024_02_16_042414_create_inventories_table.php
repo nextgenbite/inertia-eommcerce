@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->foreignId('variant_id')->constrained()->onDelete('cascade')->index()->name('inventories_variant_id_foreign'); // Specify foreign key name
             $table->foreignId('warehouse_id')->constrained()->nullable()->onDelete('cascade')->index()->name('inventories_warehouse_id_foreign'); // Specify foreign key name
             $table->integer('quantity')->nullable()->default(0);

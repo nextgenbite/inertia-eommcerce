@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('purchase_items', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->foreignId('purchase_id')->constrained()->onDelete('cascade')->index()->name('purchase_items_purchase_id_foreign'); // Adding index
             $table->foreignId('product_id')->constrained()->nullable()->index()->name('purchase_items_product_id_foreign'); // Adding index
             $table->integer('quantity');

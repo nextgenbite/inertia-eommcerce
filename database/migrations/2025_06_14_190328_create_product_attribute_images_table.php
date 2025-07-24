@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('product_attribute_images', function (Blueprint $table) {
            $table->id();
+            $table->uuid('tenant_id');
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('attribute_value_id')->constrained()->cascadeOnDelete();
             $table->string('image_path');

@@ -1,6 +1,6 @@
 <script setup>
 import { useForm ,Head} from "@inertiajs/vue3";
-import DefaultLayout from "@/Layouts/Default.vue";
+import DefaultLayout from "@/Layouts/Tenant/Default.vue";
 
 const form = useForm({
     email: "admin@admin.com",

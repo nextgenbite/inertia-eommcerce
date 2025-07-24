@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sub_sub_categories', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->foreignId('sub_category_id')->constrained()->index()->name('sub_sub_categories_sub_category_id_foreign'); // Specify foreign key name
             $table->string('title')->unique();
             $table->string('slug')->unique();

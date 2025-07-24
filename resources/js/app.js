@@ -93,6 +93,8 @@ createInertiaApp({
                 methods: {
                     can(permissions) {
                         const allPermissions = this.$page.props.auth.can;
+                        console.log(allPermissions);
+
                         return permissions.some(item => allPermissions[item]);
                     },
                     formatCurrency(amount) {

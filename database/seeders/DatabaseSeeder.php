@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
             // UserSeeder::class,
             // InventorySeeder::class,
             // CategorySeeder::class,
+            // PlanSeeder::class,
+            // TenancySeeder::class,
+            // PermissionSeeder::class,
+            // TenantRoleSeeder::class,
             JsonDataSeeder::class,
         ]);
     }

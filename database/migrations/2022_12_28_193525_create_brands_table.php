@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->string('title')->unique();
             $table->string('slug')->unique();
             $table->string('thumbnail')->nullable();

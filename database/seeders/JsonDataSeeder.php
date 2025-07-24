@@ -28,14 +28,15 @@ class JsonDataSeeder extends Seeder
     public function run()
     {
         // Dummy Attributes
-        $color = Attribute::firstOrCreate(['name' => 'Color']);
-        $size = Attribute::firstOrCreate(['name' => 'Size']);
+        $color = Attribute::firstOrCreate(['name' => 'Color', 'tenant_id'=> 1]);
+        $size = Attribute::firstOrCreate(['name' => 'Size', 'tenant_id'=> 1]);
 
         $colors = ['Red', 'Blue', 'Green'];
         $sizes = ['S', 'M', 'L'];
 
         $colorValues = collect($colors)->map(function ($val) use ($color) {
             return AttributeValue::firstOrCreate([
+                'tenant_id'=> 1,
                 'attribute_id' => $color->id,
                 'value' => $val
             ]);
@@ -43,6 +44,7 @@ class JsonDataSeeder extends Seeder
 
         $sizeValues = collect($sizes)->map(function ($val) use ($size) {
             return AttributeValue::firstOrCreate([
+                'tenant_id'=> 1,
                 'attribute_id' => $size->id,
                 'value' => $val
             ]);
@@ -54,16 +56,20 @@ class JsonDataSeeder extends Seeder
         foreach ($data as $item) {
             $categoryName = is_array($item) ? ($item['name'] ?? $item[0] ?? '') : $item;
 
-            $category = Category::firstOrCreate(
-                ['title' => $categoryName],
-                ['slug' => Str::slug($categoryName)]
-            );
 
+            $category = Category::firstOrCreate(
+                [
+                    'tenant_id' => 'tenant1',
+                    'title' => $categoryName,
+                    'slug' => Str::slug($categoryName)
+                ]
+            );
             for ($i = 1; $i <= 2; $i++) {
                 $subCatTitle = "$categoryName Sub $i";
                 $subCat = DB::table('sub_categories')->where('title', $subCatTitle)->first();
                 if (!$subCat) {
                     $subCatId = DB::table('sub_categories')->insertGetId([
+                        'tenant_id'=> 1,
                         'category_id' => $category->id,
                         'title'       => $subCatTitle,
                         'slug'        => Str::slug($subCatTitle),
@@ -81,6 +87,7 @@ class JsonDataSeeder extends Seeder
                     $subSubCat = DB::table('sub_sub_categories')->where('title', $subCatTitle)->first();
                     if ($subSubCat) {
                         DB::table('sub_sub_categories')->insert([
+                            'tenant_id'=> 1,
                             'sub_category_id' => $subCatId,
                             'title' => $subSubCatTitle,
                             'slug' => Str::slug($subSubCatTitle),
@@ -99,8 +106,8 @@ class JsonDataSeeder extends Seeder
         foreach ($products as $item) {
 if (isset($item['brand'])) {
     $brand = Brand::firstOrCreate(
-        ['title' => $item['brand']],
-        ['slug' => Str::slug($item['brand'])]
+      ['tenant_id' => 'tenant1', 'title' => $item['brand']],
+    ['slug' => Str::slug($item['brand'])]
     );
 }
             if (Product::where('title', $item['title'])->exists()) continue;
@@ -131,6 +138,7 @@ if (isset($item['brand'])) {
             } while (Product::where('barcode', $barcode)->exists());
 
             $product = Product::create([
+                'tenant_id' => 'tenant1',
                 'category_id' => $category->id,
                 'sub_category_id' => $subCategoryId,
                 'brand_id' => $brand->id,
@@ -147,6 +155,7 @@ if (isset($item['brand'])) {
             ]);
 
             $variant = ProductVariant::create([
+                'tenant_id' => 'tenant1',
                 'product_id' => $product->id,
                 'sku' => $sku . '-V',
                 'price' => $item['price'],
@@ -155,16 +164,19 @@ if (isset($item['brand'])) {
 
             $valueId = $colorValues->random()->id;
             VariantAttributeValue::create([
+                'tenant_id' => 'tenant1',
                 'product_variant_id' => $variant->id,
                 'attribute_value_id' => $valueId,
             ]);
             $sizeValueId = $sizeValues->random()->id;
             VariantAttributeValue::create([
+                'tenant_id' => 'tenant1',
                 'product_variant_id' => $variant->id,
-                'attribute_value_id' => $valueId,
+                'attribute_value_id' => $sizeValueId,
             ]);
 
             ProductAttributeImage::create([
+                'tenant_id' => 'tenant1',
                 'product_id' => $product->id,
                 'attribute_value_id' => $sizeValueId,
                 'image_path' => $thumbnail,

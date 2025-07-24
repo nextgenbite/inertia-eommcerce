@@ -91,7 +91,7 @@ class SettingController extends Controller
             // Only update if value is not null
             if ($value !== null) {
                 Setting::updateOrCreate(
-                    ['key' => $key],
+                    ['tenant_id' => tenant('id'), 'key' => $key],
                     ['value' => $value]
                 );
             }

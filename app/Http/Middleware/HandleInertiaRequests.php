@@ -40,15 +40,16 @@ class HandleInertiaRequests extends Middleware
                 'info' => fn() => $request->session()->get('info'),
             ],
             'auth' => [
-                'user' => $request->user(),
-                'can' => $request->user() ? $request->user()->getPermissionArray() : [],
+'user' => auth('tenant')->user(),
+'can' => auth('tenant')->check() ? auth('tenant')->user()->getPermissionArray() : [],
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
                     'location' => $request->url(),
                 ]);
             },
-            'settings' => fn() => Cache::rememberForever('settings',  fn() => \App\Models\Setting::pluck('value', 'key')->toArray()),
+            // 'settings' => fn() => Cache::rememberForever('settings',  fn() => \App\Models\Setting::pluck('value', 'key')->toArray()),
+            'settings' => fn() => \App\Models\Setting::pluck('value', 'key')->toArray(),
 
 
         ];

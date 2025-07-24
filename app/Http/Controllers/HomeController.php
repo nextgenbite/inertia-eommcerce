@@ -76,15 +76,15 @@ class HomeController extends Controller
     }
 
     public function ProductSearch(Request $request)
-{
-    $query = $request->input('query');
-    $products = Product::where('title', 'like', '%' . $query . '%')
-        ->select('id', 'title as title', 'slug') // `name` is required for PrimeVue `optionLabel`
-        ->limit(10)
-        ->get();
+    {
+        $query = $request->input('query');
+        $products = Product::where('title', 'like', '%' . $query . '%')
+            ->select('id', 'title as title', 'slug') // `name` is required for PrimeVue `optionLabel`
+            ->limit(10)
+            ->get();
 
-    return response()->json($products);
-}
+        return response()->json($products);
+    }
 
 
     //     public function ProductShow(Product $product)
@@ -164,5 +164,11 @@ class HomeController extends Controller
             'products' => $products,
             'search' => $search,
         ]);
+    }
+
+    public function contact()
+    {
+
+        return Inertia::render('Contact');
     }
 }

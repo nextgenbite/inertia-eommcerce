@@ -53,6 +53,7 @@ public function store(Request $request)
     DB::beginTransaction();
     try {
         $order = Order::create([
+            'tenant_id' => tenant('id'),
             'user_id' => auth()->id(),
             'customer_id' => $validated['customer_id'] ?? null,
             'warehouse_id' => $validated['warehouse_id'] ?? null,
@@ -82,6 +83,7 @@ public function store(Request $request)
             $price = $item['variant']['price'] ?? $item['product']['price'];
 
             $order->items()->create([
+                 'tenant_id' => tenant('id'),
                 'product_id' => $productId,
                 'product_variant_id' => $variantId,
                 'quantity' => $item['quantity'],

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('attributes', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->string('name')->unique();
             $table->string('display_name')->nullable();
             $table->timestamps();

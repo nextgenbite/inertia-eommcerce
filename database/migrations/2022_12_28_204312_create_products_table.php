@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->string('title')->unique();
             $table->string('slug')->unique();
             $table->foreignId('category_id')->constrained()->index()->name('products_category_id_foreign'); // Specify foreign key name
@@ -26,12 +27,14 @@ return new class extends Migration
             $table->string('barcode', 50)->unique()->nullable(); // Limiting length
             $table->string('weight')->nullable();
             $table->string('thumbnail')->nullable();
+            $table->json('images')->nullable();
             $table->longText('description')->nullable();
             $table->date('buying_date')->nullable(); // Using date type
             $table->date('expire_date')->nullable(); // Using date type
             $table->decimal('buying_price', 8, 2)->nullable(); // Using decimal type
             $table->decimal('discount_price', 8, 2)->nullable(); // Using decimal type
             $table->decimal('price', 8, 2)->nullable(); // Using decimal type
+            $table->boolean('has_variants')->default(true); // Using boolean type
             $table->boolean('status')->default(true); // Using boolean type
             $table->timestamps();
             $table->softDeletes();

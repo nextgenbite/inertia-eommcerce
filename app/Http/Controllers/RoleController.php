@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use App\Models\TenantRole as Role;
+use App\Models\TenantPermission as Permission;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\RoleIndexRequest;
 use App\Http\Requests\RoleStoreRequest;
 use App\Http\Requests\RoleUpdateRequest;
-use Spatie\Permission\Models\Permission;
+// use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -17,8 +18,8 @@ class RoleController extends Controller
     {
 
         $this->middleware('permission:role.create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role.view', ['only' => ['index', 'show']]);
-        $this->middleware('permission:role.edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:role.read', ['only' => ['index', 'show']]);
+        $this->middleware('permission:role.update', ['only' => ['edit', 'update']]);
         $this->middleware('permission:role.delete', ['only' => ['destroy', 'destroyBulk']]);
 
     }
@@ -54,6 +55,7 @@ class RoleController extends Controller
         try {
             $role = Role::create([
                 'name'          => $request->name,
+                'group_name'          => 'tenant',
             ]);
             $role->givePermissionTo($request->permissions);
             DB::commit();

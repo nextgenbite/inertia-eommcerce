@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->foreignId('expense_category_id')->constrained()->index()->name('expenses_expense_category_id_foreign'); // Specify foreign key name
             $table->date('date');
             $table->string('title');

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('shipping_costs', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
               $table->string('title')->unique();
             $table->decimal('cost')->default(0);
             $table->string('eta')->nullable();

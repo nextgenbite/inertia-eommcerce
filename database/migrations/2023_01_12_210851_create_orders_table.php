@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
+             $table->uuid('tenant_id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('warehouse_id')->nullable();
@@ -25,7 +26,8 @@ return new class extends Migration
             $table->unsignedSmallInteger('total_products')->nullable()->default(0);
             $table->decimal('subtotal', 10, 2)->nullable()->default(0);
             $table->decimal('total_discount', 10, 2)->nullable()->default(0);
-            $table->decimal('vat', 10, 2)->nullable()->default(0);
+            $table->decimal('shipping_cost', 10, 2)->nullable()->default(0);
+            $table->decimal('tax', 10, 2)->nullable()->default(0);
             $table->string('invoice_no', 100)->nullable()->default('0')->index();
             $table->decimal('total', 12, 2)->nullable()->default(0);
             $table->enum('payment_status', ['UNPAID', 'PAID', 'PARTIAL'])->default('UNPAID');

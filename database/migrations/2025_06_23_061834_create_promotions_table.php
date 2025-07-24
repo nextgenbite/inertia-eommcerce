@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->string('title'); // Flash Sale, Top Deals etc.
             $table->enum('type', ['flash_sale', 'top_deal', 'new_arrival']);
             $table->text('description')->nullable();

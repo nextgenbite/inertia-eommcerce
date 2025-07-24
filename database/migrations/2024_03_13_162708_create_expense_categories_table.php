@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('expense_categories', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->string('title');
             $table->longText('description')->nullable();
             $table->boolean('status')->default(1);

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->string('title');
             $table->boolean('status')->default(1);
             $table->timestamps();

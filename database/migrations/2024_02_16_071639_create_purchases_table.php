@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->foreignId('warehouse_id')->constrained()->nullable()->index()->name('purchases_warehouse_id_foreign'); // Specify foreign key name; // Adding index
             $table->foreignId('supplier_id')->constrained()->nullable()->index()->name('purchases_supplier_id_foreign'); // Adding index
             $table->string('code')->unique()->nullable();

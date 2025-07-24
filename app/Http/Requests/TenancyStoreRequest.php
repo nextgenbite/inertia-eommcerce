@@ -26,19 +26,22 @@ class TenancyStoreRequest extends FormRequest
             'id' => 'string|nullable',
             'company_name' => 'required|string',
             'domain' => 'required|string|lowercase|unique:domains|max:100',
-            'first_name' => 'string|max:255',
-            'last_name' => 'string|max:255',
+            'name' => 'string|max:255',
             'email' => 'required|string|lowercase|email|max:255',
-            'password' => ['required', 'string','confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'plan_id' => 'required',
+            'plan_started_at' => 'nullable',
+            'plan_expires_at' => 'nullable',
         ];
-        
     }
 
     public function prepareForValidation()
     {
         $this->merge([
             'id' => $this->domain,
-            'domain' => $this->domain. '.' . config('tenancy.central_domains')[1]
+            'domain' => $this->domain . '.' . config('tenancy.central_domains')[1],
+            'plan_started_at' => now(),
+            'plan_expires_at' => now()->addMonth() // or addDays(30) or based on plan duration
         ]);
     }
 }

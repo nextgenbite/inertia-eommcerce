@@ -111,14 +111,14 @@ const model = ref([
         label: "Role",
         icon: "pi pi-fw pi-id-card",
         to: "/admin/role",
-        can: "role.menu",
+        can: "role.read",
       },
       {
         label: "Permission",
         icon: "pi pi-fw pi-key",
         to: "/admin/permission",
         class: "rotated-icon",
-        can: "permission.menu",
+        can: "permission.read",
       },
     ],
   },
@@ -364,16 +364,7 @@ const model = ref([
       },
     ],
   },
-  {
-    items: [
-      {
-        label: "Template Source",
-        icon: "pi pi-fw pi-github",
-        url: "https://sakai.primevue.org/",
-        target: "_blank",
-      },
-    ],
-  },
+
 ]);
 </script>
 <template>

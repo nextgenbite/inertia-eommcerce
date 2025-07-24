@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-use App\Models\Permission;
+use App\Models\TenantRole as Role;
+use App\Models\TenantPermission as Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use App\Http\Requests\PermissionIndexRequest;
 use App\Http\Requests\PermissionStoreRequest;
 use App\Http\Requests\PermissionUpdateRequest;
@@ -17,8 +17,8 @@ class PermissionController extends Controller
     {
 
         $this->middleware('permission:permission.create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:permission.view', ['only' => ['index', 'show']]);
-        $this->middleware('permission:permission.edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:permission.read', ['only' => ['index', 'show']]);
+        $this->middleware('permission:permission.update', ['only' => ['edit', 'update']]);
         $this->middleware('permission:permission.delete', ['only' => ['destroy', 'destroyBulk']]);
     }
 

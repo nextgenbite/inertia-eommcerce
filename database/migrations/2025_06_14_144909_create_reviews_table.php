@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
+             $table->uuid('tenant_id');
             $table->string('avatar')->nullable();
             $table->string('author');
             $table->date('date');

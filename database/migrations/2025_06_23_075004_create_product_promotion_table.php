@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreignId('promotion_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->primary(['promotion_id', 'product_id']);
+             $table->uuid('tenant_id');
             $table->timestamps();
         });
     }
