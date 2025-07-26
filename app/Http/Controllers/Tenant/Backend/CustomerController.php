@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Tenant\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -20,14 +20,14 @@ class CustomerController extends Controller
         $title = $this->title;
         $customer = Customer::latest()->get();
         return view('backend.customer.index', compact('title', 'customer'));
-    } // End Method 
+    } // End Method
 
 
     public function create()
     {
         $title = $this->title;
         return view('backend.customer.create', compact('title'));
-    } // End Method 
+    } // End Method
 
 
     public function store(Request $request)
@@ -70,7 +70,7 @@ class CustomerController extends Controller
         );
 
         return redirect()->route('all.customer')->with($notification);
-    } // End Method 
+    } // End Method
 
 
     public function edit($id)
@@ -78,7 +78,7 @@ class CustomerController extends Controller
         $title = $this->title;
         $customer = Customer::findOrFail($id);
         return view('backend.customer.edit', compact('title', 'customer'));
-    } // End Method 
+    } // End Method
 
 
     public function UpdateCustomer(Request $request)
@@ -111,7 +111,7 @@ class CustomerController extends Controller
         );
 
         return redirect()->route('all.customer')->with($notification);
-    } // End Method 
+    } // End Method
 
 
     public function destroy($id)
@@ -143,7 +143,7 @@ class CustomerController extends Controller
             return  response()->json(['success' => true, "data" => $data], 200);
         }
         return $data;
-    } // End Method 
+    } // End Method
 
 
 
