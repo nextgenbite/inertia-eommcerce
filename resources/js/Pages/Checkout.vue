@@ -474,8 +474,12 @@
                       class="p-6 bg-surface-50 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700"
                     >
                       <div class="mb-3 flex items-center gap-2">
-                        <img
+                        <!-- <img
                           src="/assets/images/bkash.png"
+                          alt="bKash"
+                          class="h-6"
+                        /> -->
+                        <Img src="/placeholder-image.png"
                           alt="bKash"
                           class="h-6"
                         />
@@ -515,11 +519,15 @@
                       class="p-6 bg-surface-50 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700"
                     >
                       <div class="mb-3 flex items-center gap-2">
-                        <img
-                          src="/assets/images/nagad.png"
+                        <Img src="/placeholder-image.png"
                           alt="Nagad"
                           class="h-6"
                         />
+                        <!-- <img
+                          src="/assets/images/nagad.png"
+                          alt="Nagad"
+                          class="h-6"
+                        /> -->
                         <span class="font-semibold text-primary">Nagad</span>
                       </div>
                       <div class="grid grid-cols-1 gap-4">
@@ -556,7 +564,7 @@
                       class="p-6 bg-surface-50 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700"
                     >
                       <div class="mb-3 flex items-center gap-2">
-                        <img src="/assets/images/rocket.svg" alt="Rocket" class="h-6" />
+                        <Img src="/placeholder-image.png" alt="Rocket" class="h-6" />
                         <span class="font-semibold text-primary">Rocket</span>
                       </div>
                       <div class="grid grid-cols-1 gap-4">
@@ -595,8 +603,7 @@
                       class="p-6 bg-surface-50 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700"
                     >
                       <div class="mb-3 flex items-center gap-2">
-                        <img
-                          src="/assets/images/stripe.png"
+                        <Img src="/placeholder-image.png"
                           alt="Stripe"
                           class="h-6"
                         />
@@ -696,7 +703,7 @@
                       class="p-6 bg-surface-50 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700"
                     >
                       <div class="mb-3 flex items-center gap-2">
-                        <img
+                        <Img
                           src="/assets/images/authorize.png"
                           alt="Authorize.Net"
                           class="h-6"
@@ -792,7 +799,7 @@
                       class="p-6 bg-surface-50 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700"
                     >
                       <div class="mb-3 flex items-center gap-2">
-                        <img
+                        <Img
                           src="/assets/images/visa.svg"
                           alt="Bank"
                           class="h-6"

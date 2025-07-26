@@ -1,30 +1,27 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
-import { PrimeVueResolver } from '@primevue/auto-import-resolver';
 import Components from 'unplugin-vue-components/vite';
+import { PrimeVueResolver } from '@primevue/auto-import-resolver';
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: 'resources/js/app.js',
+            input: ['resources/js/app.js'],
             refresh: true,
+            ssr: 'resources/js/ssr.js', // Define the SSR entry point
         }),
-        vue({
-            template: {
-                transformAssetUrls: {
-                    base: null,
-                    includeAbsolute: false,
-                },
-            },
-        }),
+        vue(),
         Components({
-            resolvers: [PrimeVueResolver()]
-        })
+            resolvers: [PrimeVueResolver()],
+        }),
     ],
-    server: {
-        hmr: {
-            host: 'localhost',
+    ssr: {
+        noExternal: ['primevue', 'primeicons'], // Ensure PrimeVue and PrimeIcons are bundled in SSR
+    },
+    resolve: {
+        alias: {
+            '@': '/resources/js', // Simplify imports with @ alias
         },
-      }
+    },
 });

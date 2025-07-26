@@ -92,7 +92,7 @@ const smoothScroll = (id) => {
                     <Button label="Get Started" as="router-link" to="/" rounded class="!text-xl mt-8 !px-4"></Button>
                 </div>
                 <div class="flex justify-center md:justify-end">
-                    <img src="/demo/images/landing/screen-1.png" alt="Hero Image" class="w-9/12 md:w-auto" />
+                    <Img src="/placeholder-image.png" alt="Hero Image" class="w-9/12 md:w-auto" />
                 </div>
             </div>
 
@@ -239,7 +239,7 @@ const smoothScroll = (id) => {
                             <p class="text-gray-900 sm:line-height-2 md:line-height-4 text-2xl mt-6" style="max-width: 800px">
                                 “Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”
                             </p>
-                            <img src="/demo/images/landing/peak-logo.svg" class="mt-6" alt="Company logo" />
+                            <Img src="/placeholder-image.png" class="mt-6" alt="Company logo" />
                         </div>
                     </div>
                 </div>
@@ -253,7 +253,7 @@ const smoothScroll = (id) => {
 
                 <div class="grid grid-cols-12 gap-4 mt-20 pb-2 md:pb-20">
                     <div class="flex justify-center col-span-12 lg:col-span-6 bg-purple-100 p-0 order-1 lg:order-none" style="border-radius: 8px">
-                        <img src="/demo/images/landing/mockup.svg" class="w-11/12" alt="mockup mobile" />
+                        <Img src="/placeholder-image.png" class="w-11/12" alt="mockup mobile" />
                     </div>
 
                     <div class="col-span-12 lg:col-span-6 my-auto flex flex-col lg:items-end text-center lg:text-right gap-4">
@@ -279,7 +279,7 @@ const smoothScroll = (id) => {
                     </div>
 
                     <div class="flex justify-end order-1 sm:order-2 col-span-12 lg:col-span-6 bg-yellow-100 p-0" style="border-radius: 8px">
-                        <img src="/demo/images/landing/mockup-desktop.svg" class="w-11/12" alt="mockup" />
+                        <Img src="/placeholder-image.png" class="w-11/12" alt="mockup" />
                     </div>
                 </div>
             </div>
@@ -294,7 +294,7 @@ const smoothScroll = (id) => {
                     <div class="col-span-12 lg:col-span-4 p-0 md:p-4">
                         <div class="p-4 flex flex-col border-surface-200 dark:border-surface-600 pricing-card cursor-pointer border-2 hover:border-primary duration-300 transition-all" style="border-radius: 10px">
                             <div class="text-surface-900 dark:text-surface-0 text-center my-8 text-3xl">Free</div>
-                            <img src="/demo/images/landing/free.svg" class="w-10/12 mx-auto" alt="free" />
+                            <Img src="/placeholder-image.png" class="w-10/12 mx-auto" alt="free" />
                             <div class="my-8 flex flex-col items-center gap-4">
                                 <div class="flex items-center">
                                     <span class="text-5xl font-bold mr-2 text-surface-900 dark:text-surface-0">$0</span>
@@ -327,7 +327,7 @@ const smoothScroll = (id) => {
                     <div class="col-span-12 lg:col-span-4 p-0 md:p-4 mt-6 md:mt-0">
                         <div class="p-4 flex flex-col border-surface-200 dark:border-surface-600 pricing-card cursor-pointer border-2 hover:border-primary duration-300 transition-all" style="border-radius: 10px">
                             <div class="text-surface-900 dark:text-surface-0 text-center my-8 text-3xl">Startup</div>
-                            <img src="/demo/images/landing/startup.svg" class="w-10/12 mx-auto" alt="startup" />
+                            <Img src="/placeholder-image.png" class="w-10/12 mx-auto" alt="startup" />
                             <div class="my-8 flex flex-col items-center gap-4">
                                 <div class="flex items-center">
                                     <span class="text-5xl font-bold mr-2 text-surface-900 dark:text-surface-0">$1</span>
@@ -360,7 +360,7 @@ const smoothScroll = (id) => {
                     <div class="col-span-12 lg:col-span-4 p-0 md:p-4 mt-6 md:mt-0">
                         <div class="p-4 flex flex-col border-surface-200 dark:border-surface-600 pricing-card cursor-pointer border-2 hover:border-primary duration-300 transition-all" style="border-radius: 10px">
                             <div class="text-surface-900 dark:text-surface-0 text-center my-8 text-3xl">Enterprise</div>
-                            <img src="/demo/images/landing/enterprise.svg" class="w-10/12 mx-auto" alt="enterprise" />
+                            <Img src="/placeholder-image.png" class="w-10/12 mx-auto" alt="enterprise" />
                             <div class="my-8 flex flex-col items-center gap-4">
                                 <div class="flex items-center">
                                     <span class="text-5xl font-bold mr-2 text-surface-900 dark:text-surface-0">$5</span>
@@ -438,7 +438,9 @@ const smoothScroll = (id) => {
                             <div class="col-span-12 md:col-span-3">
                                 <h4 class="font-medium text-2xl leading-normal mb-4 text-surface-900 dark:text-surface-0">Community</h4>
                                 <a class="leading-normal text-xl block cursor-pointer mb-2 text-surface-700 dark:text-surface-100">Discord</a>
-                                <a class="leading-normal text-xl block cursor-pointer mb-2 text-surface-700 dark:text-surface-100">Events<img src="/demo/images/landing/new-badge.svg" class="ml-2" /></a>
+                                <a class="leading-normal text-xl block cursor-pointer mb-2 text-surface-700 dark:text-surface-100">Events
+                                    <Img src="/demo/images/landing/new-badge.svg" class="ml-2" />
+                                </a>
                                 <a class="leading-normal text-xl block cursor-pointer mb-2 text-surface-700 dark:text-surface-100">FAQ</a>
                                 <a class="leading-normal text-xl block cursor-pointer text-surface-700 dark:text-surface-100">Blog</a>
                             </div>
